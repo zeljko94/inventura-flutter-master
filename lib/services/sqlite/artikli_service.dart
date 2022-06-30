@@ -27,6 +27,7 @@ class ArtikliService extends SqliteBaseService {
         cijena: maps[i]['cijena'] as num,
         napomena: maps[i]['napomena'] as String,
         predefiniranaKolicina: maps[i]['predefiniranaKolicina'] as num,
+        mjernaJedinicaId: maps[i]['mjernaJedinicaId'] != null ? maps[i]['mjernaJedinicaId'] as int : 0,
       );
   });
   }

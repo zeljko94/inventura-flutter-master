@@ -22,7 +22,11 @@ class ListItemService extends SqliteBaseService {
         id: maps[i]['id'] as int,
         listId: maps[i]['listId'] as int,
         artiklId: maps[i]['artiklId'] as int,
-        kolicina: maps[i]['kolicina'] as num
+        kolicina: maps[i]['kolicina'] as num,
+        barkod: maps[i]['barkod'] as String,
+        kod: maps[i]['barkod'] as String,
+        cijena: maps[i]['cijena'] as num,
+        naziv: maps[i]['naziv'] as String
       );
   });
   }

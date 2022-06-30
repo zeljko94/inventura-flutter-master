@@ -9,8 +9,9 @@ class Artikl {
   // num? kolicina;
   String? napomena;
   num? predefiniranaKolicina;
+  int? mjernaJedinicaId;
 
-  Artikl({this.id, this.barkod, this.naziv, this.kod, this.cijena, this.napomena, this.predefiniranaKolicina });
+  Artikl({this.id, this.barkod, this.naziv, this.kod, this.cijena, this.napomena, this.predefiniranaKolicina, this.mjernaJedinicaId });
 
 
   Map<String, dynamic> toMap() {
@@ -22,7 +23,8 @@ class Artikl {
       'cijena': cijena,
       // 'kolicina': kolicina,
       'napomena': napomena,
-      'predefiniranaKolicina': predefiniranaKolicina
+      'predefiniranaKolicina': predefiniranaKolicina,
+      'mjernaJedinicaId': mjernaJedinicaId
     };
   }
 }

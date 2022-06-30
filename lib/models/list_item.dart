@@ -6,8 +6,12 @@ class ListItem {
   int? artiklId;
   int? listId;
   num? kolicina;
+  num? cijena;
+  String? barkod;
+  String? kod;
+  String? naziv;
 
-  ListItem({ this.id, this.artiklId, this.listId, this.artikl, this.kolicina });
+  ListItem({ this.id, this.artiklId, this.listId, this.artikl, this.naziv, this.kolicina, this.cijena, this.barkod, this.kod });
 
   Artikl? artikl;
 
@@ -16,7 +20,11 @@ class ListItem {
       'id': id,
       'artiklId': artiklId as int,
       'listId': listId as int,
-      'kolicina': kolicina as num
+      'kolicina': kolicina as num,
+      'naziv': naziv != null ? naziv as String : '',
+      'cijena': cijena != null ? cijena as num : 0,
+      'barkod': barkod != null ? barkod as String : '',
+      'kod': kod != null ? kod as String : ''
     };
   }
 }

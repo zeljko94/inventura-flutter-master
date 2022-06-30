@@ -44,6 +44,7 @@ dependencies:
   sqflite: ^2.0.2
   path_provider: ^2.0.11
   file_picker: ^4.6.1
+  flutter_typeahead: ^4.0.0
   
 
 dev_dependencies:
