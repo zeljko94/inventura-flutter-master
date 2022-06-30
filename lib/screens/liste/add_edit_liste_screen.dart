@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
@@ -341,7 +342,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
           heroTag: null,
           backgroundColor: ColorPalette.info,
           onPressed: () {
-            
+            _scanBarcode();
           },
           child: const Icon(Icons.camera_alt),
         );
@@ -372,6 +373,16 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
       dodaniArtikli.remove(item);
       dodaniArtikli = List.of(dodaniArtikli);
     });
+  }
+
+  Future _scanBarcode() async{
+    // String scanResult;
+    // scanResult = await FlutterBarcodeScanner.scanBarcode(
+    //   "#ff6666",
+    //   "Cancel",
+    //   true,
+    //   ScanMode.BARCODE
+    // );
   }
 
 }

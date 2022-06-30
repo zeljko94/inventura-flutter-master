@@ -89,7 +89,13 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                       onLongPress: () async {
                         await _deleteArtikl(artikli[index].id!);
                       },
-                      title: Text(artikli[index].naziv!),)),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(artikli[index].naziv!),
+                          Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning),)
+                        ],
+                      ),)),
             );
           },
         ),
