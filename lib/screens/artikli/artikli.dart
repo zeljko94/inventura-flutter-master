@@ -93,7 +93,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(artikli[index].naziv!),
-                          Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning),)
+                          Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning[600]),)
                         ],
                       ),)),
             );
