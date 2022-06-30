@@ -328,7 +328,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
   }
   
   _dodajArtikl(Artikl? odabraniArtikl) {
-    var listItem = ListItem(artikl: odabraniArtikl, artiklId: odabraniArtikl!.id, listId: widget.lista!.id ?? 0, kolicina: 1);
+    var listItem = ListItem(artikl: odabraniArtikl, artiklId: odabraniArtikl!.id, listId: widget.lista != null ? widget.lista!.id : 0, kolicina: 1);
     dodaniArtikli.add(listItem);
 
     setState(() {
