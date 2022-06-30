@@ -336,7 +336,16 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
     });
   }
 
-  _buildButton() {}
+  _buildButton() {
+    return FloatingActionButton(
+          heroTag: null,
+          backgroundColor: ColorPalette.info,
+          onPressed: () {
+            
+          },
+          child: const Icon(Icons.camera_alt),
+        );
+  }
 
   _resetControllers() {
     nazivController.clear();
