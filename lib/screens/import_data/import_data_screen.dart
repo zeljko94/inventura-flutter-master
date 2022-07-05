@@ -5,6 +5,7 @@ import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/data_import.dart';
 import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
+import 'package:inventura_app/services/data_import_service.dart';
 
 class ImportDataScreen extends StatefulWidget {
   const ImportDataScreen({ Key? key }) : super(key: key);
@@ -14,7 +15,7 @@ class ImportDataScreen extends StatefulWidget {
 }
 
 class _ImportDataScreenState extends State<ImportDataScreen> {
-
+  final DataImportService _dataImportService = DataImportService();
   List<DataImport> dataImports = [];
 
 
@@ -26,13 +27,14 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
     
     Future.delayed(Duration.zero, () async {
         await fetchDataImports();
+        await _dataImportService.getArtikli(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar.buildAppBar('Data imports', context),
+      appBar: MainAppBar.buildAppBar('Uvozi podataka', '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),

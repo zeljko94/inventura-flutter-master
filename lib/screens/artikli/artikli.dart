@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
@@ -15,10 +16,13 @@ class ArtikliScreen extends StatefulWidget {
 }
 
 class _ArtikliScreenState extends State<ArtikliScreen> {
-  final ArtikliService _sqlLiteService = ArtikliService();
+  final ArtikliService _artikliService = ArtikliService();
   List<Artikl> artikli = [];
+  List<Artikl> artikliStore = [];
+  bool isSearchMode = false;
 
   TextEditingController searchController = TextEditingController();
+  var currencyFormat = NumberFormat.currency(locale: "hr_HR", symbol: "KM");
 
   @override
   void initState() {
@@ -32,7 +36,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar.buildAppBar('Artikli', context),
+      appBar: isSearchMode ? buildSearchAppBar('Artikli', context) : MainAppBar.buildAppBar('Artikli', '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -63,17 +67,21 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
           onTap: () async {
 
           },
+          onChanged: _searchOnChange,
         ),
-        ListView.builder(
+        Expanded(child: 
+        artikli.length > 0 ? ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: artikli.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+              // padding: EdgeInsets.zero,
               child: Card(
-                  child: ListTile(
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: ListTile(
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -87,55 +95,110 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                         );
                       },
                       onLongPress: () async {
-                        await _deleteArtikl(artikli[index].id!);
+                        _toggleSearchModeOn();
                       },
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(artikli[index].naziv!),
-                          Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning[600]),)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(right: 12),
+                                child: Icon(Icons.image, size: 50,),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(artikli[index].naziv!, overflow: TextOverflow.ellipsis, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),),
+                                  Text(artikli[index].barkod!, style: TextStyle(color: ColorPalette.secondaryText[50], fontSize: 14)),
+                                  Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning[600]),)
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(artikli[index].jedinicaMjere!),
+                          // Text(currencyFormat.format(artikli[index].cijena!), style: const TextStyle(fontSize: 14 ),)
                         ],
-                      ),)),
+                      ),
+                    ),
+                  )
+                  ),
             );
           },
-        ),
+        ) : const Center(child: CircularProgressIndicator(),),)
       ],
     );
   }
 
   _buildButton() {
-    return FloatingActionButton(
-          heroTag: null,
-          backgroundColor: ColorPalette.info,
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                settings: const RouteSettings(name: '/add-edit-artikl'),
-                builder: (context) => AddEditArtiklScreen(
-                      onAddArtikl: fetchArtikli,
-                      onUpdateArtikl: fetchArtikli,
-                ),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        );
+    // return FloatingActionButton(
+    //       heroTag: null,
+    //       backgroundColor: ColorPalette.info,
+    //       onPressed: () async {
+    //         await fetchArtikli();
+    //       },
+    //       child: const Icon(Icons.add),
+    //     );
   }
 
   fetchArtikli() async {
-    var artikliData = await _sqlLiteService.fetchArtikli();
+    var artikliData = await _artikliService.fetchArtikli();
+    print(artikliData[artikliData.length - 1].toMap());
     setState(() {
       artikli = artikliData;
+      artikliStore = List.of(artikliData);
     });
   }
 
   _deleteArtikl(int id) async {
-    var deleted = await _sqlLiteService.deleteArtikl(id);
+    var deleted = await _artikliService.deleteArtikl(id);
 
     if(deleted > 0 ) {
       var snackBar = const SnackBar(content: Text("Artikl uspješno obrisan!"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       await fetchArtikli();
     }
+  }
+
+  _searchOnChange(String value) {
+    setState(() {
+      if(value.isEmpty) {
+        artikli = List.of(artikliStore);
+      }
+      else {
+        artikli = artikliStore.where((element) => element.naziv!.toLowerCase().contains(value.toLowerCase()) || 
+        element.barkod!.toLowerCase().contains(value.toLowerCase()) || element.kod!.toLowerCase().contains(value.toLowerCase())).toList();
+      }
+    });
+  }
+
+  _toggleSearchModeOff() {
+    setState(() {
+      isSearchMode = false;
+    });
+  }
+
+  _toggleSearchModeOn() {
+    setState(() {
+      isSearchMode = true;
+    });
+  }
+
+  AppBar buildSearchAppBar(String title, BuildContext context) {
+    return AppBar(
+      title: Text(title),
+      actions: <Widget>[
+        IconButton(onPressed: () async {}, icon: const Icon(Icons.search)),
+        IconButton(onPressed: () async {}, icon: const Icon(Icons.sort)),
+        IconButton(onPressed: () async {
+          _toggleSearchModeOff();
+        }, icon: const Icon(Icons.cancel)),
+      ],
+    );
+  }
+
+  Future<List<Artikl>> _pageFetch(int offset) async {
+    return _artikliService.pageFetch(20, offset);
   }
 }

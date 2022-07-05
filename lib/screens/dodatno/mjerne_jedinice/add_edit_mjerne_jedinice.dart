@@ -37,7 +37,7 @@ class _AddEditMjerneJediniceScreenState extends State<AddEditMjerneJediniceScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar.buildAppBar(isEdit ? 'Edit mjerne jedinice' : 'Dodaj mjernu jedinicu', context),
+      appBar: MainAppBar.buildAppBar('Mjerne jedinice', isEdit ? 'Edit mjerne jedinice' : 'Dodaj mjernu jedinicu', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -51,22 +51,22 @@ class _AddEditMjerneJediniceScreenState extends State<AddEditMjerneJediniceScree
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-          Row(
-            children: [
-              Icon(
-                !isEdit ? Icons.add_box_outlined : Icons.mode_edit_outline,
-                color: ColorPalette.primary,
-                size: 30.0,
-              ),
-              Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    !isEdit ? "Nova mjerna jedinica" : "Izmjeni mjernu jedinicu",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-              )
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Icon(
+          //       !isEdit ? Icons.add_box_outlined : Icons.mode_edit_outline,
+          //       color: ColorPalette.primary,
+          //       size: 30.0,
+          //     ),
+          //     Container(
+          //         margin: const EdgeInsets.only(left: 10),
+          //         child: Text(
+          //           !isEdit ? "Nova mjerna jedinica" : "Izmjeni mjernu jedinicu",
+          //           style: Theme.of(context).textTheme.headline6,
+          //         ),
+          //     )
+          //   ],
+          // ),
           Form(
             key: _formKey,
             child: Container(

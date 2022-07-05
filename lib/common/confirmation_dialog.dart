@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventura_app/common/color_palette.dart';
 
 class ConfirmationDialog {
   static openConfirmationDialog(
@@ -14,7 +15,7 @@ class ConfirmationDialog {
                 actions: <Widget>[
                   TextButton(
                     style: TextButton.styleFrom(
-                      primary: const Color.fromARGB(255, 0, 95, 55),
+                      primary: ColorPalette.primary,
                       textStyle: const TextStyle(fontSize: 15),
                     ),
                     onPressed: () => Navigator.pop(context, false),
@@ -22,7 +23,7 @@ class ConfirmationDialog {
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 0, 95, 55),
+                      backgroundColor: ColorPalette.primary,
                       primary: const Color.fromARGB(255, 255, 255, 255),
                       textStyle: const TextStyle(fontSize: 15),
                     ),

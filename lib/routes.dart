@@ -4,10 +4,12 @@ import 'package:inventura_app/screens/auth/login.dart';
 import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/screens/dodatno/mjerne_jedinice/add_edit_mjerne_jedinice.dart';
 import 'package:inventura_app/screens/dodatno/mjerne_jedinice/mjerne_jedinice.dart';
-import 'package:inventura_app/screens/import_data/import_data_screen.dart';
+import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
 import 'package:inventura_app/screens/liste/add_edit_dodani_artikl.dart';
-import 'package:inventura_app/screens/liste/add_edit_liste_screen.dart';
+import 'package:inventura_app/screens/liste/add_edit_lista_screen.dart';
+import 'package:inventura_app/screens/liste/lista_pregled_artikala_screen.dart';
 import 'package:inventura_app/screens/liste/liste.dart';
+import 'package:inventura_app/screens/settings/settings.dart';
 
 var routes = {
    '/login': (ctx) => const LoginScreen(),
@@ -21,8 +23,11 @@ var routes = {
    '/add-edit-mjerne-jedinice': (ctx) => const AddEditMjerneJediniceScreen(),
 
    '/liste': (ctx) => const ListeScreen(),
+   '/lista-pregled-artikala': (ctx) => const ListaPregledArtikalaScreen(),
    '/add-edit-lista': (ctx) => const AddEditListaScreen(),
    '/add-edit-dodani-artikl': (ctx) => const AddEditDodaniArtikl(),
 
-   '/import-data': (ctx) => const ImportDataScreen(),
+   '/import-data': (ctx) => const AddEditDataImportScreen(),
+
+   '/postavke': (ctx) => const SettingsScreen()
 };

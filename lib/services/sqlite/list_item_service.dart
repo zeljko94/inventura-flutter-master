@@ -20,7 +20,7 @@ class ListItemService extends SqliteBaseService {
     return List.generate(maps.length, (i) { //create a list of memos
       return ListItem(              
         id: maps[i]['id'] as int,
-        listId: maps[i]['listId'] as int,
+        listaId: maps[i]['listaId'] as int,
         artiklId: maps[i]['artiklId'] as int,
         kolicina: maps[i]['kolicina'] as num,
         barkod: maps[i]['barkod'] as String,
@@ -29,6 +29,35 @@ class ListItemService extends SqliteBaseService {
         naziv: maps[i]['naziv'] as String
       );
   });
+  }
+
+  Future<int> deleteListItems(int listId) async {
+    final db = await init();
+  
+    int result = await db.delete(
+      "ListItems",
+      where: "listaId = ?",
+      whereArgs: [listId] 
+    );
+
+    return result;
+  }
+
+  Future<List<ListItem>> getListItems(int listId) async {    final db = await init();
+    final maps = await db.query("ListItems", where: 'listaId = ?', whereArgs: [listId] );
+
+    return List.generate(maps.length, (i) { //create a list of memos
+      return ListItem(              
+        id: maps[i]['id'] as int,
+        listaId: maps[i]['listaId'] as int,
+        artiklId: maps[i]['artiklId'] as int,
+        kolicina: maps[i]['kolicina'] as num,
+        barkod: maps[i]['barkod'] as String,
+        kod: maps[i]['barkod'] as String,
+        cijena: maps[i]['cijena'] as num,
+        naziv: maps[i]['naziv'] as String
+      );
+    });
   }
 
   Future<int> delete(int id) async{ //returns number of items deleted

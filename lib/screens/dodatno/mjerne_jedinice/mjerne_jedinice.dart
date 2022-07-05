@@ -31,7 +31,7 @@ class _MjerneJediniceScreenState extends State<MjerneJediniceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar.buildAppBar('Mjerne jedinice', context),
+      appBar: MainAppBar.buildAppBar('Mjerne jedinice', '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),

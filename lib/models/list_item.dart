@@ -4,14 +4,14 @@ import 'package:inventura_app/models/artikl.dart';
 class ListItem {
   int? id;
   int? artiklId;
-  int? listId;
+  int? listaId;
   num? kolicina;
   num? cijena;
   String? barkod;
   String? kod;
   String? naziv;
 
-  ListItem({ this.id, this.artiklId, this.listId, this.artikl, this.naziv, this.kolicina, this.cijena, this.barkod, this.kod });
+  ListItem({ this.id, this.artiklId, this.listaId, this.artikl, this.naziv, this.kolicina, this.cijena, this.barkod, this.kod });
 
   Artikl? artikl;
 
@@ -19,7 +19,7 @@ class ListItem {
     return <String, dynamic> {
       'id': id,
       'artiklId': artiklId as int,
-      'listId': listId as int,
+      'listaId': listaId as int,
       'kolicina': kolicina as num,
       'naziv': naziv != null ? naziv as String : '',
       'cijena': cijena != null ? cijena as num : 0,

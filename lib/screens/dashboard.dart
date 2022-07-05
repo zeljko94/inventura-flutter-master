@@ -14,7 +14,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MainAppBar.buildAppBar('Inventura app', context),
+        appBar: MainAppBar.buildAppBar('Inventura app', '', context),
         //  body: buildBody(),
         drawer: MenuDrawer.getDrawer());
   }

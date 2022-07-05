@@ -1,11 +1,13 @@
+
 import 'package:inventura_app/models/artikl.dart';
+import 'package:inventura_app/services/sqlite/mjerne_jedinice_service.dart';
 import 'package:inventura_app/services/sqlite/sqlite_base_service.dart';
 import 'package:sqflite/sqflite.dart'; //sqflite package
 import 'dart:async';
 
 
 class ArtikliService extends SqliteBaseService {
-
+  final MjerneJediniceService _mjerneJediniceService = MjerneJediniceService();
 
   Future<int> addArtikl(Artikl artikl) async{ //retur
     final db = await init(); //open data
@@ -18,18 +20,85 @@ class ArtikliService extends SqliteBaseService {
     final db = await init();
     final maps = await db.query("Artikli");
 
-    return List.generate(maps.length, (i) { //create a list of memos
+    var artikli = List.generate(maps.length, (i) { 
       return Artikl(              
         id: maps[i]['id'] as int,
         barkod: maps[i]['barkod'] as String,
-        naziv: maps[i]['naziv'] as String,
-        kod: maps[i]['kod'] as String,
-        cijena: maps[i]['cijena'] as num,
-        napomena: maps[i]['napomena'] as String,
-        predefiniranaKolicina: maps[i]['predefiniranaKolicina'] as num,
-        mjernaJedinicaId: maps[i]['mjernaJedinicaId'] != null ? maps[i]['mjernaJedinicaId'] as int : 0,
+        naziv: maps[i]['naziv'] != null ? maps[i]['naziv'] as String : '',
+        kod: maps[i]['kod'] != null ? maps[i]['kod'] as String : '',
+        cijena: maps[i]['cijena'] != null ? maps[i]['cijena'] as num : 0,
+        napomena: maps[i]['napomena'] != null ? maps[i]['napomena'] as String : '',
+        // predefiniranaKolicina: maps[i]['predefiniranaKolicina'] != null ? maps[i]['predefiniranaKolicina'] as num : 0,
+        jedinicaMjere: maps[i]['jedinicaMjere'] != null ? maps[i]['jedinicaMjere'] as String : '',
+        pdv: maps[i]['pdv'] != null ? maps[i]['pdv'] as num : 0
       );
-  });
+    });
+
+    return artikli;
+  }
+
+  Future<List<Artikl>> pageFetch(int perPage, int offset) async {
+    final db = await init();
+    final maps = await db.query("Artikli", limit: perPage, offset: offset);
+
+    var artikli = List.generate(maps.length, (i) { 
+      return Artikl(              
+        id: maps[i]['id'] as int,
+        barkod: maps[i]['barkod'] as String,
+        naziv: maps[i]['naziv'] != null ? maps[i]['naziv'] as String : '',
+        kod: maps[i]['kod'] != null ? maps[i]['kod'] as String : '',
+        cijena: maps[i]['cijena'] != null ? maps[i]['cijena'] as num : 0,
+        napomena: maps[i]['napomena'] != null ? maps[i]['napomena'] as String : '',
+        // predefiniranaKolicina: maps[i]['predefiniranaKolicina'] != null ? maps[i]['predefiniranaKolicina'] as num : 0,
+        jedinicaMjere: maps[i]['jedinicaMjere'] != null ? maps[i]['jedinicaMjere'] as String : '',
+        pdv: maps[i]['pdv'] != null ? maps[i]['pdv'] as num : 0
+      );
+    });
+
+    return artikli;
+  }
+
+  Future<Artikl> getById(int id) async {
+      final db = await init();
+      final maps = await db.query("Artikli", where: 'id = ?', whereArgs: [id]);
+
+      var items = List.generate(maps.length, (i) { 
+        return Artikl(              
+          id: maps[i]['id'] as int,
+          barkod: maps[i]['barkod'] as String,
+          naziv: maps[i]['naziv'] != null ? maps[i]['naziv'] as String : '',
+          kod: maps[i]['kod'] != null ? maps[i]['kod'] as String : '',
+          cijena: maps[i]['cijena'] != null ? maps[i]['cijena'] as num : 0,
+          napomena: maps[i]['napomena'] != null ? maps[i]['napomena'] as String : '',
+          // predefiniranaKolicina: maps[i]['predefiniranaKolicina'] != null ? maps[i]['predefiniranaKolicina'] as num : 0,
+          // mjernaJedinicaId: maps[i]['mjernaJedinicaId'] != null ? maps[i]['mjernaJedinicaId'] as int : 0,
+          jedinicaMjere: maps[i]['jedinicaMjere'] != null ? maps[i]['jedinicaMjere'] as String : '',
+          pdv: maps[i]['pdv'] != null ? maps[i]['pdv'] as num : 0
+        );
+    });
+
+    return items.first;
+  }
+  
+
+  Future<void> bulkInsert(List<Artikl> artikli) async {
+    final db = await init();
+
+    Batch batch = db.batch();
+    artikli.forEach((artikl) { 
+      batch.insert("Artikli", artikl.toMap());
+    });
+    await batch.commit(noResult: true);
+  }
+
+  Future<int> deleteAll() async {
+    final db = await init();
+
+    int result =  await db.delete(
+      "Artikli",
+    );
+
+    return result;
   }
 
   Future<int> deleteArtikl(int id) async{ //returns number of items deleted

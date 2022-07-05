@@ -18,6 +18,22 @@ class ColorPalette {
   //   },
   // );
 
+  static const MaterialColor lightPrimary = const MaterialColor(
+    0xffB3E5FC,
+    const <int, Color> {
+      50: const Color(0xffB3E5FC),
+      100: const Color(0xffB3E5FC),
+      200: const Color(0xffB3E5FC),
+      300: const Color(0xffB3E5FC),
+      400: const Color(0xffB3E5FC),
+      500: const Color(0xffB3E5FC),
+      600: const Color(0xffB3E5FC),
+      700: const Color(0xffB3E5FC),
+      800: const Color(0xffB3E5FC),
+      900: const Color(0xffB3E5FC),
+    }
+  );
+
   static const MaterialColor primary = const MaterialColor(
     0xff0288D1, 
     const <int, Color> {
@@ -103,4 +119,21 @@ class ColorPalette {
     800: const Color(0xff2a2a2a), //90%
     900: const Color(0xff0e0e0e), //100%
   });
+
+  static const MaterialColor secondaryText = const MaterialColor(
+  0xff757575,
+  const <int, Color>{
+    50: const Color(0xff757575), //10%
+    100: const Color(0xffe3e3e3), //20%
+    200: const Color(0xff757575), //30%
+    300: const Color(0xff757575), //40%
+    400: const Color(0xff757575), //50%
+    500: const Color(0xff757575), //60%
+    600: const Color(0xff757575), //70%
+    700: const Color(0xff757575), //80%
+    800: const Color(0xff757575), //90%
+    900: const Color(0xff757575), //100%
+  });
 }
+
+

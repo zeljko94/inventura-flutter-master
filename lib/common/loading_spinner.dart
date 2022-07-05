@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:inventura_app/common/color_palette.dart';
 
 //Prikaz spinnera -  buildLoading(context);
 //Makni spinner - Navigator.of(context).pop();
 
-buildLoadingSpinner(BuildContext context) {
+buildLoadingSpinner(String msg, BuildContext context) {
   return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-          ),
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14),
+                child: Text(msg, style: TextStyle(color: ColorPalette.basic[50]),),
+              )
+            ],
+          )
         );
       });
 }

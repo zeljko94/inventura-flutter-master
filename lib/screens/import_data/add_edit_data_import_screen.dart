@@ -6,8 +6,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
+import 'package:inventura_app/common/loading_spinner.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/data_import.dart';
+import 'package:inventura_app/services/data_import_service.dart';
+import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class AddEditDataImportScreen extends StatefulWidget {
   final DataImport? dataImport;
@@ -19,8 +22,12 @@ class AddEditDataImportScreen extends StatefulWidget {
 }
 
 class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
-  bool isEdit = false;
+  final DataImportService? _dataImportService = DataImportService();
+  final ArtikliService? _artikliService = ArtikliService();
+  bool isLoading = false;
   List<PlatformFile> files = [];
+  List<String> vrsteUvoza = ['csv', 'rest api'];
+  String? selectedVrstaUvoza;
 
   TextEditingController nazivController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -29,13 +36,13 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
   void initState() {
     super.initState();
 
-    isEdit = widget.dataImport != null;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: MainAppBar.buildAppBar(isEdit ? 'Pregled importa': 'New data import', context),
+      appBar: MainAppBar.buildAppBar('Novi uvoz podataka', 'Uvoz artikala', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -48,53 +55,27 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-          Row(
-            children: [
-              Icon(
-                !isEdit ? Icons.add_box_outlined : Icons.mode_edit_outline,
-                color: ColorPalette.primary,
-                size: 30.0,
-              ),
-              Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    !isEdit ? "Unos novog importa" : "Pregled importa",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-              )
-            ],
-          ),
           Form(
             key: _formKey,
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: (Column(
                 children: [
-                  TextFormField(
-                    controller: nazivController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Naziv uvoza',
-                      floatingLabelStyle:
-                          TextStyle(color: ColorPalette.primary),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 2.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Unesite naziv';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
+                  DropdownButtonFormField<String>(
+                    value: selectedVrstaUvoza,
+                    hint: const Text('Odaberite vrstu uvoza:'),
+                    validator: (value) => value == null ? 'Odaberite vrstu uvoza' : null,
+                    items: vrsteUvoza.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (vrstaUvoza) {
+                      _setSelectedVrstaUvoza(vrstaUvoza!);
                     },
                   ),
-                  Padding(
+                  selectedVrstaUvoza == 'csv' ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       child: const Text('Odaberite dokument za uvoz:'),
@@ -105,7 +86,7 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                         setState((){});
                       },
                     ),
-                  ),
+                  ) : const SizedBox(),
                   files.isNotEmpty ? Text('Odabrani dokument: ' + files[0].name) : const SizedBox()
                 ],
               )),
@@ -122,8 +103,6 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                   textStyle: const TextStyle(fontSize: 15),
                 ),
                 onPressed: () async{
-                  Navigator.pop(context, 'Odustani');
-                  resetControllers();
                 },
                 child: const Text('Odustani'),
               ),
@@ -136,50 +115,24 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
 
-                    // buildLoadingSpinner(context);
-                    // try {
-
-
-                      //   var artikl = Artikl(
-                      //     id: isEdit ? widget.artikl!.id! : 0,
-                      //     barkod: barkodController.text,
-                      //     naziv: nazivController.text,
-                      //     kod: kodController.text,
-                      //     cijena: cijena,
-                      //     kolicina: kolicina,
-                      //     predefiniranaKolicina: 0,
-                      //     napomena: napomenaController.text
-                      //   );
-
-                      // if(!isEdit) {
-                      //   var inserted = await _sqlLiteHelperService!.addArtikl(artikl);
-                
-                      //   if(inserted > 0) {
-                      //     var snackBar = const SnackBar(content: Text("Artikl je uspješno dodan!"));
-                      //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      //     resetControllers();
-                      //     widget.onAddArtikl!();
-                      //     Navigator.of(context).pop();
-                      //   }
-                      //   else {
-                      //     var snackBar = const SnackBar(content: Text("Greška prilikom dodavanja artikla!"));
-                      //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      //   }
-                      // }
-                      // else {
-                      //   var updated = await _sqlLiteHelperService!.updateArtikl(widget.artikl!.id!, artikl);
-
-                      //   if(updated > 0) {
-                      //     var snackBar = const SnackBar(content: Text("Artikl je uspješno izmjenjen!"));
-                      //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      //     widget.onUpdateArtikl!();
-                      //     Navigator.of(context).pop();
-                      //   }
-                      //   else {
-                      //     var snackBar = const SnackBar(content: Text("Greška prilikom izmjene artikla!"));
-                      //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      //   }
-                      // }
+                    if(selectedVrstaUvoza == 'csv') {
+                      if(files.isNotEmpty) {
+                        buildLoadingSpinner('Učitavanje...', context);
+                        var artikli = await _dataImportService!.getArtikliFromCsv(files.first);
+                        await _artikliService!.deleteAll();
+                        await _artikliService!.bulkInsert(artikli!);
+                        removeLoadingSpinner(context);
+                      }
+                      else {
+                        var snackBar = const SnackBar(content: Text("Odaberite datoteku za uvoz!"));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    }
+                    else if(selectedVrstaUvoza == 'rest api') {
+                      buildLoadingSpinner('Učitavanje...', context);
+                      await _dataImportService!.getArtikli(context);
+                      removeLoadingSpinner(context);
+                    }
                   }
                 },
                 child: const Text('Pokreni uvoz'),
@@ -195,92 +148,19 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
 
   void resetControllers() {}
 
+
+  _setIsLoading(stateIsLoading) {
+    setState(() {
+      isLoading = stateIsLoading;
+    });
+  }
+
+  _setSelectedVrstaUvoza(String vrstaUvoza) {
+    setState(() {
+      selectedVrstaUvoza = vrstaUvoza;
+    });
+  }
+
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              // child: Column(
-              //   // crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //   const Text('Odaberite način importa:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-              //   Row(children: [
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/csv.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('csv');
-              //       },),
-              //     ),
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/text.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('txt');
-              //       },),
-              //     ),
-              //   ],),
-              //   Row(children: [
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/postgres.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('postgresql');
-                      
-              //       }),
-              //     ),
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/sql-server.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('sql-server');
-              //       }),
-              //     ),
-              //   ],),
-              //   Row(children: [
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/excel.jpg', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('xls');
-              //       }),
-              //     ),
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/mysql.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('mysql');
-              //       }),
-              //     ),
-              //   ],),
-              //   Row(children: [
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/oracle-rest-api.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('oracle-rest-api');
-              //       }),
-              //     ),
-              //     Padding(
-              //       padding: const EdgeInsets.all(12.0),
-              //       child: InkWell(child: Image.asset('assets/images/sqlite.png', height: 150, width: 150,), onTap: () async {
-              //         _redirectToStep2('sqlite');
-              //       }),
-              //     ),
-              //   ],)
-              //       ]),

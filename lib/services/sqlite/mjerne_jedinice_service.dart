@@ -6,6 +6,7 @@ import 'package:path/path.dart'; //used to join paths
 import 'dart:io';
 import 'dart:async';
 
+
 class MjerneJediniceService extends SqliteBaseService {
 
 
@@ -27,6 +28,19 @@ class MjerneJediniceService extends SqliteBaseService {
         opis: maps[i]['opis'] as String
       );
   });
+  }
+
+   Future<MjernaJedinica> getById(int id) async {
+    final db = await init();
+    final maps = await db.query("MjerneJedinice", where: 'id = ?', whereArgs: [id]);
+
+    return List.generate(maps.length, (i) {
+      return MjernaJedinica(              
+        id: maps[i]['id'] as int,
+        naziv: maps[i]['naziv'] as String,
+        opis: maps[i]['opis'] as String
+      );
+  }).first;
   }
 
   Future<int> delete(int id) async{ //returns number of items deleted
