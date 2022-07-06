@@ -22,9 +22,12 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   final ArtikliService _artikliService = ArtikliService();
   bool isEdit = false;
   Artikl? selectedArtikl;
+  String? _scannedBarcode;
+  String inputType = 'keyboard';
 
 
   final TextEditingController dodajArtiklTypeAheadController = TextEditingController();
+  final dodajArtiklTypeAheadControllerState = GlobalKey<FormFieldState>();
   final FocusNode artiklTypeAheadFocusNode = FocusNode();
   final TextEditingController kolicinaController = TextEditingController();
   final FocusNode kolicinaFocusNode = FocusNode();
@@ -36,6 +39,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   final TextEditingController napomenaController = TextEditingController();
   final TextEditingController predefiniranaKolicinaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
   
   
   @override
@@ -86,17 +90,19 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
               child: (Column(
                 children: [
                     isEdit ? SizedBox() : TypeAheadFormField<Artikl?>(
+                      key: dodajArtiklTypeAheadControllerState,
                       textFieldConfiguration: TextFieldConfiguration(
                         autofocus: isEdit ? true : false,
                         focusNode: artiklTypeAheadFocusNode,
                         controller: dodajArtiklTypeAheadController,
                         cursorColor: ColorPalette.primary,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(onPressed: _scanBarcode, icon: const Icon(Icons.camera_alt)),
+                          border: const UnderlineInputBorder(),
                           labelText: 'Dodaj artikl',
                           floatingLabelStyle:
-                              TextStyle(color: ColorPalette.primary),
-                          focusedBorder: UnderlineInputBorder(
+                              const TextStyle(color: ColorPalette.primary),
+                          focusedBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: ColorPalette.primary,
                                 width: 2.0),
@@ -361,10 +367,27 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
     });
   }
 
-  Future<List<Artikl>> _fetchAritkliSuggestions(String textFieldValue) {
+  Future<List<Artikl?>> _fetchAritkliSuggestions(String textFieldValue) {
     return Future.delayed(Duration.zero, () async {
       var artikli = await _artikliService.fetchArtikli();
       return artikli.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
+      // if(inputType == 'scanBarcode') {
+      //   var artikliSuggestions = artikli.where((x) => x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
+      //   if(artikliSuggestions.isNotEmpty) {
+      //     setState(() {
+      //       selectedArtikl = artikliSuggestions[0];
+      //     });
+      //     print(selectedArtikl!.naziv);
+      //     dodajArtiklTypeAheadController.text = selectedArtikl!.naziv!;
+      //   }
+      //   return artikliSuggestions;
+      // }
+      // else if (inputType == 'keyboard') {
+      //   return artikli.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
+      // }
+      // else {
+      //   return [];
+      // }
     });
   }
   
@@ -373,4 +396,55 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   }
 
   _resetControllers() {}
+
+  Future<void> _scanQrCode() async {
+    // String barcodeScanRes;
+    // // Platform messages may fail, so we use a try/catch PlatformException.
+    // try {
+    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+    //       '#ff6666', 'Cancel', true, ScanMode.QR);
+    //   print(barcodeScanRes);
+    // } on PlatformException {
+    //   barcodeScanRes = 'Failed to get platform version.';
+    // }
+
+    // if (!mounted) return;
+
+    // setState(() {
+    //   _scannedBarcode = barcodeScanRes;
+    // });
+  }
+
+  Future<void> _scanBarcode() async {
+    setState(() {
+      inputType = 'scanBarcode';
+    });
+    // String barcodeScanRes;
+    // // Platform messages may fail, so we use a try/catch PlatformException.
+    // try {
+    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+    //       '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+    //   print(barcodeScanRes);
+    // } on PlatformException {
+    //   barcodeScanRes = 'Failed to get platform version.';
+    // }
+
+    // // If the widget was removed from the tree while the asynchronous platform
+    // // message was in flight, we want to discard the reply rather than calling
+    // // setState to update our non-existent appearance.
+    // if (!mounted) return;
+
+    // setState(() {
+    //   _scanBarcode = barcodeScanRes;
+    // });
+
+    Future.delayed(const Duration(seconds: 2), () async {
+      setState(() {
+        _scannedBarcode = '238668';
+      });
+      dodajArtiklTypeAheadController.text = _scannedBarcode!;
+      artiklTypeAheadFocusNode.requestFocus();
+    });
+  }
+
 }

@@ -14,6 +14,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
   bool obrisiArtiklePrilikomImportaSwitch = false;
+  bool trimLeadingZerosSwitch = false;
   TextEditingController linkZaUvozPodatakaSaRestApijaController = TextEditingController();
 
 
@@ -49,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Obriši artikle prilikom importa'),
+                  child: Text('Default search input method'),
                 ),
                 CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
                   setState(() {
@@ -62,7 +63,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Obriši artikle prilikom importa'),
+                  child: Text('Scanner input mode search by fields'), // barkod, sifra
+                ),
+                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
+                  setState(() {
+                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
+                  });
+                })
+              ],),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Keyboard input mode search by fields'), // naziv, barkod, sifra
+                ),
+                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
+                  setState(() {
+                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
+                  });
+                })
+              ],),
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Number of results per search'), // barkod, sifra
                 ),
                 CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
                   setState(() {
@@ -90,9 +119,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: EdgeInsets.all(8.0),
                   child: Text('Trim leading zeros'),
                 ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
+                CupertinoSwitch(value: trimLeadingZerosSwitch, onChanged: (value) {
                   setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
+                    trimLeadingZerosSwitch  = !trimLeadingZerosSwitch;
                   });
                 })
               ],),

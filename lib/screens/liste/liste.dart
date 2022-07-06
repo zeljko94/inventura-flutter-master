@@ -62,10 +62,10 @@ class _ListeScreenState extends State<ListeScreen> {
             border: UnderlineInputBorder(),
             labelText: 'Search',
             floatingLabelStyle:
-                TextStyle(color: Color.fromARGB(255, 0, 95, 55)),
+                TextStyle(color: ColorPalette.primary),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
-                  color: Color.fromARGB(255, 0, 95, 55),
+                  color: ColorPalette.primary,
                   width: 2.0),
             ),
           ),

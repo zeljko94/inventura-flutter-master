@@ -30,12 +30,14 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
   String? selectedVrstaUvoza;
 
   TextEditingController nazivController = TextEditingController();
+  TextEditingController restApiLinkController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
 
+    restApiLinkController.text = 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi';
   }
 
   @override
@@ -65,6 +67,17 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                     value: selectedVrstaUvoza,
                     hint: const Text('Odaberite vrstu uvoza:'),
                     validator: (value) => value == null ? 'Odaberite vrstu uvoza' : null,
+                    decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Vrsta uvoza',
+                    floatingLabelStyle:
+                        TextStyle(color: ColorPalette.primary),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: ColorPalette.primary,
+                          width: 2.0),
+                    ),
+                  ),
                     items: vrsteUvoza.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -87,7 +100,25 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                       },
                     ),
                   ) : const SizedBox(),
-                  files.isNotEmpty ? Text('Odabrani dokument: ' + files[0].name) : const SizedBox()
+                  files.isNotEmpty ? Text('Odabrani dokument: ' + files[0].name) : const SizedBox(),
+                  selectedVrstaUvoza == 'rest api' ? TextFormField(
+                    showCursor: true,
+                    readOnly: true,
+                    controller: restApiLinkController,
+                    decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Rest api link',
+                    floatingLabelStyle:
+                        TextStyle(color: ColorPalette.primary),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: ColorPalette.primary,
+                          width: 2.0),
+                    ),
+                  ),
+                  onTap: () {
+                  }
+                ) : const SizedBox(),
                 ],
               )),
             ),
@@ -130,7 +161,9 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                     }
                     else if(selectedVrstaUvoza == 'rest api') {
                       buildLoadingSpinner('Učitavanje...', context);
-                      await _dataImportService!.getArtikli(context);
+                      var artikli = await _dataImportService!.getArtikliFromRestApi(context);
+                      await _artikliService!.deleteAll();
+                      await _artikliService!.bulkInsert(artikli!);
                       removeLoadingSpinner(context);
                     }
                   }

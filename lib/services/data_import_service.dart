@@ -6,26 +6,28 @@ import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:inventura_app/models/artikl.dart';
-
-import 'package:inventura_app/models/artikl2.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class DataImportService {
   final ArtikliService? _artikliService = ArtikliService();
 
-  Future<List<Artikl2>?> getArtikli(context) async {
+  Future<List<Artikl>?> getArtikliFromRestApi(context) async {
     final response = await http.get(Uri.parse('http://192.168.5.200:8888/ords/opus/artikl/barkodovi'));
-    print(response.body);
     if (response.statusCode == 200) {
-      try {
-        Iterable iterable = json.decode(response.body);
-        print(iterable);
-        List<Artikl2> artikli = List<Artikl2>.from(iterable.map((model)=> Artikl2.fromJson(model)));
+      // try {
+        var jsonresponse = jsonDecode(response.body);
+        jsonresponse = jsonresponse["Artikli"];
+        print(jsonresponse);
+        var artikli = <Artikl>[];
+        for(var i=0; i<jsonresponse.length; i++) {
+          var barkod = jsonresponse[i]["BARKODOVI"] != null ? jsonresponse[i]["BARKODOVI"][0]["BARKOD"] : '';
+          artikli.add(Artikl(naziv: jsonresponse[i]["NAZIV"], kod: jsonresponse[i]["SIFRA"], jedinicaMjere: jsonresponse[i]["JMJ"], barkod: barkod.toString()));
+        }
         return artikli;
-      } catch(exception) {
-        print(exception);
-        return null;
-      }
+      // } catch(exception) {
+      //   print(exception);
+      //   return null;
+      // }
     } else {
       return null;
     }
