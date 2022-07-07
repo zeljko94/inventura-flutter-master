@@ -134,7 +134,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                      Text(artikli[index].cijena!.toString(), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      Text(artikli[index].cijena!.toString() + ' KM', maxLines: 1, overflow: TextOverflow.ellipsis,),
                                       Text(artikli[index].jedinicaMjere!, maxLines: 1, overflow: TextOverflow.ellipsis,),
                                     ],
                                   ),
@@ -208,20 +208,40 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
       isLoading = value;
     });
   }
+  
+  _applySorting(SortingAndFilteringOptions options) async {
+    setState(() {
+      if(options.sortByColumn == 'Naziv') {
+        artikli.sort((a, b) => a.naziv!.compareTo(b.naziv!));
+      }
+      else if(options.sortByColumn == 'Barkod') {
+        artikli.sort((a, b) => a.barkod!.compareTo(b.barkod!));
+      }
+      else if(options.sortByColumn == 'Sifra') {
+        artikli.sort((a, b) => a.kod!.compareTo(b.kod!));
+      }
+      else if(options.sortByColumn == 'Cijena') {
+        artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+      }
+    });
+  }
 
   AppBar buildSearchAppBar(String title, BuildContext context) {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {
-            Navigator.of(context).push(
+        IconButton(icon: const Icon(Icons.sort), onPressed: () async {
+            SortingAndFilteringOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
                 settings: const RouteSettings(name: '/sorting-and-filtering-options'),
                 builder: (context) => const SortingAndFilteringOptionsScreen(),
               ),
             );
+            if(result != null) {
+              _applySorting(result);
+            }
         }),
-        IconButton(icon: const Icon(Icons.sort), onPressed: () async {}),
+        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {}),
       ],
     );
   }

@@ -26,7 +26,9 @@ class ListItemService extends SqliteBaseService {
         barkod: maps[i]['barkod'] as String,
         kod: maps[i]['barkod'] as String,
         cijena: maps[i]['cijena'] as num,
-        naziv: maps[i]['naziv'] as String
+        naziv: maps[i]['naziv'] as String,
+        nazivArtikla: maps[i]['nazivArtikla'] as String,
+        jedinicaMjere: maps[i]['jedinicaMjere'] as String
       );
   });
   }
@@ -55,7 +57,9 @@ class ListItemService extends SqliteBaseService {
         barkod: maps[i]['barkod'] as String,
         kod: maps[i]['barkod'] as String,
         cijena: maps[i]['cijena'] as num,
-        naziv: maps[i]['naziv'] as String
+        naziv: maps[i]['naziv'] as String,
+        nazivArtikla: maps[i]['nazivArtikla'] as String,
+        jedinicaMjere: maps[i]['jedinicaMjere'] as String
       );
     });
   }

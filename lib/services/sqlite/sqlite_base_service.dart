@@ -56,7 +56,8 @@ class SqliteBaseService {
           naziv TEXT,
           kod TEXT,
           cijena NUMERIC(16,4),
-          kolicina NUMERIC(16,4)
+          kolicina NUMERIC(16,4),
+          nazivArtikla TEXT
         );
       """);
 

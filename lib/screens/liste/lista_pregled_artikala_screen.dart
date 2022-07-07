@@ -68,7 +68,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     totalKolicina = 0;
     setState(() {
         widget.lista!.items!.forEach((element) { 
-          totalCijena += (element.artikl!.cijena! * element.kolicina!);
+          totalCijena += (element.cijena! * element.kolicina!);
           totalKolicina += element.kolicina!;
         });
         totalBrojArtikala += widget.lista!.items!.length;
@@ -168,7 +168,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                                               Text('#' + (index + 1).toString()),
                                               Expanded(
                                                 child: Padding(padding: const EdgeInsets.only(left: 15),
-                                                child: Text(dodaniArtikli[index].artikl!.naziv!,
+                                                child: Text(dodaniArtikli[index].nazivArtikla!,
                                                 maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
                                               ))),
@@ -176,7 +176,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                                                 padding: const EdgeInsets.only(left: 4),
                                                 child: Row(  
                                                   children: [
-                                                    Text(dodaniArtikli[index].kolicina!.toString() + ' ' + dodaniArtikli[index].artikl!.jedinicaMjere.toString()),
+                                                    Text(dodaniArtikli[index].kolicina!.toString() + ' ' + dodaniArtikli[index].jedinicaMjere.toString()),
                                                     IconButton(onPressed: () async { 
                                                       _removeDodaniArtikl(dodaniArtikli[index]);
                                                     }, icon: const Icon(CustomIcons.times), color: ColorPalette.danger,)
@@ -260,8 +260,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
 
   _dodajArtikl(Artikl? odabraniArtikl) {
     var listItem = ListItem(
-      artikl: odabraniArtikl, artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 1, 
-    naziv: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
+       artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 1, jedinicaMjere: odabraniArtikl.jedinicaMjere,
+    naziv: odabraniArtikl.naziv, nazivArtikla: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
 
     var existing = dodaniArtikli.firstWhereOrNull((element) => element.barkod == odabraniArtikl.barkod);
     if(existing == null) {
@@ -303,9 +303,11 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       existing.listaId = dodaniArt.listaId;
       existing.naziv = dodaniArt.naziv;
       existing.artiklId = dodaniArt.artiklId;
+      existing.nazivArtikla = dodaniArt.nazivArtikla;
+      existing.jedinicaMjere = dodaniArt.jedinicaMjere;
 
-      var artikl = artikli.firstWhereOrNull((x) => x.id == existing!.artiklId);
-      existing.artikl = artikl;
+      // var artikl = artikli.firstWhereOrNull((x) => x.id == existing!.artiklId);
+      // existing.artikl = artikl;
 
       // var mjernaJedinica = mjerne
 

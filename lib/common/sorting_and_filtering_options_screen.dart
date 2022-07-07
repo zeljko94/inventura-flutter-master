@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
-import 'package:inventura_app/custom_icons_icons.dart';
 
 class SortingAndFilteringOptionsScreen extends StatefulWidget {
   const SortingAndFilteringOptionsScreen({ Key? key }) : super(key: key);
@@ -43,7 +41,7 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
         Wrap(
           children: [
             for(var chip in sortColumnChips) Padding(
-              padding: EdgeInsets.all(2),
+              padding: EdgeInsets.fromLTRB(8, 2, 2, 2),
               child: InkWell(
                 onTap: () async {
                   setState(() {
@@ -64,7 +62,7 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
         Wrap(
           children: [
             Padding(
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.fromLTRB(8, 2, 2, 2),
                   child: InkWell(
                     child: Chip(
                     label: Text('Ascending', style: TextStyle(color: ColorPalette.basic[50],)), 
@@ -107,8 +105,7 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
         Tooltip(
           message: 'Primjeni',
           child: IconButton(onPressed: () async {
-
-
+            Navigator.pop(context, SortingAndFilteringOptions(sortByColumn: selectedSortColumnChip, sortOrder: selectedSortOrder));
         }, icon: const Icon(Icons.check)),
         ),
       ],
@@ -116,4 +113,27 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
   }
 
   
+}
+
+class SortingAndFilteringOptions {
+  String? sortByColumn;
+  String? sortOrder;
+
+  static const columnMappings = <String, String> {
+    'Naziv': 'naziv',
+    'Sifra': 'kod',
+    'Barkod': 'barkod',
+    'Jedinica mjere': 'jedinicaMjere',
+    'Cijena': 'cijena'
+  };
+
+  SortingAndFilteringOptions({ this.sortByColumn, this.sortOrder });
+
+  
+  Map<String, dynamic> toMap() {
+    return <String, dynamic> {
+      'sortByColumn': sortByColumn,
+      'sortOrder': sortOrder
+    };
+  }
 }

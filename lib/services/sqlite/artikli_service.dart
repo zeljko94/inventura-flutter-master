@@ -58,7 +58,8 @@ class ArtikliService extends SqliteBaseService {
     return artikli;
   }
 
-  Future<Artikl> getById(int id) async {
+  Future<Artikl?> getById(int id) async {
+    try {
       final db = await init();
       final maps = await db.query("Artikli", where: 'id = ?', whereArgs: [id]);
 
@@ -70,14 +71,18 @@ class ArtikliService extends SqliteBaseService {
           kod: maps[i]['kod'] != null ? maps[i]['kod'] as String : '',
           cijena: maps[i]['cijena'] != null ? maps[i]['cijena'] as num : 0,
           napomena: maps[i]['napomena'] != null ? maps[i]['napomena'] as String : '',
-          // predefiniranaKolicina: maps[i]['predefiniranaKolicina'] != null ? maps[i]['predefiniranaKolicina'] as num : 0,
-          // mjernaJedinicaId: maps[i]['mjernaJedinicaId'] != null ? maps[i]['mjernaJedinicaId'] as int : 0,
           jedinicaMjere: maps[i]['jedinicaMjere'] != null ? maps[i]['jedinicaMjere'] as String : '',
           pdv: maps[i]['pdv'] != null ? maps[i]['pdv'] as num : 0
         );
     });
 
-    return items.first;
+    return items.isNotEmpty ? items.first : null;
+    }
+    catch(exception) {
+      print("artikl.getById");
+      print(exception);
+      return null;
+    }
   }
   
 

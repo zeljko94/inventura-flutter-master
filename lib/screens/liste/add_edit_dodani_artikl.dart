@@ -348,6 +348,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           kod: kodController.text,
                           cijena: cijena,
                           kolicina: kolicina,
+                          nazivArtikla: selectedArtikl!.naziv,
                           artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl!.id!,
                           artikl: isEdit ? widget.dodaniArtikl!.artikl : selectedArtikl,
                           listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!
@@ -371,23 +372,6 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
     return Future.delayed(Duration.zero, () async {
       var artikli = await _artikliService.fetchArtikli();
       return artikli.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
-      // if(inputType == 'scanBarcode') {
-      //   var artikliSuggestions = artikli.where((x) => x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
-      //   if(artikliSuggestions.isNotEmpty) {
-      //     setState(() {
-      //       selectedArtikl = artikliSuggestions[0];
-      //     });
-      //     print(selectedArtikl!.naziv);
-      //     dodajArtiklTypeAheadController.text = selectedArtikl!.naziv!;
-      //   }
-      //   return artikliSuggestions;
-      // }
-      // else if (inputType == 'keyboard') {
-      //   return artikli.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
-      // }
-      // else {
-      //   return [];
-      // }
     });
   }
   
