@@ -74,8 +74,8 @@ class _AddEditArtiklScreenState extends State<AddEditArtiklScreen> {
         return DecoratedBox(
           decoration: BoxDecoration(
             image: DecorationImage(
-              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
-              image: AssetImage("assets/images/background2.jpg"),
+              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+              image: AssetImage(ColorPalette.backgroundImagePath),
               fit: BoxFit.cover),
           ),
           child: Padding(

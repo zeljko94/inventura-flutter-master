@@ -134,6 +134,9 @@ class ColorPalette {
     800: const Color(0xff757575), //90%
     900: const Color(0xff757575), //100%
   });
+
+  static const String backgroundImagePath = 'assets/images/background4.jpg';
+  static const double backgroundImageOpacity = 0.13;
 }
 
 

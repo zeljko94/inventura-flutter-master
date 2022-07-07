@@ -46,86 +46,94 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   }
     _buildBody() {
     return StatefulBuilder(builder: (context, setState) {
-      return !isLoading ? Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-          Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: (Column(
-                children: [
-                  
-                  DropdownButtonFormField<String>(
-                    value: selectedVrstaIzvoza,
-                    hint: const Text('Odaberite vrstu izvoza:'),
-                    validator: (value) => value == null ? 'Odaberite vrstu izvoza' : null,
-                    decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Vrsta izvoza',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
+      return !isLoading ? DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+          image: AssetImage(ColorPalette.backgroundImagePath),
+          fit: BoxFit.cover),
+      ),
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+            Form(
+              key: _formKey,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: (Column(
+                  children: [
+                    
+                    DropdownButtonFormField<String>(
+                      value: selectedVrstaIzvoza,
+                      hint: const Text('Odaberite vrstu izvoza:'),
+                      validator: (value) => value == null ? 'Odaberite vrstu izvoza' : null,
+                      decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Vrsta izvoza',
+                      floatingLabelStyle:
+                          TextStyle(color: ColorPalette.primary),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
                     ),
-                  ),
-                    items: vrsteIzvoza.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (vrstaUvoza) {
-                      _setSelectedVrstaUvoza(vrstaUvoza!);
-                    },
-                  ),
-                ],
-              )
+                      items: vrsteIzvoza.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (vrstaUvoza) {
+                        _setSelectedVrstaUvoza(vrstaUvoza!);
+                      },
+                    ),
+                  ],
+                )
+                ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: ColorPalette.primary,
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async{
+                  },
+                  child: const Text('Odustani'),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: ColorPalette.primary,
+                    primary: const Color.fromARGB(255, 255, 255, 255),
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+      
+                      if(selectedVrstaIzvoza == 'csv') {
+                        await _pokreniIzvozCsv(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                      }
+                      else if(selectedVrstaIzvoza == 'excel') {
+                        await _pokreniIzvozExcel(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                      }
+                      else if(selectedVrstaIzvoza == 'rest api') {
+                      }
+                    }
+                  },
+                  child: const Text('Pokreni izvoz'),
+                ),
+              ]),
+            )
+            ],),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  primary: ColorPalette.primary,
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                onPressed: () async{
-                },
-                child: const Text('Odustani'),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: ColorPalette.primary,
-                  primary: const Color.fromARGB(255, 255, 255, 255),
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-
-                    if(selectedVrstaIzvoza == 'csv') {
-                      await _pokreniIzvozCsv(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
-                    }
-                    else if(selectedVrstaIzvoza == 'excel') {
-                      await _pokreniIzvozExcel(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
-                    }
-                    else if(selectedVrstaIzvoza == 'rest api') {
-                    }
-                  }
-                },
-                child: const Text('Pokreni izvoz'),
-              ),
-            ]),
-          )
-          ],),
-        ) : const Center(child: CircularProgressIndicator());
+      ) : const Center(child: CircularProgressIndicator());
     });
   }
 

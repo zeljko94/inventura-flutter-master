@@ -70,239 +70,247 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
   
   _buildBody() {
-    return SingleChildScrollView(child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Column(children: [
-              const ListTile(
-                leading: Icon(Icons.search),
-                title: Text('Pretraga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
-                // subtitle: Text('Podnaslov'),
-              ),
-              InkWell(
-                onTap: () async {
-                    var res = await _displayZadanaMetodaUnosaPretrazivanja('Odaberite zadanu vrstu pretraživanja', context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Zadana metoda unosa pretraživanja'),
-                    ),
-                    const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
-                  ],
-              ),
-                ),),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
+          image: AssetImage(ColorPalette.backgroundImagePath),
+          fit: BoxFit.cover),
+      ),
+      child: SingleChildScrollView(child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(children: [
+                const ListTile(
+                  leading: Icon(Icons.search),
+                  title: Text('Pretraga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                  // subtitle: Text('Podnaslov'),
+                ),
                 InkWell(
                   onTap: () async {
-                    
+                      var res = await _displayZadanaMetodaUnosaPretrazivanja('Odaberite zadanu vrstu pretraživanja', context);
                   },
-                  child: Column(
-                        children: [
-                          for(var i=0; i<poljaZaPretraguCheckboxItemsMap.length; i++) 
-                          CheckboxListTile(
-                              value: poljaZaPretraguCheckboxItemsMap[i].isChecked,
-                              title: Text(poljaZaPretraguCheckboxItemsMap[i].label!),
-                              checkColor: ColorPalette.primary,
-                              onChanged: (value) async {
-                                setState(() {
-                                  poljaZaPretraguCheckboxItemsMap[i].isChecked = !poljaZaPretraguCheckboxItemsMap[i].isChecked!;
-                                });
-                                print(poljaZaPretraguCheckboxItemsMap[i].isChecked);
-                              },
-                            ),
-                        ],
-                      )
-                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(0),
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Zadana metoda unosa pretraživanja'),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                    ],
+                ),
+                  ),),
                   InkWell(
                     onTap: () async {
                       
                     },
+                    child: Column(
+                          children: [
+                            for(var i=0; i<poljaZaPretraguCheckboxItemsMap.length; i++) 
+                            CheckboxListTile(
+                                value: poljaZaPretraguCheckboxItemsMap[i].isChecked,
+                                title: Text(poljaZaPretraguCheckboxItemsMap[i].label!),
+                                checkColor: ColorPalette.primary,
+                                onChanged: (value) async {
+                                  setState(() {
+                                    poljaZaPretraguCheckboxItemsMap[i].isChecked = !poljaZaPretraguCheckboxItemsMap[i].isChecked!;
+                                  });
+                                  print(poljaZaPretraguCheckboxItemsMap[i].isChecked);
+                                },
+                              ),
+                          ],
+                        )
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        
+                      },
+                      child: 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Pretraga unosom pretražuje po poljima'), // naziv, barkod, sifra
+                          ),
+                          const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                        ],
+                      ),
+                    ),
+                  InkWell(
+                    onTap: () async {
+                      var valueFromDialog = await _displayInputDialog('Broj rezultata po pretraživanju', 'Unesite broj artikala koji će se prikazivati prilikom pretraživanja', 'Broj rezultata po pretraživanju', true, numberOfResultsPerSearch, context);
+                      if(valueFromDialog != null) {
+                        setState(() {
+                          numberOfResultsPerSearch = int.parse(valueFromDialog.toString());
+                        });
+                      }
+                    },
                     child: 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Pretraga unosom pretražuje po poljima'), // naziv, barkod, sifra
-                        ),
-                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
-                      ],
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Broj rezultata po pretraživanju'),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                        ],
+                      ),
                   ),
-                InkWell(
-                  onTap: () async {
-                    var valueFromDialog = await _displayInputDialog('Broj rezultata po pretraživanju', 'Unesite broj artikala koji će se prikazivati prilikom pretraživanja', 'Broj rezultata po pretraživanju', true, numberOfResultsPerSearch, context);
-                    if(valueFromDialog != null) {
-                      setState(() {
-                        numberOfResultsPerSearch = int.parse(valueFromDialog.toString());
-                      });
-                    }
-                  },
-                  child: 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Broj rezultata po pretraživanju'),
-                        ),
-                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
-                      ],
-                    ),
-                ),
-            ],)
+              ],)
+            ),
           ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Column(children: [
-              const ListTile(
-                leading: Icon(Icons.qr_code_2),
-                title: Text('Skeniranje', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
-                // subtitle: Text('Podnaslov'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Trim leading zeros'),
-                ),
-                CupertinoSwitch(value: trimLeadingZerosSwitch, onChanged: (value) {
-                  setState(() {
-                    trimLeadingZerosSwitch  = !trimLeadingZerosSwitch;
-                  });
-                })
-              ],),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //   const Padding(
-              //     padding: EdgeInsets.all(8.0),
-              //     child: Text('Obriši artikle prilikom importa'),
-              //   ),
-              //   CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-              //     setState(() {
-              //       obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-              //     });
-              //   })
-              // ],),
-            ],)
-          ),
-        ),
-        
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Column(children: [
-              const ListTile(
-                leading: Icon(Icons.download),
-                title: Text('Uvoz podataka', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
-                // subtitle: Text('Podnaslov'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Obriši artikle prilikom uvoza'),
-                ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
-              ],),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Csv delimiter simbol'),
-                ),
-                const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText)
-              ],),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: linkZaUvozPodatakaSaRestApijaController,
-                  cursorColor: ColorPalette.primary,
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Link za uvoz podataka sa rest backenda',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                  onTap: () async {
     
-                  },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(children: [
+                const ListTile(
+                  leading: Icon(Icons.qr_code_2),
+                  title: Text('Skeniranje', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                  // subtitle: Text('Podnaslov'),
                 ),
-              ),
-            ],)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Trim leading zeros'),
+                  ),
+                  CupertinoSwitch(value: trimLeadingZerosSwitch, onChanged: (value) {
+                    setState(() {
+                      trimLeadingZerosSwitch  = !trimLeadingZerosSwitch;
+                    });
+                  })
+                ],),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //   const Padding(
+                //     padding: EdgeInsets.all(8.0),
+                //     child: Text('Obriši artikle prilikom importa'),
+                //   ),
+                //   CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
+                //     setState(() {
+                //       obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
+                //     });
+                //   })
+                // ],),
+              ],)
+            ),
           ),
-        ),
-        
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Column(children: [
-              const ListTile(
-                leading: Icon(Icons.upload),
-                title: Text('Izvoz podataka', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
-                // subtitle: Text('Podnaslov'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+          
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(children: [
+                const ListTile(
+                  leading: Icon(Icons.download),
+                  title: Text('Uvoz podataka', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                  // subtitle: Text('Podnaslov'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Obriši artikle prilikom uvoza'),
+                  ),
+                  CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
+                    setState(() {
+                      obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
+                    });
+                  })
+                ],),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Csv delimiter simbol'),
+                  ),
+                  const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText)
+                ],),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                ),
-              ],),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: linkZaUvozPodatakaSaRestApijaController,
-                  cursorColor: ColorPalette.primary,
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Link za uvoz podataka sa rest backenda',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
+                  child: TextFormField(
+                    controller: linkZaUvozPodatakaSaRestApijaController,
+                    cursorColor: ColorPalette.primary,
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Link za uvoz podataka sa rest backenda',
+                      floatingLabelStyle:
+                          TextStyle(color: ColorPalette.primary),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
                     ),
+                    validator: (value) {
+                      return null;
+                    },
+                    onTap: () async {
+      
+                    },
                   ),
-                  validator: (value) {
-                    return null;
-                  },
-                  onTap: () async {
-    
-                  },
                 ),
-              ),
-            ],)
+              ],)
+            ),
           ),
-        )
-      ],
-    ),);
+          
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(children: [
+                const ListTile(
+                  leading: Icon(Icons.upload),
+                  title: Text('Izvoz podataka', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                  // subtitle: Text('Podnaslov'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                  ),
+                ],),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: linkZaUvozPodatakaSaRestApijaController,
+                    cursorColor: ColorPalette.primary,
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Link za uvoz podataka sa rest backenda',
+                      floatingLabelStyle:
+                          TextStyle(color: ColorPalette.primary),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      return null;
+                    },
+                    onTap: () async {
+      
+                    },
+                  ),
+                ),
+              ],)
+            ),
+          )
+        ],
+      ),),
+    );
   }
 
   AppBar _buildAppbar(String title, BuildContext context) {

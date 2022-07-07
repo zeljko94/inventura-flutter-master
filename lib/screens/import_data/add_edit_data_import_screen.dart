@@ -53,147 +53,155 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
 
   _buildBody() {
     return StatefulBuilder(builder: (context, setState) {
-      return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-          Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: (Column(
-                children: [
-                  DropdownButtonFormField<String>(
-                    value: selectedVrstaUvoza,
-                    hint: const Text('Odaberite vrstu uvoza:'),
-                    validator: (value) => value == null ? 'Odaberite vrstu uvoza' : null,
-                    decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Vrsta uvoza',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
+      return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+          image: AssetImage(ColorPalette.backgroundImagePath),
+          fit: BoxFit.cover),
+      ),
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+            Form(
+              key: _formKey,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: (Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: selectedVrstaUvoza,
+                      hint: const Text('Odaberite vrstu uvoza:'),
+                      validator: (value) => value == null ? 'Odaberite vrstu uvoza' : null,
+                      decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Vrsta uvoza',
+                      floatingLabelStyle:
+                          TextStyle(color: ColorPalette.primary),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
                     ),
-                  ),
-                    items: vrsteUvoza.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (vrstaUvoza) {
-                      _setSelectedVrstaUvoza(vrstaUvoza!);
-                    },
-                  ),
-                  selectedVrstaUvoza == 'csv' ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      child: const Text('Odaberite dokument za uvoz:'),
-                      onPressed: () async {
-                        FilePicker.platform.clearTemporaryFiles();
-                        final result = await FilePicker.platform.pickFiles(allowMultiple: true, );
-                        if (result == null) return;
-                        files = result.files;
-                        setState((){});
+                      items: vrsteUvoza.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (vrstaUvoza) {
+                        _setSelectedVrstaUvoza(vrstaUvoza!);
                       },
                     ),
-                  ) : const SizedBox(),
-                  files.isNotEmpty ? Text('Odabrani dokument: ' + files[0].name) : const SizedBox(),
-                  selectedVrstaUvoza == 'rest api' ? TextFormField(
-                    showCursor: true,
-                    readOnly: true,
-                    controller: restApiLinkController,
-                    decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Rest api link',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
+                    selectedVrstaUvoza == 'csv' ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        child: const Text('Odaberite dokument za uvoz:'),
+                        onPressed: () async {
+                          FilePicker.platform.clearTemporaryFiles();
+                          final result = await FilePicker.platform.pickFiles(allowMultiple: true, );
+                          if (result == null) return;
+                          files = result.files;
+                          setState((){});
+                        },
+                      ),
+                    ) : const SizedBox(),
+                    files.isNotEmpty ? Text('Odabrani dokument: ' + files[0].name) : const SizedBox(),
+                    selectedVrstaUvoza == 'rest api' ? TextFormField(
+                      showCursor: true,
+                      readOnly: true,
+                      controller: restApiLinkController,
+                      decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Rest api link',
+                      floatingLabelStyle:
+                          TextStyle(color: ColorPalette.primary),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
                     ),
-                  ),
-                  onTap: () {
-                  }
-                ) : const SizedBox(),
-                ],
-              )),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  primary: ColorPalette.primary,
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                onPressed: () async{
-                },
-                child: const Text('Odustani'),
+                    onTap: () {
+                    }
+                  ) : const SizedBox(),
+                  ],
+                )),
               ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: ColorPalette.primary,
-                  primary: const Color.fromARGB(255, 255, 255, 255),
-                  textStyle: const TextStyle(fontSize: 15),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: ColorPalette.primary,
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async{
+                  },
+                  child: const Text('Odustani'),
                 ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-
-                    if(selectedVrstaUvoza == 'csv') {
-                      if(files.isNotEmpty) {
-                        buildLoadingSpinner('Učitavanje...', context);
-                        var artikli = await _dataImportService!.getArtikliFromCsv(files.first);
-                        if(artikli == null) {
-                          removeLoadingSpinner(context);
-                          var snackBar = const SnackBar(content: Text("Greška prilikom uvoza podataka!"));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        }
-
-                        await _artikliService!.deleteAll();
-                        var isOkInsert = await _artikliService!.bulkInsert(artikli);
-
-                        if(isOkInsert) {
-                          removeLoadingSpinner(context);
-                          var snackBar = const SnackBar(content: Text("Artikli uspješno uvezeni!"));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: ColorPalette.primary,
+                    primary: const Color.fromARGB(255, 255, 255, 255),
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+      
+                      if(selectedVrstaUvoza == 'csv') {
+                        if(files.isNotEmpty) {
+                          buildLoadingSpinner('Učitavanje...', context);
+                          var artikli = await _dataImportService!.getArtikliFromCsv(files.first);
+                          if(artikli == null) {
+                            removeLoadingSpinner(context);
+                            var snackBar = const SnackBar(content: Text("Greška prilikom uvoza podataka!"));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+      
+                          await _artikliService!.deleteAll();
+                          var isOkInsert = await _artikliService!.bulkInsert(artikli);
+      
+                          if(isOkInsert) {
+                            removeLoadingSpinner(context);
+                            var snackBar = const SnackBar(content: Text("Artikli uspješno uvezeni!"));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
+                          else {
+                            removeLoadingSpinner(context);
+                            var snackBar = const SnackBar(content: Text("Greška prilikom spremanja podataka u sqlite bazu!"));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            return;
+                          }
                         }
                         else {
-                          removeLoadingSpinner(context);
-                          var snackBar = const SnackBar(content: Text("Greška prilikom spremanja podataka u sqlite bazu!"));
+                          var snackBar = const SnackBar(content: Text("Odaberite datoteku za uvoz!"));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
                         }
                       }
-                      else {
-                        var snackBar = const SnackBar(content: Text("Odaberite datoteku za uvoz!"));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      else if(selectedVrstaUvoza == 'rest api') {
+                        buildLoadingSpinner('Učitavanje...', context);
+                        var artikli = await _dataImportService!.getArtikliFromRestApi(context);
+                        await _artikliService!.deleteAll();
+                        await _artikliService!.bulkInsert(artikli!);
+                        removeLoadingSpinner(context);
                       }
                     }
-                    else if(selectedVrstaUvoza == 'rest api') {
-                      buildLoadingSpinner('Učitavanje...', context);
-                      var artikli = await _dataImportService!.getArtikliFromRestApi(context);
-                      await _artikliService!.deleteAll();
-                      await _artikliService!.bulkInsert(artikli!);
-                      removeLoadingSpinner(context);
-                    }
-                  }
-                },
-                child: const Text('Pokreni uvoz'),
-              ),
-            ]),
-          )
-          ],),
-        );
+                  },
+                  child: const Text('Pokreni uvoz'),
+                ),
+              ]),
+            )
+            ],),
+          ),
+      );
     });
   }
 
