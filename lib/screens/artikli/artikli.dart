@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
@@ -212,8 +213,15 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        IconButton(onPressed: () async {}, icon: const Icon(CustomIcons.filter)),
-        IconButton(onPressed: () async {}, icon: const Icon(Icons.sort)),
+        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/sorting-and-filtering-options'),
+                builder: (context) => const SortingAndFilteringOptionsScreen(),
+              ),
+            );
+        }),
+        IconButton(icon: const Icon(Icons.sort), onPressed: () async {}),
       ],
     );
   }

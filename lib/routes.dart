@@ -1,3 +1,4 @@
+import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
 import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/auth/login.dart';
@@ -30,6 +31,8 @@ var routes = {
 
    '/import-data': (ctx) => const AddEditDataImportScreen(),
    '/export-data': (ctx) => const ExportDataScreen(),
+
+   '/sorting-and-filtering-options': (ctx) => const SortingAndFilteringOptionsScreen(),
 
    '/postavke': (ctx) => const SettingsScreen()
 };
