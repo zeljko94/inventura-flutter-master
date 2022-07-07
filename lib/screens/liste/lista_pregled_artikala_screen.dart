@@ -67,10 +67,10 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     totalKolicina = 0;
     setState(() {
         widget.lista!.items!.forEach((element) { 
-          totalBrojArtikala += element.kolicina as int;
           totalCijena += (element.artikl!.cijena! * element.kolicina!);
           totalKolicina += element.kolicina!;
         });
+        totalBrojArtikala += widget.lista!.items!.length;
     });
   }
 
@@ -166,14 +166,14 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                                             children: [
                                               Text('#' + (index + 1).toString()),
                                               Expanded(
-                                                child: Padding(padding: EdgeInsets.only(left: 15),
+                                                child: Padding(padding: const EdgeInsets.only(left: 15),
                                                 child: Text(dodaniArtikli[index].artikl!.naziv!,
                                                 maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
                                               ))),
                                               Row(  
                                                 children: [
-                                                  Text(dodaniArtikli[index].kolicina!.toString()),
+                                                  Text(dodaniArtikli[index].kolicina!.toString() + ' ' + dodaniArtikli[index].artikl!.jedinicaMjere.toString()),
                                                   IconButton(onPressed: () async { 
                                                     _removeDodaniArtikl(dodaniArtikli[index]);
                                                   }, icon: const Icon(Icons.cancel), color: ColorPalette.danger,)

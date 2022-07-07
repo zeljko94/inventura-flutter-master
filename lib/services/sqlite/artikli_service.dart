@@ -81,14 +81,21 @@ class ArtikliService extends SqliteBaseService {
   }
   
 
-  Future<void> bulkInsert(List<Artikl> artikli) async {
-    final db = await init();
+  Future<bool> bulkInsert(List<Artikl> artikli) async {
+    try {
+      final db = await init();
 
-    Batch batch = db.batch();
-    artikli.forEach((artikl) { 
-      batch.insert("Artikli", artikl.toMap());
-    });
-    await batch.commit(noResult: true);
+      Batch batch = db.batch();
+      artikli.forEach((artikl) { 
+        batch.insert("Artikli", artikl.toMap());
+      });
+      await batch.commit(noResult: true);
+      return true;
+    }
+    catch(exception) {
+      print(exception);
+      return false;
+    }
   }
 
   Future<int> deleteAll() async {

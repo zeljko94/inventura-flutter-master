@@ -4,6 +4,7 @@ import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/lista.dart';
+import 'package:inventura_app/screens/export_data/export_data_screen.dart';
 import 'package:inventura_app/screens/liste/add_edit_lista_screen.dart';
 import 'package:inventura_app/screens/liste/lista_pregled_artikala_screen.dart';
 import 'package:inventura_app/services/sqlite/liste_service.dart';
@@ -190,11 +191,11 @@ class _ListeScreenState extends State<ListeScreen> {
           child: IconButton(onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
-              settings: const RouteSettings(name: '/add-edit-lista'),
-              builder: (context) => AddEditListaScreen(
+              settings: const RouteSettings(name: '/export-data'),
+              builder: (context) => ExportDataScreen(
                 lista: searchSelectedLista,
-                onAddLista: fetchListe,
-                onUpdateLista: fetchListe,
+                // onAddLista: fetchListe,
+                // onUpdateLista: fetchListe,
               ),
             ),
           );

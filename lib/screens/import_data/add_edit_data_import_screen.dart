@@ -150,8 +150,22 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                       if(files.isNotEmpty) {
                         buildLoadingSpinner('Učitavanje...', context);
                         var artikli = await _dataImportService!.getArtikliFromCsv(files.first);
+                        if(artikli == null) {
+                          removeLoadingSpinner(context);
+                          var snackBar = const SnackBar(content: Text("Greška prilikom uvoza podataka!"));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
+
                         await _artikliService!.deleteAll();
-                        await _artikliService!.bulkInsert(artikli!);
+                        var isOkInsert = await _artikliService!.bulkInsert(artikli);
+
+                        if(!isOkInsert) {
+                          removeLoadingSpinner(context);
+                          var snackBar = const SnackBar(content: Text("Greška prilikom spremanja podataka u sqlite bazu!"));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
                         removeLoadingSpinner(context);
                       }
                       else {

@@ -4,6 +4,7 @@ import 'package:inventura_app/screens/auth/login.dart';
 import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/screens/dodatno/mjerne_jedinice/add_edit_mjerne_jedinice.dart';
 import 'package:inventura_app/screens/dodatno/mjerne_jedinice/mjerne_jedinice.dart';
+import 'package:inventura_app/screens/export_data/export_data_screen.dart';
 import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
 import 'package:inventura_app/screens/liste/add_edit_dodani_artikl.dart';
 import 'package:inventura_app/screens/liste/add_edit_lista_screen.dart';
@@ -28,6 +29,7 @@ var routes = {
    '/add-edit-dodani-artikl': (ctx) => const AddEditDodaniArtikl(),
 
    '/import-data': (ctx) => const AddEditDataImportScreen(),
+   '/export-data': (ctx) => const ExportDataScreen(),
 
    '/postavke': (ctx) => const SettingsScreen()
 };

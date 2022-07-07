@@ -17,6 +17,8 @@ class ArtikliScreen extends StatefulWidget {
 
 class _ArtikliScreenState extends State<ArtikliScreen> {
   final ArtikliService _artikliService = ArtikliService();
+
+  bool isLoading = false;
   List<Artikl> artikli = [];
   List<Artikl> artikliStore = [];
   bool isSearchMode = false;
@@ -54,10 +56,10 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             border: UnderlineInputBorder(),
             labelText: 'Search',
             floatingLabelStyle:
-                TextStyle(color: Color.fromARGB(255, 0, 95, 55)),
+                TextStyle(color: ColorPalette.primary),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
-                  color: Color.fromARGB(255, 0, 95, 55),
+                  color: ColorPalette.primary,
                   width: 2.0),
             ),
           ),
@@ -69,8 +71,12 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
           },
           onChanged: _searchOnChange,
         ),
+        artikli.isEmpty ? const Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.warning)),
+        ) : SizedBox(),
         Expanded(child: 
-        artikli.length > 0 ? ListView.builder(
+        !isLoading ? ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: artikli.length,
@@ -110,7 +116,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(artikli[index].naziv!, overflow: TextOverflow.ellipsis, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),),
+                                  Text(artikli[index].naziv!, overflow: TextOverflow.ellipsis, maxLines: 3, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),),
                                   Text(artikli[index].barkod!, style: TextStyle(color: ColorPalette.secondaryText[50], fontSize: 14)),
                                   Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning[600]),)
                                 ],
@@ -143,12 +149,19 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   }
 
   fetchArtikli() async {
-    var artikliData = await _artikliService.fetchArtikli();
-    print(artikliData[artikliData.length - 1].toMap());
-    setState(() {
-      artikli = artikliData;
-      artikliStore = List.of(artikliData);
-    });
+    _setIsLoading(true);
+    try {
+      var artikliData = await _artikliService.fetchArtikli();
+      setState(() {
+        artikli = artikliData;
+        artikliStore = List.of(artikliData);
+      });
+      _setIsLoading(false);
+    }
+    catch(exception) {
+      print(exception);
+      _setIsLoading(false);
+    }
   }
 
   _deleteArtikl(int id) async {
@@ -185,6 +198,12 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     });
   }
 
+  _setIsLoading(bool value) {
+    setState(() {
+      isLoading = value;
+    });
+  }
+
   AppBar buildSearchAppBar(String title, BuildContext context) {
     return AppBar(
       title: Text(title),
@@ -196,9 +215,5 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         }, icon: const Icon(Icons.cancel)),
       ],
     );
-  }
-
-  Future<List<Artikl>> _pageFetch(int offset) async {
-    return _artikliService.pageFetch(20, offset);
   }
 }

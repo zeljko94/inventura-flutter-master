@@ -60,8 +60,29 @@ class SqliteBaseService {
         );
       """);
 
+      await db.execute("""
+        CREATE TABLE AppSettings(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          defaultSearchInputMethod TEXT,
+          scannerInputModeSearchByFields TEXT,
+          keyboardInputModeSearchByFields TEXT,
+          numberOfResultsPerSearch INTEGER,
+
+          trimLeadingZeros INT,
+          obrisiArtiklePrilikomUvoza INT,
+          csvDelimiterSimbol TEXT,
+          restApiLinkImportArtikli TEXT
+        );
+      """);
+
       
       // INSERT INITIAL DATA
+      await db.execute("""
+        INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbol, restApiLinkImportArtikli) 
+        VALUES(1, 'keyboard', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 0, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi')
+      """);
+
+
       // await db.execute("""
       //   INSERT INTO MjerneJedinice(id, naziv, opis) VALUES(1, 'Komad', 'komad'),(2, 'Kg', 'kilogram'),(3, 'L', 'litar')
       // """);
