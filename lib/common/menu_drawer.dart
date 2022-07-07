@@ -8,11 +8,19 @@ class MenuDrawer {
   // static AuthService authService = AuthService.fromAuthService();
 
 List<Map> menuItems = [
+  // {
+  //   'title': 'Početna',
+  //   'icon': Icons.house,
+  //   'group': false,
+  //   'link': '/dashboard',
+  //   'hasChildren': false,
+  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
+  // },
   {
-    'title': 'Početna',
-    'icon': Icons.house,
+    'title': 'Artikli',
+    'icon': Icons.article,
     'group': false,
-    'link': '/dashboard',
+    'link': '/artikli',
     'hasChildren': false,
     'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
   },
@@ -21,14 +29,6 @@ List<Map> menuItems = [
     'icon': Icons.list,
     'group': false,
     'link': '/liste',
-    'hasChildren': false,
-    'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  },
-  {
-    'title': 'Artikli',
-    'icon': Icons.article,
-    'group': false,
-    'link': '/artikli',
     'hasChildren': false,
     'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
   },

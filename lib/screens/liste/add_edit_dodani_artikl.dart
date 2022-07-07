@@ -3,6 +3,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
@@ -55,7 +56,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
       kodController.text    = widget.dodaniArtikl!.kod!;
       cijenaController.text = widget.dodaniArtikl!.cijena!.toString();
       kolicinaController.text    = widget.dodaniArtikl!.kolicina!.toString();
-      mjernaJedinicaController.text = widget.dodaniArtikl!.artikl!.jedinicaMjere!;
+      mjernaJedinicaController.text = widget.dodaniArtikl!.jedinicaMjere!;
       
       kolicinaController.selection = TextSelection(
         baseOffset: 0,
@@ -79,72 +80,214 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   
   _buildBody() {
       return StatefulBuilder(builder: (context, setState) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-          Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: (Column(
-                children: [
-                    isEdit ? SizedBox() : TypeAheadFormField<Artikl?>(
-                      key: dodajArtiklTypeAheadControllerState,
-                      textFieldConfiguration: TextFieldConfiguration(
-                        autofocus: isEdit ? true : false,
-                        focusNode: artiklTypeAheadFocusNode,
-                        controller: dodajArtiklTypeAheadController,
-                        cursorColor: ColorPalette.primary,
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(onPressed: _scanBarcode, icon: const Icon(Icons.camera_alt)),
-                          border: const UnderlineInputBorder(),
-                          labelText: 'Dodaj artikl',
-                          floatingLabelStyle:
-                              const TextStyle(color: ColorPalette.primary),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: ColorPalette.primary,
-                                width: 2.0),
+        return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
+          image: AssetImage("assets/images/background2.jpg"),
+          fit: BoxFit.cover),
+      ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+            Form(
+              key: _formKey,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: (Column(
+                  children: [
+                      isEdit ? SizedBox() : TypeAheadFormField<Artikl?>(
+                        key: dodajArtiklTypeAheadControllerState,
+                        textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: isEdit ? true : false,
+                          focusNode: artiklTypeAheadFocusNode,
+                          controller: dodajArtiklTypeAheadController,
+                          cursorColor: ColorPalette.primary,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(onPressed: _scanBarcode, icon: const Icon(Icons.camera_alt)),
+                            // suffixIcon: Row(
+                            //   mainAxisAlignment: MainAxisAlignment.end,
+                            //   children: [
+                            //     IconButton(onPressed: _scanBarcode, icon: const Icon(CustomIcons.times),),
+                            //   ],
+                            // ),
+                            border: const UnderlineInputBorder(),
+                            labelText: 'Dodaj artikl',
+                            floatingLabelStyle:
+                                const TextStyle(color: ColorPalette.primary),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: ColorPalette.primary,
+                                  width: 2.0),
+                            ),
                           ),
                         ),
+                        noItemsFoundBuilder: (context) => const Center(
+                          child: Text('Nema pronađenih artikala', style: TextStyle(fontSize: 18),),
+                        ),
+                        suggestionsCallback: _fetchAritkliSuggestions, 
+                        itemBuilder: (context, Artikl? suggestion) {
+                          return ListTile(
+                            title: Text(suggestion!.naziv!),
+                          );
+                        }, 
+                        onSuggestionSelected: (Artikl? suggestion) {
+                          selectedArtikl = suggestion;
+                          barkodController.text = suggestion!.barkod!;
+                          nazivController.text  = suggestion.naziv!;
+                          kodController.text    = suggestion.kod!;
+                          cijenaController.text = suggestion.cijena!.toString();
+                          kolicinaController.text    = '0';
+                          mjernaJedinicaController.text = suggestion.jedinicaMjere!;
+                          dodajArtiklTypeAheadController.text = suggestion.naziv!;
+        
+                          kolicinaFocusNode.requestFocus();
+                          kolicinaController.selection = TextSelection(
+                            baseOffset: 0,
+                            extentOffset: kolicinaController.text.length,
+                          );
+                        widget.onAddDodaniArtikl!(suggestion);
+                        }
                       ),
-                      noItemsFoundBuilder: (context) => const Center(
-                        child: Text('Nema pronađenih artikala', style: TextStyle(fontSize: 18),),
+                    TextFormField(
+                      autofocus: isEdit ? true : false,
+                      focusNode: kolicinaFocusNode,
+                      keyboardType: TextInputType.number,
+                      controller: kolicinaController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Količina',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
                       ),
-                      suggestionsCallback: _fetchAritkliSuggestions, 
-                      itemBuilder: (context, Artikl? suggestion) {
-                        return ListTile(
-                          title: Text(suggestion!.naziv!),
-                        );
-                      }, 
-                      onSuggestionSelected: (Artikl? suggestion) {
-                        selectedArtikl = suggestion;
-                        barkodController.text = suggestion!.barkod!;
-                        nazivController.text  = suggestion.naziv!;
-                        kodController.text    = suggestion.kod!;
-                        cijenaController.text = suggestion.cijena!.toString();
-                        kolicinaController.text    = '0';
-                        mjernaJedinicaController.text = suggestion.jedinicaMjere!;
-                        dodajArtiklTypeAheadController.text = suggestion.naziv!;
-
-                        kolicinaFocusNode.requestFocus();
-                        kolicinaController.selection = TextSelection(
-                          baseOffset: 0,
-                          extentOffset: kolicinaController.text.length,
-                        );
-                      widget.onAddDodaniArtikl!(suggestion);
-                      }
+                      validator: (value) {
+                        if(value == null || value.isEmpty) {
+                          return "Kolicina je obavezno polje!";
+                        }
+                        else if(num.tryParse(value) == null){
+                          return 'Unesite brojčanu vrijednost!';
+                        }
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
                     ),
-                  TextFormField(
-                    autofocus: isEdit ? true : false,
-                    focusNode: kolicinaFocusNode,
-                    keyboardType: TextInputType.number,
-                    controller: kolicinaController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
+                    TextFormField(
+                      controller: barkodController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Barkod',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesite barkod';
+                        }
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
+                    ),
+                    TextFormField(
+                      controller: nazivController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Naziv',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesite naziv';
+                        }
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
+                    ),
+                    TextFormField(
+                      controller: kodController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Kod',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesite kod';
+                        }
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
+                    ),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: cijenaController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Cijena',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        if(value == null || value.isEmpty) {
+                          return "Cijena je obavezno polje!";
+                        }
+                        else if(num.tryParse(value) == null){
+                          return 'Unesite brojčanu vrijednost!';
+                        }
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
+                    ),
+                    TextFormField(
+                      showCursor: true,
+                      readOnly: true,
+                      enabled: false,
+                      controller: mjernaJedinicaController,
+                      decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
-                      labelText: 'Količina',
+                      labelText: 'Mjerna jedinica',
                       floatingLabelStyle:
                           TextStyle(color: ColorPalette.primary),
                       focusedBorder: UnderlineInputBorder(
@@ -153,25 +296,15 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                             width: 2.0),
                       ),
                     ),
-                    validator: (value) {
-                      if(value == null || value.isEmpty) {
-                        return "Kolicina je obavezno polje!";
-                      }
-                      else if(num.tryParse(value) == null){
-                        return 'Unesite brojčanu vrijednost!';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
-                    },
+                    onTap: () {
+                    }
                   ),
-                  TextFormField(
-                    controller: barkodController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
+                    TextFormField(
+                      showCursor: true,
+                      controller: napomenaController,
+                      decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
-                      labelText: 'Barkod',
+                      labelText: 'Napomena',
                       floatingLabelStyle:
                           TextStyle(color: ColorPalette.primary),
                       focusedBorder: UnderlineInputBorder(
@@ -180,190 +313,73 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                             width: 2.0),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Unesite barkod';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
-                    },
+                    onTap: () {
+                    }
                   ),
-                  TextFormField(
-                    controller: nazivController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Naziv',
-                      floatingLabelStyle:
-                          TextStyle(color: ColorPalette.primary),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 2.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Unesite naziv';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
-                    },
-                  ),
-                  TextFormField(
-                    controller: kodController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Kod',
-                      floatingLabelStyle:
-                          TextStyle(color: ColorPalette.primary),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 2.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Unesite kod';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
-                    },
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: cijenaController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Cijena',
-                      floatingLabelStyle:
-                          TextStyle(color: ColorPalette.primary),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 2.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if(value == null || value.isEmpty) {
-                        return "Cijena je obavezno polje!";
-                      }
-                      else if(num.tryParse(value) == null){
-                        return 'Unesite brojčanu vrijednost!';
-                      }
-                      return null;
-                    },
-                    onTap: () async {
-        
-                    },
-                  ),
-                  TextFormField(
-                    showCursor: true,
-                    readOnly: true,
-                    enabled: false,
-                    controller: mjernaJedinicaController,
-                    decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Mjerna jedinica',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
-                    ),
-                  ),
-                  onTap: () {
-                  }
-                ),
-                  TextFormField(
-                    showCursor: true,
-                    controller: napomenaController,
-                    decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Napomena',
-                    floatingLabelStyle:
-                        TextStyle(color: ColorPalette.primary),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: ColorPalette.primary,
-                          width: 2.0),
-                    ),
-                  ),
-                  onTap: () {
-                  }
-                ),
-                ],
-              )),
+                  ],
+                )),
+              ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: ColorPalette.primary,
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async{
+                    Navigator.pop(context, 'Odustani');
+                    _resetControllers();
+                  },
+                  child: const Text('Odustani'),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: ColorPalette.primary,
+                    primary: const Color.fromARGB(255, 255, 255, 255),
+                    textStyle: const TextStyle(fontSize: 15),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+        
+                          var kolicina = num.tryParse(kolicinaController.text);
+                          if(kolicina == null) {
+                            return;
+                          }
+        
+                          var cijena = num.tryParse(cijenaController.text);
+                          if(cijena == null) {
+                            return;
+                          }
+        
+                          var listItem = ListItem(
+                            id: 0,
+                            barkod: barkodController.text,
+                            naziv: nazivController.text,
+                            kod: kodController.text,
+                            cijena: cijena,
+                            kolicina: kolicina,
+                            nazivArtikla: isEdit ? widget.dodaniArtikl!.nazivArtikla : selectedArtikl!.naziv,
+                            artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl!.id!,
+                            // artikl: isEdit ? widget.dodaniArtikl!.artikl : selectedArtikl,
+                            listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!,
+                            jedinicaMjere: isEdit ? widget.dodaniArtikl!.jedinicaMjere! : selectedArtikl!.jedinicaMjere
+                          );
+        
+        
+                          widget.onUpdateDodaniArtikl!(listItem);
+                          Navigator.of(context).pop();
+                    }
+                  },
+                  child: const Text('Spremi'),
+                ),
+              ]),
+            )
+            ],),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  primary: ColorPalette.primary,
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                onPressed: () async{
-                  Navigator.pop(context, 'Odustani');
-                  _resetControllers();
-                },
-                child: const Text('Odustani'),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: ColorPalette.primary,
-                  primary: const Color.fromARGB(255, 255, 255, 255),
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-
-                        var kolicina = num.tryParse(kolicinaController.text);
-                        if(kolicina == null) {
-                          return;
-                        }
-
-                        var cijena = num.tryParse(cijenaController.text);
-                        if(cijena == null) {
-                          return;
-                        }
-
-                        var listItem = ListItem(
-                          id: 0,
-                          barkod: barkodController.text,
-                          naziv: nazivController.text,
-                          kod: kodController.text,
-                          cijena: cijena,
-                          kolicina: kolicina,
-                          nazivArtikla: selectedArtikl!.naziv,
-                          artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl!.id!,
-                          artikl: isEdit ? widget.dodaniArtikl!.artikl : selectedArtikl,
-                          listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!
-                        );
-
-
-                        widget.onUpdateDodaniArtikl!(listItem);
-                        Navigator.of(context).pop();
-                  }
-                },
-                child: const Text('Spremi'),
-              ),
-            ]),
-          )
-          ],),
         );
     });
   }

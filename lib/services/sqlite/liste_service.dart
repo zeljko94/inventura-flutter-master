@@ -44,9 +44,9 @@ class ListeService extends SqliteBaseService {
 
     for(var i=0; i<liste.length; i++) {
       liste[i].items = await _listItemService!.getListItems(liste[i].id!);
-      for(var j=0; j<liste[i].items!.length; j++) {
-        liste[i].items![j].artikl = await _artikliService!.getById(liste[i].items![j].artiklId!);
-      }
+      // for(var j=0; j<liste[i].items!.length; j++) {
+      //   liste[i].items![j].artikl = await _artikliService!.getById(liste[i].items![j].artiklId!);
+      // }
     }
 
     return liste;

@@ -14,7 +14,7 @@ class DataImportService {
   Future<List<Artikl>?> getArtikliFromRestApi(context) async {
     final response = await http.get(Uri.parse('http://192.168.5.200:8888/ords/opus/artikl/barkodovi'));
     if (response.statusCode == 200) {
-      // try {
+      try {
         var jsonresponse = jsonDecode(utf8.decode(response.bodyBytes));
         jsonresponse = jsonresponse["Artikli"];
         var artikli = <Artikl>[];
@@ -25,10 +25,10 @@ class DataImportService {
           }
         }
         return artikli;
-      // } catch(exception) {
-      //   print(exception);
-      //   return null;
-      // }
+      } catch(exception) {
+        print(exception);
+        return null;
+      }
     } else {
       return null;
     }

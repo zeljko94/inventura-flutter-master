@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
+import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
@@ -33,7 +34,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
   List<String> vrsteUnosaPretrazivanja = ['keyboard', 'scan'];
-  List<String> mogucaPoljaZaPretrazivanje = ['barkod', 'sifra', 'naziv'];
+  final List<CheckboxListItem> poljaZaPretraguCheckboxItemsMap = [
+    CheckboxListItem(label: 'naziv', isChecked: true),
+    CheckboxListItem(label: 'barkod', isChecked: true),
+    CheckboxListItem(label: 'kod', isChecked: true),
+  ];
 
   @override
   void initState() {
@@ -51,9 +56,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         numberOfResultsPerSearch = settings.numberOfResultsPerSearch;
         csvDelimiterSimbol = settings.csvDelimiterSimbol;
       });
+      linkZaUvozPodatakaSaRestApijaController.text = settings.restApiLinkImportArtikli!;
     });
 
-    linkZaUvozPodatakaSaRestApijaController.text = "http://192.168.5.200:8888/ords/opus/artikl/barkodovi";
   }
 
   @override
@@ -95,20 +100,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),),
                 InkWell(
                   onTap: () async {
+                    
                   },
-                  child: 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Pretraga skeniranjem pretražuje po poljima'), // barkod, sifra
-                      ),
-                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
-                    ],),
+                  child: Column(
+                        children: [
+                          for(var i=0; i<poljaZaPretraguCheckboxItemsMap.length; i++) 
+                          CheckboxListTile(
+                              value: poljaZaPretraguCheckboxItemsMap[i].isChecked,
+                              title: Text(poljaZaPretraguCheckboxItemsMap[i].label!),
+                              checkColor: ColorPalette.primary,
+                              onChanged: (value) async {
+                                setState(() {
+                                  poljaZaPretraguCheckboxItemsMap[i].isChecked = !poljaZaPretraguCheckboxItemsMap[i].isChecked!;
+                                });
+                                print(poljaZaPretraguCheckboxItemsMap[i].isChecked);
+                              },
+                            ),
+                        ],
+                      )
                   ),
                   InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      
+                    },
                     child: 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,7 +137,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 InkWell(
                   onTap: () async {
-                    var valueFromDialog = await _displayTextInputDialog('Broj rezultata po pretraživanju', 'Unesite broj artikala koji će se prikazivati prilikom pretraživanja', 'Broj rezultata po pretraživanju', true, numberOfResultsPerSearch, context);
+                    var valueFromDialog = await _displayInputDialog('Broj rezultata po pretraživanju', 'Unesite broj artikala koji će se prikazivati prilikom pretraživanja', 'Broj rezultata po pretraživanju', true, numberOfResultsPerSearch, context);
                     if(valueFromDialog != null) {
                       setState(() {
                         numberOfResultsPerSearch = int.parse(valueFromDialog.toString());
@@ -295,14 +309,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        IconButton(icon: const Icon(Icons.check),
-        onPressed: () async {
-          await _onSaveSettings();
-        }),
-        IconButton(icon: const Icon(CustomIcons.times), 
-        onPressed: () async {
-          await _onCancelSettings();
-        }),
+        // IconButton(icon: const Icon(Icons.check),
+        // onPressed: () async {
+        //   await _onSaveSettings();
+        // }),
+        // IconButton(icon: const Icon(CustomIcons.times), 
+        // onPressed: () async {
+        //   await _onCancelSettings();
+        // }),
       ],
     );
   }
@@ -315,14 +329,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   _onCancelSettings() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        settings: const RouteSettings(name: '/dashboard'),
-        builder: (context) => const DashboardScreen(title: 'Dashboard',),
+        settings: const RouteSettings(name: '/artikli'),
+        builder: (context) => const ArtikliScreen(),
       ),
     );
   }
 
 
-  Future<dynamic> _displayTextInputDialog(String title, String message, String inputLabel, bool isNumberOnly, dynamic value, BuildContext context) async {
+  Future<dynamic> _displayInputDialog(String title, String message, String inputLabel, bool isNumberOnly, dynamic value, BuildContext context) async {
     dialogInputTextController.text = value.toString();
   return showDialog(
       context: context,
@@ -331,6 +345,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: Text(title),
           content: 
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
               // Text(message),
                 Form(
@@ -400,6 +415,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(title),
               content: 
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                   // Text(message),
                     Form(
@@ -438,7 +454,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           });
       }
 
-  Future<dynamic> _displayDialog(String title, BuildContext context) async {
+  Future<dynamic> _displayCheckboxDialog(String title, BuildContext context) async {
       return showDialog(
           context: context,
           builder: (context) {
@@ -446,37 +462,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(title),
               content: 
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                   // Text(message),
                     Form(
                       // key: _formKey,
-                      child: DropdownButtonFormField<String>(
-                        value: defaultSearchInputMethod,
-                        hint: const Text('Vrsta unosa:'),
-                        validator: (value) => value == null ? 'Vrsta unosa' : null,
-                        decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                        labelText: 'Vrsta unosa',
-                        floatingLabelStyle:
-                            TextStyle(color: ColorPalette.primary),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: ColorPalette.primary,
-                              width: 2.0),
-                        ),
-                      ),
-                        items: vrsteUnosaPretrazivanja.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (vrstaUnosa) {
-                          setState(() {
-                            defaultSearchInputMethod = vrstaUnosa;
-                          });
-                        },
-                      ),
+                      child: Container()
                     ),
                   ],
                 ),  
@@ -484,4 +475,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           });
       }
 
+
+}
+
+
+
+
+class CheckboxListItem {
+  String? label;
+  bool? isChecked;
+
+  CheckboxListItem({ this.label, this.isChecked });
 }

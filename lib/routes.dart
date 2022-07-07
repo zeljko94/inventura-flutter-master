@@ -16,7 +16,7 @@ import 'package:inventura_app/screens/settings/settings.dart';
 var routes = {
    '/login': (ctx) => const LoginScreen(),
 
-   '/dashboard': (ctx) => const DashboardScreen(title: 'Početna'),
+  //  '/dashboard': (ctx) => const DashboardScreen(title: 'Početna'),
    
    '/artikli': (ctx) => const ArtikliScreen(),
    '/add-edit-artikl': (ctx) => const AddEditArtiklScreen(),

@@ -48,108 +48,116 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   }
 
   _buildBody() {
-    return Column(
-      children: [
-        TextFormField(
-          controller: searchController,
-          cursorColor: ColorPalette.primary,
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            border: UnderlineInputBorder(),
-            labelText: 'Search',
-            floatingLabelStyle:
-                TextStyle(color: ColorPalette.primary),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color: ColorPalette.primary,
-                  width: 2.0),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.33), BlendMode.dstATop),
+          image: AssetImage("assets/images/background2.jpg"),
+           fit: BoxFit.cover),
+      ),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: searchController,
+            cursorColor: ColorPalette.primary,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              border: UnderlineInputBorder(),
+              labelText: 'Search',
+              floatingLabelStyle:
+                  TextStyle(color: ColorPalette.primary),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                    color: ColorPalette.primary,
+                    width: 2.0),
+              ),
             ),
+            validator: (value) {
+              return null;
+            },
+            onTap: () async {
+    
+            },
+            onChanged: _searchOnChange,
           ),
-          validator: (value) {
-            return null;
-          },
-          onTap: () async {
-
-          },
-          onChanged: _searchOnChange,
-        ),
-        artikli.isEmpty ? const Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.warning)),
-        ) : SizedBox(),
-        Expanded(child: 
-        !isLoading ? ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: artikli.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
-              // padding: EdgeInsets.zero,
-              child: Card(
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            settings: const RouteSettings(name: '/add-edit-artikl'),
-                            builder: (context) => AddEditArtiklScreen(
-                              artikl: artikli[index],
-                              onAddArtikl: fetchArtikli,
-                              onUpdateArtikl: fetchArtikli,
-                            ),
-                          ),
-                        );
-                      },
-                      onLongPress: () async {
-                      },
-                      title: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                    Text(artikli[index].naziv!, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),)
-                                  ],
-                                ),
+          artikli.isEmpty ? Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.secondaryText[50])),
+          ) : SizedBox(),
+          Expanded(child: 
+          !isLoading ? ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: artikli.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+                // padding: EdgeInsets.zero,
+                child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.zero,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: '/add-edit-artikl'),
+                              builder: (context) => AddEditArtiklScreen(
+                                artikl: artikli[index],
+                                onAddArtikl: fetchArtikli,
+                                onUpdateArtikl: fetchArtikli,
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
+                            ),
+                          );
+                        },
+                        onLongPress: () async {
+                        },
+                        title: Column(
+                          children: [
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                      Text(artikli[index].barkod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
-                                      Text(artikli[index].kod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      Text(artikli[index].naziv!, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),)
                                     ],
                                   ),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                      Text(artikli[index].cijena!.toString() + ' KM', maxLines: 1, overflow: TextOverflow.ellipsis,),
-                                      Text(artikli[index].jedinicaMjere!, maxLines: 1, overflow: TextOverflow.ellipsis,),
-                                    ],
-                                  ),
                               ],
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                        Text(artikli[index].barkod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                        Text(artikli[index].kod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                        Text(artikli[index].cijena!.toString() + ' KM', maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                        Text(artikli[index].jedinicaMjere!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                    )
                     ),
-                  )
-                  ),
-            );
-          },
-        ) : const Center(child: CircularProgressIndicator(),),)
-      ],
+              );
+            },
+          ) : const Center(child: CircularProgressIndicator(),),)
+        ],
+      ),
     );
   }
 

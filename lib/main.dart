@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/routes.dart';
+import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/auth/login.dart';
 import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/services/auth_service.dart';
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const CircularProgressIndicator();
             if (snapshot.data == true) {
-              return const DashboardScreen(title: '');
+              return const ArtikliScreen();
             } else {
               return const LoginScreen();
             }

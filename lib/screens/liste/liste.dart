@@ -54,78 +54,86 @@ class _ListeScreenState extends State<ListeScreen> {
   }
   
   _buildBody() {
-    return Column(
-      children: [
-        TextFormField(
-          controller: searchController,
-          cursorColor: ColorPalette.primary,
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            border: UnderlineInputBorder(),
-            labelText: 'Search',
-            floatingLabelStyle:
-                TextStyle(color: ColorPalette.primary),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color: ColorPalette.primary,
-                  width: 2.0),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
+          image: AssetImage("assets/images/background2.jpg"),
+          fit: BoxFit.cover),
+      ),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: searchController,
+            cursorColor: ColorPalette.primary,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              border: UnderlineInputBorder(),
+              labelText: 'Search',
+              floatingLabelStyle:
+                  TextStyle(color: ColorPalette.primary),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                    color: ColorPalette.primary,
+                    width: 2.0),
+              ),
             ),
+            validator: (value) {
+              return null;
+            },
+            onTap: () async {
+    
+            },
+            onChanged: _searchOnChange,
           ),
-          validator: (value) {
-            return null;
-          },
-          onTap: () async {
-
-          },
-          onChanged: _searchOnChange,
-        ),
-        ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: liste.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
-              child: Card(
-                  child: ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            settings: const RouteSettings(name: '/lista-pregled-artikala'),
-                            builder: (context) => ListaPregledArtikalaScreen(
-                              lista: liste[index],
-                              onAddLista: fetchListe,
-                              onUpdateLista: fetchListe,
+          ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: liste.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+                child: Card(
+                    child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: '/lista-pregled-artikala'),
+                              builder: (context) => ListaPregledArtikalaScreen(
+                                lista: liste[index],
+                                onAddLista: fetchListe,
+                                onUpdateLista: fetchListe,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      onLongPress: () async {
-                        searchSelectedLista = liste[index];
-                        _toggleSearchModeOn();
-                      },
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(liste[index].naziv!),
-                              Text(liste[index].skladiste!)
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text('Broj artikala: ' + liste[index].items!.length.toString())
-                          ],)
-                        ],
-                      ),)),
-            );
-          },
-        ),
-      ],
+                          );
+                        },
+                        onLongPress: () async {
+                          searchSelectedLista = liste[index];
+                          _toggleSearchModeOn();
+                        },
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(liste[index].naziv!),
+                                Text(liste[index].skladiste!)
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text('Broj artikala: ' + liste[index].items!.length.toString())
+                            ],)
+                          ],
+                        ),)),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
   
