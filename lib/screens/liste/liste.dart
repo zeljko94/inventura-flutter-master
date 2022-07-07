@@ -3,6 +3,7 @@ import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/screens/export_data/export_data_screen.dart';
 import 'package:inventura_app/screens/liste/add_edit_lista_screen.dart';
@@ -205,7 +206,7 @@ class _ListeScreenState extends State<ListeScreen> {
           message: 'Odustani',
           child: IconButton(onPressed: () async {
           _toggleSearchModeOff();
-        }, icon: const Icon(Icons.cancel)),
+        }, icon: const Icon(CustomIcons.times)),
         ),
       ],
     );

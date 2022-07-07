@@ -93,6 +93,7 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                     child: ElevatedButton(
                       child: const Text('Odaberite dokument za uvoz:'),
                       onPressed: () async {
+                        FilePicker.platform.clearTemporaryFiles();
                         final result = await FilePicker.platform.pickFiles(allowMultiple: true, );
                         if (result == null) return;
                         files = result.files;
@@ -160,13 +161,18 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                         await _artikliService!.deleteAll();
                         var isOkInsert = await _artikliService!.bulkInsert(artikli);
 
-                        if(!isOkInsert) {
+                        if(isOkInsert) {
+                          removeLoadingSpinner(context);
+                          var snackBar = const SnackBar(content: Text("Artikli uspješno uvezeni!"));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
+                        else {
                           removeLoadingSpinner(context);
                           var snackBar = const SnackBar(content: Text("Greška prilikom spremanja podataka u sqlite bazu!"));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
-                        removeLoadingSpinner(context);
                       }
                       else {
                         var snackBar = const SnackBar(content: Text("Odaberite datoteku za uvoz!"));

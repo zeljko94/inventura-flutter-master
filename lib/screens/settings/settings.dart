@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
@@ -19,12 +20,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool trimLeadingZerosSwitch = false;
   TextEditingController linkZaUvozPodatakaSaRestApijaController = TextEditingController();
 
-  String? defaultSearchInputMethod;
+  String? defaultSearchInputMethod = 'keyboard';
   String? scannerInputModeSearchByFields;
   String? keyboardInputModeSearchByFields;
+
   int? numberOfResultsPerSearch;
   String? csvDelimiterSimbol;
 
+  
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController dialogInputTextController = TextEditingController();
+
+
+  List<String> vrsteUnosaPretrazivanja = ['keyboard', 'scan'];
+  List<String> mogucaPoljaZaPretrazivanje = ['barkod', 'sifra', 'naziv'];
 
   @override
   void initState() {
@@ -32,7 +41,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     Future.delayed(Duration.zero, () async {
       var settings = await _appSettingsService.getSettings();
-      print(settings.toMap());
+      
+      setState(() {
+        numberOfResultsPerSearch = settings.numberOfResultsPerSearch;
+        obrisiArtiklePrilikomImportaSwitch = settings.obrisiArtiklePrilikomUvoza! > 0;
+        defaultSearchInputMethod = settings.defaultSearchInputMethod;
+        scannerInputModeSearchByFields = settings.scannerInputModeSearchByFields;
+        keyboardInputModeSearchByFields = settings.keyboardInputModeSearchByFields;
+        numberOfResultsPerSearch = settings.numberOfResultsPerSearch;
+        csvDelimiterSimbol = settings.csvDelimiterSimbol;
+      });
     });
 
     linkZaUvozPodatakaSaRestApijaController.text = "http://192.168.5.200:8888/ords/opus/artikl/barkodovi";
@@ -58,60 +76,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: Text('Pretraga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
                 // subtitle: Text('Podnaslov'),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Default search input method'),
+              InkWell(
+                onTap: () async {
+                    var res = await _displayZadanaMetodaUnosaPretrazivanja('Odaberite zadanu vrstu pretraživanja', context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(0),
+                  child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('Zadana metoda unosa pretraživanja'),
+                    ),
+                    const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                  ],
+              ),
+                ),),
+                InkWell(
+                  onTap: () async {
+                  },
+                  child: 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Pretraga skeniranjem pretražuje po poljima'), // barkod, sifra
+                      ),
+                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                    ],),
+                  ),
+                  InkWell(
+                    onTap: () async {},
+                    child: 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Pretraga unosom pretražuje po poljima'), // naziv, barkod, sifra
+                        ),
+                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                      ],
+                    ),
+                  ),
+                InkWell(
+                  onTap: () async {
+                    var valueFromDialog = await _displayTextInputDialog('Broj rezultata po pretraživanju', 'Unesite broj artikala koji će se prikazivati prilikom pretraživanja', 'Broj rezultata po pretraživanju', true, numberOfResultsPerSearch, context);
+                    if(valueFromDialog != null) {
+                      setState(() {
+                        numberOfResultsPerSearch = int.parse(valueFromDialog.toString());
+                      });
+                    }
+                  },
+                  child: 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Broj rezultata po pretraživanju'),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText,)
+                      ],
+                    ),
                 ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
-              ],),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Scanner input mode search by fields'), // barkod, sifra
-                ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
-              ],),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Keyboard input mode search by fields'), // naziv, barkod, sifra
-                ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
-              ],),
-              
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Number of results per search'), // barkod, sifra
-                ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
-              ],),
             ],)
           ),
         ),
@@ -167,9 +197,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text('Obriši artikle prilikom uvoza'),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Obriši artikle prilikom uvoza'),
                 ),
                 CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
                   setState(() {
@@ -180,15 +210,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text('Csv delimiter simbol'),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Csv delimiter simbol'),
                 ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
+                const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText)
               ],),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -232,13 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: const Text('Obriši artikle prilikom importa'),
                 ),
-                CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                  setState(() {
-                    obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                  });
-                })
               ],),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -279,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onPressed: () async {
           await _onSaveSettings();
         }),
-        IconButton(icon: const Icon(Icons.cancel), 
+        IconButton(icon: const Icon(CustomIcons.times), 
         onPressed: () async {
           await _onCancelSettings();
         }),
@@ -300,4 +320,168 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+
+
+  Future<dynamic> _displayTextInputDialog(String title, String message, String inputLabel, bool isNumberOnly, dynamic value, BuildContext context) async {
+    dialogInputTextController.text = value.toString();
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: 
+            Column(
+              children: [
+              // Text(message),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    keyboardType: isNumberOnly ? TextInputType.number : TextInputType.text,
+                    controller: dialogInputTextController,
+                    cursorColor: ColorPalette.primary,
+                    decoration: InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      labelText: inputLabel,
+                      floatingLabelStyle: const TextStyle(color: ColorPalette.primary),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: ColorPalette.primary,
+                            width: 2.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if(value == null || value == '') {
+                        return inputLabel + ' je obavezno polje.';
+                      }
+
+                      if(isNumberOnly) {
+                        var numberValue = double.tryParse(value);
+                        if(numberValue == null) {
+                          return 'Unesite broj.';
+                        }
+                      }
+                      return null;
+                    },
+                    onTap: () async {
+    
+                    },
+                  )
+                ),
+              ],
+            ),  
+            actions: [
+              ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    dialogInputTextController.clear();
+                  },
+                  child: const Text('cancel')),
+              ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      Navigator.pop(context, dialogInputTextController.text);
+                      dialogInputTextController.clear();
+                    }
+                  },
+                  child: const Text('confirm')
+                ),
+            ],
+        );
+      });
+  }
+
+  
+
+  Future<dynamic> _displayZadanaMetodaUnosaPretrazivanja(String title, BuildContext context) async {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(title),
+              content: 
+                Column(
+                  children: [
+                  // Text(message),
+                    Form(
+                      // key: _formKey,
+                      child: DropdownButtonFormField<String>(
+                        value: defaultSearchInputMethod,
+                        hint: const Text('Vrsta unosa:'),
+                        validator: (value) => value == null ? 'Vrsta unosa' : null,
+                        decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Vrsta unosa',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                        items: vrsteUnosaPretrazivanja.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (vrstaUnosa) {
+                          setState(() {
+                            defaultSearchInputMethod = vrstaUnosa;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),  
+            );
+          });
+      }
+
+  Future<dynamic> _displayDialog(String title, BuildContext context) async {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(title),
+              content: 
+                Column(
+                  children: [
+                  // Text(message),
+                    Form(
+                      // key: _formKey,
+                      child: DropdownButtonFormField<String>(
+                        value: defaultSearchInputMethod,
+                        hint: const Text('Vrsta unosa:'),
+                        validator: (value) => value == null ? 'Vrsta unosa' : null,
+                        decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Vrsta unosa',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                        items: vrsteUnosaPretrazivanja.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (vrstaUnosa) {
+                          setState(() {
+                            defaultSearchInputMethod = vrstaUnosa;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),  
+            );
+          });
+      }
+
 }

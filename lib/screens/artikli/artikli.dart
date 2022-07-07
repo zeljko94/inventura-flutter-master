@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
@@ -38,7 +39,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: isSearchMode ? buildSearchAppBar('Artikli', context) : MainAppBar.buildAppBar('Artikli', '', context),
+      appBar: buildSearchAppBar('Artikli', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -101,30 +102,44 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                         );
                       },
                       onLongPress: () async {
-                        _toggleSearchModeOn();
                       },
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      title: Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.only(right: 12),
-                                child: Icon(Icons.image, size: 50,),
-                              ),
-                              Column(
+                              Expanded(child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(artikli[index].naziv!, overflow: TextOverflow.ellipsis, maxLines: 3, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),),
-                                  Text(artikli[index].barkod!, style: TextStyle(color: ColorPalette.secondaryText[50], fontSize: 14)),
-                                  Text(artikli[index].napomena!, style: TextStyle(color: ColorPalette.warning[600]),)
-                                ],
+                                    Text(artikli[index].naziv!, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: ColorPalette.basic[900], fontSize: 18, fontWeight: FontWeight.bold ),)
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                          Text(artikli[index].jedinicaMjere!),
-                          // Text(currencyFormat.format(artikli[index].cijena!), style: const TextStyle(fontSize: 14 ),)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                      Text(artikli[index].barkod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      Text(artikli[index].kod!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                      Text(artikli[index].cijena!.toString(), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                      Text(artikli[index].jedinicaMjere!, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -186,17 +201,6 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     });
   }
 
-  _toggleSearchModeOff() {
-    setState(() {
-      isSearchMode = false;
-    });
-  }
-
-  _toggleSearchModeOn() {
-    setState(() {
-      isSearchMode = true;
-    });
-  }
 
   _setIsLoading(bool value) {
     setState(() {
@@ -208,11 +212,8 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        IconButton(onPressed: () async {}, icon: const Icon(Icons.search)),
+        IconButton(onPressed: () async {}, icon: const Icon(CustomIcons.filter)),
         IconButton(onPressed: () async {}, icon: const Icon(Icons.sort)),
-        IconButton(onPressed: () async {
-          _toggleSearchModeOff();
-        }, icon: const Icon(Icons.cancel)),
       ],
     );
   }

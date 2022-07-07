@@ -15,13 +15,14 @@ class DataImportService {
     final response = await http.get(Uri.parse('http://192.168.5.200:8888/ords/opus/artikl/barkodovi'));
     if (response.statusCode == 200) {
       // try {
-        var jsonresponse = jsonDecode(response.body);
+        var jsonresponse = jsonDecode(utf8.decode(response.bodyBytes));
         jsonresponse = jsonresponse["Artikli"];
-        print(jsonresponse);
         var artikli = <Artikl>[];
         for(var i=0; i<jsonresponse.length; i++) {
-          var barkod = jsonresponse[i]["BARKODOVI"] != null ? jsonresponse[i]["BARKODOVI"][0]["BARKOD"] : '';
-          artikli.add(Artikl(naziv: jsonresponse[i]["NAZIV"], kod: jsonresponse[i]["SIFRA"], jedinicaMjere: jsonresponse[i]["JMJ"], barkod: barkod.toString()));
+          var barkodovi = jsonresponse[i]["BARKODOVI"] ?? [];
+          for(var j=0; j<barkodovi.length; j++) {
+            artikli.add(Artikl( naziv: jsonresponse[i]["NAZIV"], kod: jsonresponse[i]["SIFRA"], jedinicaMjere: jsonresponse[i]["JMJ"], barkod: barkodovi[j]['BARKOD'].toString()));
+          }
         }
         return artikli;
       // } catch(exception) {
@@ -37,28 +38,27 @@ class DataImportService {
   Future<List<Artikl>?> getArtikliFromCsv(PlatformFile platformFile) async 
   {
     File file = File(platformFile.path!);
-    // var text = latin1.decode(await file.readAsBytes());
-    // file.openRead()
-    //   .transform(latin1.decoder)
-    //   .transform(new LineSplitter())
-    //   .forEach((element) {print(element); });
+
     try {
      final input = File(file.path).openRead();
+
      final fields = await input
-         .transform(latin1.decoder)
+         .transform(utf8.decoder)
          .transform(const CsvToListConverter(fieldDelimiter: '#', eol: '\r\n'))
          .toList();
-      //final headers = ['barkod', 'nesto', 'naziv', 'jmj', 'pdv'];
+      //final headers = ['sifra', 'naziv', 'barkod', 'jedinicaMjere', 'pdv', 'cijena'];
 
       var artikli = <Artikl>[];
       for(var i=0; i<fields.length; i++) {
-        var pdv = num.tryParse(fields[i][4]);
+        var pdv = num.tryParse(fields[i][4].toString().replaceAll(',', '.'));
+        var cijena = num.tryParse(fields[i][5].toString().replaceAll(',', '.'));
         artikli.add(Artikl(
-          barkod: fields[i][0].toString(), 
-          kod: fields[i][1].toString(),  
-          naziv: fields[i][2].toString(), 
+          kod: fields[i][0].toString(),  
+          naziv: fields[i][1].toString(), 
+          barkod: fields[i][2].toString(), 
           jedinicaMjere: fields[i][3].toString(), 
-          pdv: pdv ?? 0
+          pdv: pdv ?? 0,
+          cijena: cijena ?? 0
         ));
       }
 

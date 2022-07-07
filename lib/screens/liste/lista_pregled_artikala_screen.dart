@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
@@ -171,13 +172,16 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                                                 maxLines: 3,
                                                 overflow: TextOverflow.ellipsis,
                                               ))),
-                                              Row(  
-                                                children: [
-                                                  Text(dodaniArtikli[index].kolicina!.toString() + ' ' + dodaniArtikli[index].artikl!.jedinicaMjere.toString()),
-                                                  IconButton(onPressed: () async { 
-                                                    _removeDodaniArtikl(dodaniArtikli[index]);
-                                                  }, icon: const Icon(Icons.cancel), color: ColorPalette.danger,)
-                                                ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 4),
+                                                child: Row(  
+                                                  children: [
+                                                    Text(dodaniArtikli[index].kolicina!.toString() + ' ' + dodaniArtikli[index].artikl!.jedinicaMjere.toString()),
+                                                    IconButton(onPressed: () async { 
+                                                      _removeDodaniArtikl(dodaniArtikli[index]);
+                                                    }, icon: const Icon(CustomIcons.times), color: ColorPalette.danger,)
+                                                  ],
+                                                ),
                                               )
                                             ],
                                           ),)),
