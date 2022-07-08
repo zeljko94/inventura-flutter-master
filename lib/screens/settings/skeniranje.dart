@@ -20,19 +20,8 @@ class _SettingsSkeniranjeScreenState extends State<SettingsSkeniranjeScreen> {
     super.initState();
     
     Future.delayed(Duration.zero, () async {
-      var settings = await _appSettingsService.getSettings();
-
-      setState(() {
-        _settings = settings;
-      });
+      await _fetchAppSettings();
     });
-  }
-
-  _updateTrimLeadingZeros(bool value) async {
-    setState(() {
-      _settings!.trimLeadingZeros  = value ? 1 : 0;
-    });
-    await _appSettingsService.update(_settings!.id!, _settings!);
   }
 
   @override
@@ -50,15 +39,32 @@ class _SettingsSkeniranjeScreenState extends State<SettingsSkeniranjeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                   const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.fromLTRB(15, 8, 8, 8),
                     child: Text('Trim leading zeros'),
                   ),
-                  CupertinoSwitch(value: _settings == null ||_settings!.trimLeadingZeros! == 0 ? false : true, onChanged: (value) async {
+                  CupertinoSwitch(value: _settings == null || _settings!.trimLeadingZeros! == 0 ? false : true, onChanged: (value) async {
                     await _updateTrimLeadingZeros(value);
                   })
                 ],),
               ],)
             ),
           );
+  }
+
+
+  _updateTrimLeadingZeros(bool value) async {
+    _settings!.trimLeadingZeros  = value ? 1 : 0;
+    await _appSettingsService.update(_settings!.id!, _settings!);
+    await _fetchAppSettings();
+  }
+
+  _fetchAppSettings() async {
+    var settings = await _appSettingsService.getSettings();
+
+    setState(() {
+      _settings = settings;
+    });
+    print("SETTINGS SKENIRANJE");
+    print(_settings!.toMap());
   }
 }

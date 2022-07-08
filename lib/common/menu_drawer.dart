@@ -106,14 +106,14 @@ List<Map> menuItems = [
     'hasChildren': false,
     'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
   },
-  {
-    'title': 'Uvoz/Izvoz konfiguracije',
-    'icon': Icons.import_export,
-    'group': false,
-    'link': '/uvoz-izvoz-konfiguracije',
-    'hasChildren': false,
-    'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  },
+  // {
+  //   'title': 'Uvoz/Izvoz konfiguracije',
+  //   'icon': Icons.import_export,
+  //   'group': false,
+  //   'link': '/uvoz-izvoz-konfiguracije',
+  //   'hasChildren': false,
+  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
+  // },
   {
     'title': 'Postavke',
     'icon': Icons.settings,

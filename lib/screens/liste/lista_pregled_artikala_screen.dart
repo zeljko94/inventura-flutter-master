@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
@@ -36,6 +36,9 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
 
 
   final _formKey = GlobalKey<FormState>();
+
+  
+  final currencyFormat = NumberFormat("#,##0.00", "en_US");
   
 
 
@@ -104,7 +107,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Text(totalCijena.toString() + ' KM', style: TextStyle(fontSize: 16,  color: ColorPalette.basic[50], fontWeight: FontWeight.bold),),
+                  child: Text(currencyFormat.format(totalCijena) + ' KM', style: TextStyle(fontSize: 16,  color: ColorPalette.basic[50], fontWeight: FontWeight.bold),),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),

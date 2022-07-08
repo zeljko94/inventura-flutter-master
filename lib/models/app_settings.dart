@@ -8,11 +8,14 @@ class AppSettings {
 
   int? trimLeadingZeros;
   int? obrisiArtiklePrilikomUvoza;
-  String? csvDelimiterSimbol;
+  String? csvDelimiterSimbolImport;
   String? restApiLinkImportArtikli;
 
+  String? csvDelimiterSimbolExport;
+  String? exportDataFields;
+
   AppSettings({ this.id, this.defaultSearchInputMethod, this.scannerInputModeSearchByFields, this.keyboardInputModeSearchByFields, this.numberOfResultsPerSearch, 
-  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbol, this.restApiLinkImportArtikli });
+  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbolImport, this.restApiLinkImportArtikli, this.csvDelimiterSimbolExport, this.exportDataFields });
 
   
   Map<String, dynamic> toMap() {
@@ -24,7 +27,7 @@ class AppSettings {
       'numberOfResultsPerSearch': numberOfResultsPerSearch,
       'trimLeadingZeros': trimLeadingZeros,
       'obrisiArtiklePrilikomUvoza': obrisiArtiklePrilikomUvoza,
-      'csvDelimiterSimbol': csvDelimiterSimbol,
+      'csvDelimiterSimbolImport': csvDelimiterSimbolImport,
       'restApiLinkImportArtikli': restApiLinkImportArtikli,
     };
   }

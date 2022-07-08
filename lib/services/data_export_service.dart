@@ -31,11 +31,10 @@ class DataExportService {
         print("STORAGE PERMISSION NOT GRANTED!");
         return false;
       }
-      String dir =
-          (Platform.isAndroid ? (await getExternalStorageDirectory())!.path : (await getApplicationSupportDirectory()).path);
+      String dir = (Platform.isAndroid ? (await getExternalStorageDirectory())!.path : (await getApplicationSupportDirectory()).path);
       String file = "$dir";
       File f = File(file + "/" + filename + ".csv");
-      print("IZVOZ PODATAKA CSV" + f.path);
+      print("IZVOZ PODATAKA CSV  " + f.path);
       String csv = const ListToCsvConverter(fieldDelimiter: '#', eol: '\r\n').convert(rows);
       f.writeAsString(csv);
       return true;

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
 class SettingsUvozPodatakaScreen extends StatefulWidget {
@@ -12,10 +13,11 @@ class SettingsUvozPodatakaScreen extends StatefulWidget {
 
 class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen> {
   final AppSettingsService _appSettingsService = AppSettingsService();
+  AppSettings? _settings;
   
-  bool obrisiArtiklePrilikomImportaSwitch = false;
+  // bool obrisiArtiklePrilikomImportaSwitch = false;
   TextEditingController linkZaUvozPodatakaSaRestApijaController = TextEditingController();
-  String? csvDelimiterSimbol;
+  // String? csvDelimiterSimbolImport;
   
   final _formKey = GlobalKey<FormState>();
   TextEditingController dialogInputTextController = TextEditingController();
@@ -27,13 +29,8 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
 
 
     Future.delayed(Duration.zero, () async {
-      var settings = await _appSettingsService.getSettings();
-      
-      setState(() {
-        obrisiArtiklePrilikomImportaSwitch = settings.obrisiArtiklePrilikomUvoza! > 0;
-        csvDelimiterSimbol = settings.csvDelimiterSimbol;
-      });
-      linkZaUvozPodatakaSaRestApijaController.text = settings.restApiLinkImportArtikli!;
+      await _fetchAppSettings();
+      linkZaUvozPodatakaSaRestApijaController.text = _settings!.restApiLinkImportArtikli!;
     });
     
   }
@@ -53,33 +50,31 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                   const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.fromLTRB(15, 8, 8, 8),
                     child: Text('Obriši artikle prilikom uvoza'),
                   ),
-                  CupertinoSwitch(value: obrisiArtiklePrilikomImportaSwitch, onChanged: (value) {
-                    setState(() {
-                      obrisiArtiklePrilikomImportaSwitch  = !obrisiArtiklePrilikomImportaSwitch;
-                    });
+                  CupertinoSwitch(value: _settings == null || _settings!.obrisiArtiklePrilikomUvoza! == 0 ? false : true, onChanged: (value) async {
+                      await _updateObrisiArtiklePrilikomImporta(value);
                   })
                 ],),
                 InkWell(
                   onTap: () async {
-                    var result = await _displayInputDialog('Csv delimiter simbol', '', 'Simbol', false, csvDelimiterSimbol, context);
+                    var result = await _displayInputDialog('Csv delimiter simbol', '', 'Simbol', false, _settings!.csvDelimiterSimbolImport, context);
                   },
-                  child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Csv delimiter simbol'),
+                  child: IgnorePointer(
+                    ignoring: true,
+                    child: ExpansionTile(
+                      trailing: Icon(Icons.arrow_forward_ios, size: 15,),
+                      title: Text('Csv delimiter simbol'),
+                      children: <Widget>[
+                      ],
                     ),
-                    const Icon(Icons.arrow_forward_ios, color: ColorPalette.secondaryText)
-                  ],
-                ),
+                  )
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    maxLines: null,
                     controller: linkZaUvozPodatakaSaRestApijaController,
                     cursorColor: ColorPalette.primary,
                     decoration: const InputDecoration(
@@ -180,6 +175,22 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
             ],
         );
       });
+  }
+
+  _updateObrisiArtiklePrilikomImporta(bool value) async {
+    _settings!.obrisiArtiklePrilikomUvoza = value ? 1 : 0;
+    _appSettingsService.update(_settings!.id!, _settings!);
+    await _fetchAppSettings();
+  }
+  
+  _fetchAppSettings() async {
+    var settings = await _appSettingsService.getSettings();
+    
+    setState(() {
+      _settings = settings;
+    });
+    print("SETTINGS UVOZ");
+    print(_settings!.toMap());
   }
 
 }
