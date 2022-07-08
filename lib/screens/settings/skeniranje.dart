@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:inventura_app/models/app_settings.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
 class SettingsSkeniranjeScreen extends StatefulWidget {
   const SettingsSkeniranjeScreen({ Key? key }) : super(key: key);
@@ -9,13 +11,28 @@ class SettingsSkeniranjeScreen extends StatefulWidget {
 }
 
 class _SettingsSkeniranjeScreenState extends State<SettingsSkeniranjeScreen> {
+  final AppSettingsService _appSettingsService = AppSettingsService();
+  AppSettings? _settings;
 
-  bool trimLeadingZerosSwitch = false;
 
   @override
   void initState() {
     super.initState();
     
+    Future.delayed(Duration.zero, () async {
+      var settings = await _appSettingsService.getSettings();
+
+      setState(() {
+        _settings = settings;
+      });
+    });
+  }
+
+  _updateTrimLeadingZeros(bool value) async {
+    setState(() {
+      _settings!.trimLeadingZeros  = value ? 1 : 0;
+    });
+    await _appSettingsService.update(_settings!.id!, _settings!);
   }
 
   @override
@@ -36,10 +53,8 @@ class _SettingsSkeniranjeScreenState extends State<SettingsSkeniranjeScreen> {
                     padding: EdgeInsets.all(8.0),
                     child: Text('Trim leading zeros'),
                   ),
-                  CupertinoSwitch(value: trimLeadingZerosSwitch, onChanged: (value) {
-                    setState(() {
-                      trimLeadingZerosSwitch  = !trimLeadingZerosSwitch;
-                    });
+                  CupertinoSwitch(value: _settings == null ||_settings!.trimLeadingZeros! == 0 ? false : true, onChanged: (value) async {
+                    await _updateTrimLeadingZeros(value);
                   })
                 ],),
               ],)
