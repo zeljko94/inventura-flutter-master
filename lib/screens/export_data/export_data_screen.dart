@@ -1,5 +1,4 @@
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
@@ -7,11 +6,10 @@ import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/services/data_export_service.dart';
-import 'package:open_file/open_file.dart';
 
 class ExportDataScreen extends StatefulWidget {
-  final Lista? lista;
-  const ExportDataScreen({Key? key, this.lista }) : super(key: key);
+  final List<Lista>? liste;
+  const ExportDataScreen({Key? key, this.liste }) : super(key: key);
 
   @override
   State<ExportDataScreen> createState() => _ExportDataScreenState();
@@ -23,6 +21,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   bool isLoading = false;
   List<String>  vrsteIzvoza = ['csv', 'excel', 'rest api'];
   String? selectedVrstaIzvoza;
+  bool izveziKaoOdvojeneDatoteke = false;
 
   TextEditingController filenameController = TextEditingController();
   TextEditingController restApiLinkController = TextEditingController();
@@ -62,11 +61,18 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: (Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
+                    const Text('Odabrane liste: ', style: TextStyle(fontSize: 16),),
+                    for(var i=0; i<widget.liste!.length; i++) 
+                      Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(widget.liste![i].naziv!)
+                      )
+                    ,
                     DropdownButtonFormField<String>(
                       value: selectedVrstaIzvoza,
-                      hint: const Text('Odaberite vrstu izvoza:'),
+                      hint: const Text('Odaberite vrstu izvoza:', textAlign: TextAlign.start,),
                       validator: (value) => value == null ? 'Odaberite vrstu izvoza' : null,
                       decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
@@ -89,6 +95,19 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                         _setSelectedVrstaUvoza(vrstaUvoza!);
                       },
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CheckboxListTile(
+                          checkColor: ColorPalette.success,
+                          title: const Text('Izvezi kao odvojene datoteke?'),
+                          value: izveziKaoOdvojeneDatoteke,
+                          onChanged: (value) async {
+                            setState(() {
+                              izveziKaoOdvojeneDatoteke = !izveziKaoOdvojeneDatoteke;
+                            });
+                          },
+                        ),
+                    )
                   ],
                 )
                 ),
@@ -117,14 +136,29 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
       
+                      _setIsLoading(true);
                       if(selectedVrstaIzvoza == 'csv') {
-                        await _pokreniIzvozCsv(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                        if(izveziKaoOdvojeneDatoteke) {
+                          for(var i=0; i<widget.liste!.length; i++) {
+                            await _pokreniIzvozCsv(widget.liste![i].items!, widget.liste![i].naziv!.replaceAll(' ', '') + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                          }
+                        }
+                        else {
+                          List<ListItem> listItems = [];
+                          String naziv = '';
+                          for(var i=0; i<widget.liste!.length; i++) {
+                            listItems.addAll(widget.liste![i].items!);
+                            naziv += widget.liste![i].naziv! + '_';
+                          }
+                          await _pokreniIzvozCsv(listItems, naziv.replaceAll(' ', '') + DateTime.now().millisecondsSinceEpoch.toString());
+                        }
                       }
-                      else if(selectedVrstaIzvoza == 'excel') {
-                        await _pokreniIzvozExcel(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
-                      }
-                      else if(selectedVrstaIzvoza == 'rest api') {
-                      }
+                      // else if(selectedVrstaIzvoza == 'excel') {
+                      //   await _pokreniIzvozExcel(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                      // }
+                      // else if(selectedVrstaIzvoza == 'rest api') {
+                      // }
+                      _setIsLoading(false);
                     }
                   },
                   child: const Text('Pokreni izvoz'),
@@ -153,7 +187,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   }
   
   _pokreniIzvozCsv(List<ListItem> items, String filename) async {
-    _setIsLoading(true);
+    // _setIsLoading(true);
     var isSuccess = await _dataExportService.exportCsv(items, filename);
     if(isSuccess) {
         var snackBar = const SnackBar(content: Text("Uspješan izvoz podataka!"));
@@ -163,8 +197,10 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
       var snackBar = const SnackBar(content: Text("Greška prilikom izvoza liste!"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    _setIsLoading(false);
+    // _setIsLoading(false);
   }
+
+
   _pokreniIzvozExcel(List<ListItem> items, String filename) async {
     // _setIsLoading(true);
     // var isSuccess = await _dataExportService.exportExcel(items, filename);

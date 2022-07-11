@@ -3,8 +3,6 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,7 +12,6 @@ class DataExportService {
 
   Future<void> _openFile(String path) async {
     final _result = await OpenFile.open(path);
-    print(_result.message);
 
   }
 
@@ -24,6 +21,7 @@ class DataExportService {
       for (int i = 0; i < items.length; i++) {
         List<dynamic> row = [];
         row.add(items[i].barkod);
+        // row.add(items[i].kod);
         row.add(items[i].kolicina);
         rows.add(row);
       }
@@ -31,7 +29,8 @@ class DataExportService {
         print("STORAGE PERMISSION NOT GRANTED!");
         return false;
       }
-      String dir = (Platform.isAndroid ? (await getExternalStorageDirectory())!.path : (await getApplicationSupportDirectory()).path);
+      String androidDownloadsDir = '/storage/emulated/0/Download';
+      String dir = (Platform.isAndroid ? androidDownloadsDir /*(await getExternalStorageDirectory())!.path*/ : (await getApplicationSupportDirectory()).path);
       String file = "$dir";
       File f = File(file + "/" + filename + ".csv");
       print("IZVOZ PODATAKA CSV  " + f.path);

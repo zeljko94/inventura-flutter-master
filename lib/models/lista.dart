@@ -6,6 +6,7 @@ class Lista {
   String? naziv;
   String? napomena;
   String? skladiste;
+  bool? isCheckedForExport = false;
 
   Lista({ this.id, this.naziv, this.napomena, this.skladiste, this.items });
 
@@ -19,7 +20,8 @@ class Lista {
       'naziv': naziv,
       'napomena': napomena,
       'skladiste': skladiste,
-      'items': items
+      'items': items,
+      'isCheckedForExport': isCheckedForExport
     };
   }
 }

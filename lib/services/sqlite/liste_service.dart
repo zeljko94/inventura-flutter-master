@@ -16,6 +16,7 @@ class ListeService extends SqliteBaseService {
     var map = lista.toMap();
     map.remove("id");
     map.remove("items");
+    map.remove("isCheckedForExport");
     var insertedListaId = await db.insert("Liste", map, conflictAlgorithm: ConflictAlgorithm.ignore,);
 
     if(insertedListaId > 0) {
@@ -70,6 +71,7 @@ class ListeService extends SqliteBaseService {
     final db = await init();
     var map = lista.toMap();
     map.remove("items");
+    map.remove("isCheckedForExport");
   
     int result = await db.update(
       "Liste", 

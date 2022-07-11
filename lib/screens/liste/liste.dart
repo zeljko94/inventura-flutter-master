@@ -22,7 +22,7 @@ class _ListeScreenState extends State<ListeScreen> {
   List<Lista> listeStore = [];
   final ListeService? _listeService = ListeService();
   bool isSearchMode = false;
-  Lista? searchSelectedLista;
+  // List<Lista> searchSelectedLista = [];
 
   TextEditingController searchController = TextEditingController();
 
@@ -57,8 +57,8 @@ class _ListeScreenState extends State<ListeScreen> {
     return DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
-          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
-          image: AssetImage(ColorPalette.backgroundImagePath),
+          colorFilter: ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+          image: const AssetImage(ColorPalette.backgroundImagePath),
           fit: BoxFit.cover),
       ),
       child: Column(
@@ -109,12 +109,21 @@ class _ListeScreenState extends State<ListeScreen> {
                           );
                         },
                         onLongPress: () async {
-                          searchSelectedLista = liste[index];
+                        //  liste[index].isCheckedForExport != liste[index].isCheckedForExport;
                           _toggleSearchModeOn();
                         },
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            if(isSearchMode) Checkbox(
+                              checkColor: ColorPalette.success,
+                              value: liste[index].isCheckedForExport,
+                              onChanged: (value) async {
+                                setState(() {
+                                  liste[index].isCheckedForExport = !liste[index].isCheckedForExport!;
+                                });
+                              },
+                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -159,7 +168,6 @@ class _ListeScreenState extends State<ListeScreen> {
   _toggleSearchModeOff() {
     setState(() {
       isSearchMode = false;
-      searchSelectedLista = null;
     });
   }
 
@@ -173,14 +181,14 @@ class _ListeScreenState extends State<ListeScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        Tooltip(
+        if(liste.where((lista) => lista.isCheckedForExport == true).toList().length < 2) Tooltip(
           message: 'Uredi listu',
           child: IconButton(onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
               settings: const RouteSettings(name: '/add-edit-lista'),
               builder: (context) => AddEditListaScreen(
-                lista: searchSelectedLista,
+                lista: liste.firstWhere((element) => element.isCheckedForExport!),
                 onAddLista: fetchListe,
                 onUpdateLista: fetchListe,
               ),
@@ -190,9 +198,9 @@ class _ListeScreenState extends State<ListeScreen> {
         Tooltip(
           message: 'Obriši listu',
           child: IconButton(onPressed: () async {
-          if(searchSelectedLista != null) {
-            await _deleteLista(searchSelectedLista!.id!);
-          }
+          // if(searchSelectedLista != null) {
+            await _deleteSelectedListe();
+          // }
         },  icon: const Icon(Icons.delete))
         ),
         Tooltip(
@@ -202,7 +210,7 @@ class _ListeScreenState extends State<ListeScreen> {
             MaterialPageRoute(
               settings: const RouteSettings(name: '/export-data'),
               builder: (context) => ExportDataScreen(
-                lista: searchSelectedLista,
+                liste: liste.where((lista) => lista.isCheckedForExport!).toList(),
                 // onAddLista: fetchListe,
                 // onUpdateLista: fetchListe,
               ),
@@ -220,20 +228,23 @@ class _ListeScreenState extends State<ListeScreen> {
     );
   }
 
-  _deleteLista(int id) async {
-    var confirmDelete = await ConfirmationDialog.openConfirmationDialog("Brisanje liste", 'Jeste li sigurni da želite trajno obrisati listu?', context);
+  _deleteSelectedListe() async {
+    var confirmDelete = await ConfirmationDialog.openConfirmationDialog("Brisanje liste", 'Jeste li sigurni da želite trajno obrisati odabrane liste?', context);
 
     if(confirmDelete) {
-      var deleted = await _listeService!.delete(id);
+      var selectedListe = liste.where((element) => element.isCheckedForExport!).toList();
+      selectedListe.forEach((element) async {
+        var deleted = await _listeService!.delete(element.id!);
 
-      if(deleted > 0 ) {
-        var snackBar = const SnackBar(content: Text("Lista uspješno obrisana!"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        if(isSearchMode) {
-          _toggleSearchModeOff();
+        if(deleted > 0 ) {
+          var snackBar = const SnackBar(content: Text("Liste uspješno obrisane!"));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          if(isSearchMode) {
+            _toggleSearchModeOff();
+          }
+          await fetchListe();
         }
-        await fetchListe();
-      }
+      });
     }
   }
 
@@ -247,4 +258,5 @@ class _ListeScreenState extends State<ListeScreen> {
       }
     });
   }
+
 }

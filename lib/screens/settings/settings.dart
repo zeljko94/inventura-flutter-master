@@ -72,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 class CheckboxListItem {
   String? label;
-  bool? isChecked;
+  bool? isChecked = false;
 
   CheckboxListItem({ this.label, this.isChecked });
 }
