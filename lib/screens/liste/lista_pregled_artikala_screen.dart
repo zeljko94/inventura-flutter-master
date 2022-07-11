@@ -202,34 +202,35 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
               padding: const EdgeInsets.only(top: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: ColorPalette.primary,
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  onPressed: () async{
-                    Navigator.pop(context, 'Odustani');
-                    _resetControllers();
-                  },
-                  child: const Text('Odustani'),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: ColorPalette.primary,
-                    primary: const Color.fromARGB(255, 255, 255, 255),
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+              //   children: <Widget>[
+              //   TextButton(
+              //     style: TextButton.styleFrom(
+              //       primary: ColorPalette.primary,
+              //       textStyle: const TextStyle(fontSize: 15),
+              //     ),
+              //     onPressed: () async{
+              //       Navigator.pop(context, 'Odustani');
+              //       _resetControllers();
+              //     },
+              //     child: const Text('Odustani'),
+              //   ),
+              //   TextButton(
+              //     style: TextButton.styleFrom(
+              //       backgroundColor: ColorPalette.primary,
+              //       primary: const Color.fromARGB(255, 255, 255, 255),
+              //       textStyle: const TextStyle(fontSize: 15),
+              //     ),
+              //     onPressed: () async {
+              //       if (_formKey.currentState!.validate()) {
 
 
-                      await _spremiIzmjene();
-                    }
-                  },
-                  child: const Text('Spremi'),
-                ),
-              ]),
+              //         await _spremiIzmjene();
+              //       }
+              //     },
+              //     child: const Text('Spremi'),
+              //   ),
+              // ]
+              ),
             )
             ],),
           );
@@ -281,6 +282,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     });
 
     _updateTotalValues();
+    _spremiIzmjene();
   }
 
     
@@ -293,6 +295,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       widget.lista!.items = List.of(dodaniArtikli);
     });
     _updateTotalValues();
+    _spremiIzmjene();
   }
 
   void _scanBarcode() {}
@@ -322,6 +325,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         dodaniArtikli = List.of(dodaniArtikli);
       });
       _updateTotalValues();
+      _spremiIzmjene();
     }
   }
   
@@ -342,7 +346,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         _resetControllers();
         widget.onAddLista!();
-        Navigator.of(context).pop();
+        // Navigator.of(context).pop();
       }
       else {
         var snackBar = const SnackBar(content: Text("Greška prilikom dodavanja liste!"));
@@ -356,7 +360,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         var snackBar = const SnackBar(content: Text("Lista je uspješno izmjenjena!"));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         widget.onUpdateLista!();
-        Navigator.of(context).pop();
+        // Navigator.of(context).pop();
       }
       else {
         var snackBar = const SnackBar(content: Text("Greška prilikom izmjene liste!"));
