@@ -21,7 +21,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   bool isLoading = false;
   List<String>  vrsteIzvoza = ['csv', 'excel', 'rest api'];
   String? selectedVrstaIzvoza;
-  bool izveziKaoOdvojeneDatoteke = false;
+  bool izveziKaoOdvojeneDatoteke = true;
 
   TextEditingController filenameController = TextEditingController();
   TextEditingController restApiLinkController = TextEditingController();
@@ -200,7 +200,6 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   }
   
   _pokreniIzvozCsv(List<ListItem> items, String filename) async {
-    // _setIsLoading(true);
     var isSuccess = await _dataExportService.exportCsv(items, filename);
     if(isSuccess) {
         var snackBar = const SnackBar(content: Text("Uspješan izvoz podataka!"));
@@ -210,7 +209,6 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
       var snackBar = const SnackBar(content: Text("Greška prilikom izvoza liste!"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    // _setIsLoading(false);
   }
 
 

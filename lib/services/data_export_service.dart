@@ -11,6 +11,8 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
 class DataExportService {
 
+  static const String ANDROID_DOWNLOAD_PATH = '/storage/emulated/0/Download';
+
   Future<void> _openFile(String path) async {
     final _result = await OpenFile.open(path);
 
@@ -30,7 +32,7 @@ class DataExportService {
         print("STORAGE PERMISSION NOT GRANTED!");
         return false;
       }
-      String androidDownloadsDir = '/storage/emulated/0/Download';
+      String androidDownloadsDir = ANDROID_DOWNLOAD_PATH;
       String dir = (Platform.isAndroid ? androidDownloadsDir /*(await getExternalStorageDirectory())!.path*/ : (await getApplicationSupportDirectory()).path);
       String file = "$dir";
       File f = File(file + "/" + filename + ".csv");
@@ -52,7 +54,7 @@ class DataExportService {
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
 
-    const String path = '/storage/emulated/0/Download';
+    const String path = ANDROID_DOWNLOAD_PATH;
     String filename = '$path/Output.xlsx';
     File file = File(filename);
     await file.writeAsBytes(bytes, flush: true);
@@ -63,11 +65,20 @@ class DataExportService {
     try {
       final Workbook workbook = Workbook();
       final Worksheet sheet = workbook.worksheets[0];
-      sheet.getRangeByName('A1').setText('Hello World!');
+      sheet.getRangeByName('A1').setText('Barkod');
+      sheet.getRangeByName('B1').setText('Šifra');
+      sheet.getRangeByName('C1').setText('Količina');
+
+      for(var i=0; i<items.length; i++) {
+        sheet.getRangeByName('A' + (i+2).toString()).setText(items[i].barkod);
+        sheet.getRangeByName('B' + (i+2).toString()).setText(items[i].kod);
+        sheet.getRangeByName('C' + (i+2).toString()).setText(items[i].kolicina.toString());
+      }
+      
       final List<int> bytes = workbook.saveAsStream();
       workbook.dispose();
 
-      const String path = '/storage/emulated/0/Download';
+      const String path = ANDROID_DOWNLOAD_PATH;
       File file = File('$path/$filename.xlsx');
       await file.writeAsBytes(bytes, flush: true);
       return true;
