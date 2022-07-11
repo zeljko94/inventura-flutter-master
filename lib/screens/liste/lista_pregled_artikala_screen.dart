@@ -261,13 +261,17 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
   _resetControllers() {
   }
 
-  _dodajArtikl(Artikl? odabraniArtikl) {
-    var listItem = ListItem(
-       artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 1, jedinicaMjere: odabraniArtikl.jedinicaMjere,
-    naziv: odabraniArtikl.naziv, nazivArtikla: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
+  _dodajArtikl(ListItem? listItem) {
+    // var listItem = ListItem(
+    //    artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 0, jedinicaMjere: odabraniArtikl.jedinicaMjere,
+    // naziv: odabraniArtikl.naziv, nazivArtikla: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
 
-    var existing = dodaniArtikli.firstWhereOrNull((element) => element.barkod == odabraniArtikl.barkod);
-    if(existing == null) {
+    // var existing = dodaniArtikli.firstWhereOrNull((element) => element.barkod == odabraniArtikl.barkod);
+    // if(existing == null) {
+    //   dodaniArtikli.add(listItem);
+    // }
+
+    if(listItem!.kolicina! > 0) {
       dodaniArtikli.add(listItem);
     }
 

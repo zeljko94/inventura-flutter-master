@@ -146,7 +146,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                             baseOffset: 0,
                             extentOffset: kolicinaController.text.length,
                           );
-                        widget.onAddDodaniArtikl!(suggestion);
+                        // widget.onAddDodaniArtikl!(suggestion);
                         }
                       ),
                     TextFormField(
@@ -168,10 +168,16 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                       ),
                       validator: (value) {
                         if(value == null || value.isEmpty) {
+                          kolicinaFocusNode.requestFocus();
                           return "Kolicina je obavezno polje!";
                         }
                         else if(num.tryParse(value) == null){
+                          kolicinaFocusNode.requestFocus();
                           return 'Unesite brojčanu vrijednost!';
+                        }
+                        else if(num.tryParse(value)! < 1) {
+                          kolicinaFocusNode.requestFocus();
+                          return 'Količina mora biti veća od 0.';
                         }
                         return null;
                       },
@@ -369,7 +375,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           );
         
         
-                          widget.onUpdateDodaniArtikl!(listItem);
+                          isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
                           Navigator.of(context).pop();
                     }
                   },
