@@ -262,7 +262,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
   _resetControllers() {
   }
 
-  _dodajArtikl(ListItem? listItem) {
+  _dodajArtikl(ListItem? listItem) async {
     // var listItem = ListItem(
     //    artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 0, jedinicaMjere: odabraniArtikl.jedinicaMjere,
     // naziv: odabraniArtikl.naziv, nazivArtikla: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
@@ -282,25 +282,38 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     });
 
     _updateTotalValues();
-    _spremiIzmjene();
+    await _spremiIzmjene();
+
+    print("reload screen");
+    // Navigator.popAndPushNamed(context, '/add-edit-dodani-artikl');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: '/add-edit-dodani-artikl'),
+        builder: (context) => AddEditDodaniArtikl(
+          lista: widget.lista!,
+          onAddDodaniArtikl: _dodajArtikl,
+          onUpdateDodaniArtikl: _updateDodaniArtikl,
+        ),
+      ),
+    );
   }
 
     
 
 
-  void _removeDodaniArtikl(ListItem? item) {
+  void _removeDodaniArtikl(ListItem? item) async {
     setState(() {
       dodaniArtikli.remove(item);
       dodaniArtikli = List.of(dodaniArtikli);
       widget.lista!.items = List.of(dodaniArtikli);
     });
     _updateTotalValues();
-    _spremiIzmjene();
+    await _spremiIzmjene();
   }
 
   void _scanBarcode() {}
 
-  void _updateDodaniArtikl(ListItem dodaniArt) {
+  void _updateDodaniArtikl(ListItem dodaniArt) async {
     ListItem? existing;
     existing = dodaniArtikli.firstWhereOrNull((x) => x.barkod == dodaniArt.barkod);
 
@@ -325,7 +338,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         dodaniArtikli = List.of(dodaniArtikli);
       });
       _updateTotalValues();
-      _spremiIzmjene();
+      await _spremiIzmjene();
     }
   }
   
