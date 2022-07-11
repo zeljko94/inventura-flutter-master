@@ -30,16 +30,15 @@ class _ListeScreenState extends State<ListeScreen> {
   void initState() {
     super.initState();
 
+
     fetchListe();
   }
 
-  fetchListe() {
-    Future.delayed(Duration.zero, () async {
-      var listeData = await _listeService!.fetchAll();
-      setState(() {
-        liste = listeData;
-        listeStore = listeData;
-      });
+  fetchListe() async {
+    var listeData = await _listeService!.fetchAll();
+    setState(() {
+      liste = listeData;
+      listeStore = listeData;
     });
   }
 
@@ -86,7 +85,8 @@ class _ListeScreenState extends State<ListeScreen> {
             },
             onChanged: _searchOnChange,
           ),
-          ListView.builder(
+          Expanded(
+            child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemCount: liste.length,
@@ -97,16 +97,23 @@ class _ListeScreenState extends State<ListeScreen> {
                 child: Card(
                     child: ListTile(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              settings: const RouteSettings(name: '/lista-pregled-artikala'),
-                              builder: (context) => ListaPregledArtikalaScreen(
-                                lista: liste[index],
-                                onAddLista: fetchListe,
-                                onUpdateLista: fetchListe,
+                          if(!isSearchMode) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                settings: const RouteSettings(name: '/lista-pregled-artikala'),
+                                builder: (context) => ListaPregledArtikalaScreen(
+                                  lista: liste[index],
+                                  onAddLista: fetchListe,
+                                  onUpdateLista: fetchListe,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
+                          else {
+                            setState(() {
+                              liste[index].isCheckedForExport = !liste[index].isCheckedForExport!;
+                            });
+                          }
                         },
                         onLongPress: () async {
                         //  liste[index].isCheckedForExport != liste[index].isCheckedForExport;
@@ -140,6 +147,7 @@ class _ListeScreenState extends State<ListeScreen> {
                         ),)),
               );
             },
+          )
           ),
         ],
       ),
@@ -168,6 +176,10 @@ class _ListeScreenState extends State<ListeScreen> {
   _toggleSearchModeOff() {
     setState(() {
       isSearchMode = false;
+      
+      for(var i=0; i<liste.length; i++) {
+        liste[i].isCheckedForExport = false;
+      }
     });
   }
 
@@ -176,6 +188,7 @@ class _ListeScreenState extends State<ListeScreen> {
       isSearchMode = true;
     });
   }
+
 
   AppBar buildSearchAppBar(String title, BuildContext context) {
     return AppBar(
@@ -232,19 +245,26 @@ class _ListeScreenState extends State<ListeScreen> {
     var confirmDelete = await ConfirmationDialog.openConfirmationDialog("Brisanje liste", 'Jeste li sigurni da želite trajno obrisati odabrane liste?', context);
 
     if(confirmDelete) {
+      List<int> deletedIds = [];
       var selectedListe = liste.where((element) => element.isCheckedForExport!).toList();
       selectedListe.forEach((element) async {
         var deleted = await _listeService!.delete(element.id!);
 
         if(deleted > 0 ) {
-          var snackBar = const SnackBar(content: Text("Liste uspješno obrisane!"));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          if(isSearchMode) {
-            _toggleSearchModeOff();
-          }
+          deletedIds.add(element.id!);
           await fetchListe();
         }
+        else {
+          var snackBar = const SnackBar(content: Text("Greška prilikom brisanja liste-!"));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          return;
+        }
       });
+      var snackBar = const SnackBar(content: Text("Liste uspješno obrisane!"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if(isSearchMode) {
+        _toggleSearchModeOff();
+      }
     }
   }
 
