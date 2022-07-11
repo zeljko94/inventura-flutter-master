@@ -4,7 +4,6 @@ import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/routes.dart';
 import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/auth/login.dart';
-import 'package:inventura_app/screens/dashboard.dart';
 import 'package:inventura_app/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 

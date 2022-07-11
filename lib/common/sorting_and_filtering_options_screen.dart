@@ -119,14 +119,6 @@ class SortingAndFilteringOptions {
   String? sortByColumn;
   String? sortOrder;
 
-  static const columnMappings = <String, String> {
-    'Naziv': 'naziv',
-    'Sifra': 'kod',
-    'Barkod': 'barkod',
-    'Jedinica mjere': 'jedinicaMjere',
-    'Cijena': 'cijena'
-  };
-
   SortingAndFilteringOptions({ this.sortByColumn, this.sortOrder });
 
   

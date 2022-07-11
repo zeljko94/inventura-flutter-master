@@ -6,13 +6,15 @@ import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:inventura_app/models/artikl.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class DataImportService {
+  final AppSettingsService _appSettingsService = AppSettingsService();
   final ArtikliService? _artikliService = ArtikliService();
 
-  Future<List<Artikl>?> getArtikliFromRestApi(context) async {
-    final response = await http.get(Uri.parse('http://192.168.5.200:8888/ords/opus/artikl/barkodovi'));
+  Future<List<Artikl>?> getArtikliFromRestApi(String url) async {
+    final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       try {
         var jsonresponse = jsonDecode(utf8.decode(response.bodyBytes));

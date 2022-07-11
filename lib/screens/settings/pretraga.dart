@@ -44,7 +44,6 @@ class _SettingsPretragaScreenState extends State<SettingsPretragaScreen> {
 
     Future.delayed(Duration.zero, () async {
       var settings = await _appSettingsService.getSettings();
-      // print(settings.toMap());
       
       setState(() {
         _settings = settings;
@@ -85,16 +84,15 @@ class _SettingsPretragaScreenState extends State<SettingsPretragaScreen> {
                   onTap: () async {
                       var res = await _displayZadanaMetodaUnosaPretrazivanja('Odaberite zadanu vrstu pretraživanja', context);
                       if(res != null) {
-                        print(res);
                         await _updateZadanaMetodaPretrazivanja(res);
                       }
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(0),
                     child: 
                       IgnorePointer(
                         ignoring: true,
-                        child: const ExpansionTile(
+                        child: ExpansionTile(
                         title: Text('Zadana metoda pretraživanja'),
                         trailing: Icon(Icons.arrow_forward_ios, size: 15,),
                         // subtitle: Text('Trailing expansion arrow icon'),
@@ -103,7 +101,7 @@ class _SettingsPretragaScreenState extends State<SettingsPretragaScreen> {
                   ),),
                   
                     ExpansionTile(
-                      title: Text('Pretraga skeniranjem pretražuje po poljima'),
+                      title: const Text('Pretraga skeniranjem pretražuje po poljima'),
                       children: <Widget>[
                         for(var i=0; i<poljaZaPretraguCheckboxItemsScanner.length; i++)
                           CheckboxListTile(
@@ -180,8 +178,6 @@ class _SettingsPretragaScreenState extends State<SettingsPretragaScreen> {
   }
 
   _updateBrojRezultataPoPretrazivanju() async {
-    print(dialogInputTextController.text);
-    print(int.tryParse(dialogInputTextController.text));
     setState(() {
       _settings!.numberOfResultsPerSearch = int.tryParse(dialogInputTextController.text);
     });

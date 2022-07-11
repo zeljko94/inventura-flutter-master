@@ -219,17 +219,33 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   
   _applySorting(SortingAndFilteringOptions options) async {
     setState(() {
-      if(options.sortByColumn == 'Naziv') {
-        artikli.sort((a, b) => a.naziv!.compareTo(b.naziv!));
+      if(options.sortOrder == 'Ascending') {
+        if(options.sortByColumn == 'Naziv') {
+          artikli.sort((a, b) => a.naziv!.compareTo(b.naziv!));
+        }
+        else if(options.sortByColumn == 'Barkod') {
+          artikli.sort((a, b) => a.barkod!.compareTo(b.barkod!));
+        }
+        else if(options.sortByColumn == 'Sifra') {
+          artikli.sort((a, b) => a.kod!.compareTo(b.kod!));
+        }
+        else if(options.sortByColumn == 'Cijena') {
+          artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+        }
       }
-      else if(options.sortByColumn == 'Barkod') {
-        artikli.sort((a, b) => a.barkod!.compareTo(b.barkod!));
-      }
-      else if(options.sortByColumn == 'Sifra') {
-        artikli.sort((a, b) => a.kod!.compareTo(b.kod!));
-      }
-      else if(options.sortByColumn == 'Cijena') {
-        artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+      else if(options.sortOrder == 'Descending') {
+        if(options.sortByColumn == 'Naziv') {
+          artikli.sort((a, b) => b.naziv!.compareTo(a.naziv!));
+        }
+        else if(options.sortByColumn == 'Barkod') {
+          artikli.sort((a, b) => b.barkod!.compareTo(a.barkod!));
+        }
+        else if(options.sortByColumn == 'Sifra') {
+          artikli.sort((a, b) => b.kod!.compareTo(a.kod!));
+        }
+        else if(options.sortByColumn == 'Cijena') {
+          artikli.sort((a, b) => b.cijena!.compareTo(a.cijena!));
+        }
       }
     });
   }

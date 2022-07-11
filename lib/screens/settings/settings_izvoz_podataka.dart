@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/models/app_settings.dart';
+import 'package:inventura_app/screens/settings/settings.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
 class SettingsIzvozPodatakaScreen extends StatefulWidget {
@@ -18,6 +19,14 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
   final _formKey = GlobalKey<FormState>();
   TextEditingController dialogInputTextController = TextEditingController();
 
+  final List<CheckboxListItem> poljaZaExportCheckboxItems = [
+    CheckboxListItem(label: 'naziv', isChecked: false),
+    CheckboxListItem(label: 'barkod', isChecked: false),
+    CheckboxListItem(label: 'šifra', isChecked: false),
+    CheckboxListItem(label: 'količina', isChecked: false),
+    CheckboxListItem(label: 'jedinica mjere', isChecked: false),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -26,6 +35,13 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
       var settings = await _appSettingsService.getSettings();
       setState(() {
         _settings = settings;
+
+        var poljaZaExport = _settings!.exportDataFields!.split(',');
+        poljaZaExportCheckboxItems.forEach((element) {
+          if(poljaZaExport.firstWhere((x) => x == element.label, orElse: () => '') != '') {
+            element.isChecked = true;
+          }
+        });
       });
     });
   }
@@ -46,8 +62,11 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
                 InkWell(
                   onTap: () async {
                     var result = await _displayInputDialog('Csv delimiter simbol', '', 'Simbol', false, _settings!.csvDelimiterSimbolExport, context);
+                    if(result != null) {
+                      await _updateCsvExportSimbol(result);
+                    }
                   },
-                  child: IgnorePointer(
+                  child: const IgnorePointer(
                     ignoring: true,
                     child: ExpansionTile(
                       trailing: Icon(Icons.arrow_forward_ios, size: 15,),
@@ -57,13 +76,32 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
                     ),
                   )
                 ),
+
+                
+                ExpansionTile(
+                  title: const Text('Pretraga unosom pretražuje po poljima'),
+                  children: <Widget>[
+                    for(var i=0; i<poljaZaExportCheckboxItems.length; i++)
+                      CheckboxListTile(
+                        checkColor: ColorPalette.success,
+                        title: Text(poljaZaExportCheckboxItems[i].label!),
+                        value: poljaZaExportCheckboxItems[i].isChecked,
+                        onChanged: (value) async {
+                          setState(() {
+                            poljaZaExportCheckboxItems[i].isChecked = !poljaZaExportCheckboxItems[i].isChecked!;
+                          });
+                          await _updatePoljaZaExport();
+                        },
+                      )
+                  ],
+                ),
               ],)
             ),
           );
   }
 
 
-      Future<dynamic> _displayInputDialog(String title, String message, String inputLabel, bool isNumberOnly, dynamic value, BuildContext context) async {
+  Future<dynamic> _displayInputDialog(String title, String message, String inputLabel, bool isNumberOnly, dynamic value, BuildContext context) async {
     dialogInputTextController.text = value.toString();
   return showDialog(
       context: context,
@@ -137,6 +175,19 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
             ],
         );
       });
+  }
+
+  _updateCsvExportSimbol(result) async {
+    _settings!.csvDelimiterSimbolExport = result;
+    _appSettingsService.update(_settings!.id!, _settings!);
+  }
+
+  _updatePoljaZaExport() async {
+    String result = poljaZaExportCheckboxItems.where((element) => element.isChecked!).map((e) => e.label!).toList().join(',');
+    setState(() {
+      _settings!.exportDataFields = result;
+    });
+    await _appSettingsService.update(_settings!.id!, _settings!);
   }
 
 }

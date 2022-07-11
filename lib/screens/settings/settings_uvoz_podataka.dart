@@ -60,8 +60,12 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
                 InkWell(
                   onTap: () async {
                     var result = await _displayInputDialog('Csv delimiter simbol', '', 'Simbol', false, _settings!.csvDelimiterSimbolImport, context);
+                    if(result != null) {
+                      _settings!.csvDelimiterSimbolImport = result;
+                      _appSettingsService.update(_settings!.id!, _settings!);
+                    }
                   },
-                  child: IgnorePointer(
+                  child: const IgnorePointer(
                     ignoring: true,
                     child: ExpansionTile(
                       trailing: Icon(Icons.arrow_forward_ios, size: 15,),
@@ -73,26 +77,35 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    maxLines: null,
-                    controller: linkZaUvozPodatakaSaRestApijaController,
-                    cursorColor: ColorPalette.primary,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Link za uvoz podataka sa rest backenda',
-                      floatingLabelStyle:
-                          TextStyle(color: ColorPalette.primary),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 2.0),
+                  child: Focus(
+                      child: TextFormField(
+                      maxLines: null,
+                      controller: linkZaUvozPodatakaSaRestApijaController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Link za uvoz podataka sa rest backenda',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
                       ),
+                      onChanged: (value) async {
+                        _settings!.restApiLinkImportArtikli = value;
+                        _appSettingsService.update(_settings!.id!, _settings!);
+                      },
+                      validator: (value) {
+                        return null;
+                      },
+                      onTap: () async {
+        
+                      },
                     ),
-                    validator: (value) {
-                      return null;
-                    },
-                    onTap: () async {
-      
+                    onFocusChange: (hasFocus) async {
+
                     },
                   ),
                 ),
@@ -185,12 +198,10 @@ class _SettingsUvozPodatakaScreenState extends State<SettingsUvozPodatakaScreen>
   
   _fetchAppSettings() async {
     var settings = await _appSettingsService.getSettings();
-    
+
     setState(() {
       _settings = settings;
     });
-    print("SETTINGS UVOZ");
-    print(_settings!.toMap());
   }
 
 }

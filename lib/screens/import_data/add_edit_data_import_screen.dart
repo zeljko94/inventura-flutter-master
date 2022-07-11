@@ -1,7 +1,4 @@
 
-
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/app_bar.dart';
@@ -10,6 +7,7 @@ import 'package:inventura_app/common/loading_spinner.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/data_import.dart';
 import 'package:inventura_app/services/data_import_service.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class AddEditDataImportScreen extends StatefulWidget {
@@ -22,6 +20,8 @@ class AddEditDataImportScreen extends StatefulWidget {
 }
 
 class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
+  final AppSettingsService _appSettingsService = AppSettingsService();
+
   final DataImportService? _dataImportService = DataImportService();
   final ArtikliService? _artikliService = ArtikliService();
   bool isLoading = false;
@@ -37,7 +37,11 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
   void initState() {
     super.initState();
 
-    restApiLinkController.text = 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi';
+    // restApiLinkController.text = 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi';
+    Future.delayed(Duration.zero, () async {
+      var settings = await _appSettingsService.getSettings();
+      restApiLinkController.text = settings.restApiLinkImportArtikli!;
+    });
   }
 
   @override
@@ -188,7 +192,7 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
                       }
                       else if(selectedVrstaUvoza == 'rest api') {
                         buildLoadingSpinner('Učitavanje...', context);
-                        var artikli = await _dataImportService!.getArtikliFromRestApi(context);
+                        var artikli = await _dataImportService!.getArtikliFromRestApi(restApiLinkController.text);
                         await _artikliService!.deleteAll();
                         await _artikliService!.bulkInsert(artikli!);
                         removeLoadingSpinner(context);

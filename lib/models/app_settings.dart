@@ -29,6 +29,8 @@ class AppSettings {
       'obrisiArtiklePrilikomUvoza': obrisiArtiklePrilikomUvoza,
       'csvDelimiterSimbolImport': csvDelimiterSimbolImport,
       'restApiLinkImportArtikli': restApiLinkImportArtikli,
+      'csvDelimiterSimbolExport': csvDelimiterSimbolExport,
+      'exportDataFields': exportDataFields
     };
   }
 }
