@@ -50,6 +50,7 @@ dependencies:
   pagination_view: ^2.0.0
   permission_handler: ^10.0.0
   open_file: ^3.2.1
+  syncfusion_flutter_xlsio: ^20.2.36-beta
   
 
 dev_dependencies:

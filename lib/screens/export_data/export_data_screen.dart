@@ -153,9 +153,22 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                           await _pokreniIzvozCsv(listItems, naziv.replaceAll(' ', '') + DateTime.now().millisecondsSinceEpoch.toString());
                         }
                       }
-                      // else if(selectedVrstaIzvoza == 'excel') {
-                      //   await _pokreniIzvozExcel(widget.lista!.items!, widget.lista!.naziv! + '_' + DateTime.now().millisecondsSinceEpoch.toString());
-                      // }
+                      else if(selectedVrstaIzvoza == 'excel') {
+                        if(izveziKaoOdvojeneDatoteke){
+                          for(var i=0; i<widget.liste!.length; i++) {
+                            await _pokreniIzvozExcel(widget.liste![i].items!, widget.liste![i].naziv!.replaceAll(' ', '') + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                          }
+                        }
+                        else {
+                          List<ListItem> listItems = [];
+                          String naziv = '';
+                          for(var i=0; i<widget.liste!.length; i++) {
+                            listItems.addAll(widget.liste![i].items!);
+                            naziv += widget.liste![i].naziv! + '_';
+                          }
+                          await _pokreniIzvozExcel(listItems, naziv.replaceAll(' ', '') + '_' + DateTime.now().millisecondsSinceEpoch.toString());
+                        }
+                      }
                       // else if(selectedVrstaIzvoza == 'rest api') {
                       // }
                       _setIsLoading(false);
@@ -202,16 +215,14 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
 
 
   _pokreniIzvozExcel(List<ListItem> items, String filename) async {
-    // _setIsLoading(true);
-    // var isSuccess = await _dataExportService.exportExcel(items, filename);
-    // if(isSuccess) {
-    //     var snackBar = const SnackBar(content: Text("Uspješan izvoz podataka!"));
-    //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // }
-    // else {
-    //   var snackBar = const SnackBar(content: Text("Greška prilikom izvoza liste!"));
-    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // }
-    // _setIsLoading(false);
+    var isSuccess = await _dataExportService.exportExcel(items, filename);
+    if(isSuccess) {
+        var snackBar = const SnackBar(content: Text("Uspješan izvoz podataka!"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    else {
+      var snackBar = const SnackBar(content: Text("Greška prilikom izvoza liste!"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }

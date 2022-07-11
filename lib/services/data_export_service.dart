@@ -7,6 +7,7 @@ import 'package:inventura_app/models/list_item.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
 class DataExportService {
 
@@ -44,27 +45,38 @@ class DataExportService {
     }
   }
   
+  Future<void> excelTest() async {    
+    final Workbook workbook = Workbook();
+    final Worksheet sheet = workbook.worksheets[0];
+    sheet.getRangeByName('A1').setText('Hello World!');
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
 
-  // Future<bool> exportExcel(List<ListItem> items, String filename) async {    
-  //   try {
-  //     var excel = Excel.createExcel();
-  //     if (!await Permission.storage.request().isGranted) {
-  //       print("STORAGE PERMISSION NOT GRANTED!");
-  //       return false;
-  //     }
-  //     String dir =
-  //         (Platform.isAndroid ? (await getExternalStorageDirectory())!.path : (await getApplicationSupportDirectory()).path);
-  //     String file = "$dir";
-  //     File f = File(file + "/" + filename + ".xlsx");
-  //     print("IZVOZ PODATAKA EXCEL" + f.path);
-  //     await f.writeAsBytes(await excel.encode());
-  //     return true;
-  //   }
-  //   catch(exception) {
-  //     print(exception);
-  //     return false;
-  //   }
-  // }
+    const String path = '/storage/emulated/0/Download';
+    String filename = '$path/Output.xlsx';
+    File file = File(filename);
+    await file.writeAsBytes(bytes, flush: true);
+
+  }
+
+  Future<bool> exportExcel(List<ListItem> items, String filename) async {    
+    try {
+      final Workbook workbook = Workbook();
+      final Worksheet sheet = workbook.worksheets[0];
+      sheet.getRangeByName('A1').setText('Hello World!');
+      final List<int> bytes = workbook.saveAsStream();
+      workbook.dispose();
+
+      const String path = '/storage/emulated/0/Download';
+      File file = File('$path/$filename.xlsx');
+      await file.writeAsBytes(bytes, flush: true);
+      return true;
+    }
+    catch(exception) {
+      print(exception);
+      return false;
+    }
+  }
   
   Future<bool> exportRestApi(List<ListItem> items) async {
     return Future.delayed(Duration.zero, () async {

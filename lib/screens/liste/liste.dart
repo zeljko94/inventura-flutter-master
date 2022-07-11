@@ -194,7 +194,7 @@ class _ListeScreenState extends State<ListeScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
-        if(liste.where((lista) => lista.isCheckedForExport == true).toList().length < 2) Tooltip(
+        if(liste.where((lista) => lista.isCheckedForExport == true).toList().length < 2 && liste.where((lista) => lista.isCheckedForExport == true).toList().isNotEmpty) Tooltip(
           message: 'Uredi listu',
           child: IconButton(onPressed: () async {
           Navigator.of(context).push(
