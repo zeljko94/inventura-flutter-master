@@ -1,9 +1,11 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/routes.dart';
 import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/auth/login.dart';
+import 'package:inventura_app/screens/splash_screen.dart';
 import 'package:inventura_app/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -90,16 +92,32 @@ class MyApp extends StatelessWidget {
                 letterSpacing: 1.5),
           )),
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder(
-          future: authService.isUserLoggedIn(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator();
-            if (snapshot.data == true) {
-              return const ArtikliScreen();
-            } else {
-              return const LoginScreen();
-            }
-          }),
+      home: AnimatedSplashScreen(
+                duration: 1000,
+                splashTransition: SplashTransition.fadeTransition,
+                backgroundColor: Colors.blue,
+                splash: Column(children: [
+                  Icon(Icons.home, size: 75, color: Color(0xffffffff),),
+                  Text('Inventura', style: TextStyle(color: Color(0xffffffff), fontSize: 25, fontWeight: FontWeight.bold),),
+                ]),
+                nextScreen: const ArtikliScreen(),
+              ),
+      // home: FutureBuilder(
+      //     future: authService.isUserLoggedIn(),
+      //     builder: (context, snapshot) {
+      //       if (!snapshot.hasData) return const CircularProgressIndicator();
+      //       if (snapshot.data == true) {
+      //         return const ArtikliScreen();
+      //       } else {
+      //         return AnimatedSplashScreen(
+      //           duration: 5000,
+      //           splashTransition: SplashTransition.fadeTransition,
+      //           backgroundColor: Colors.blue,
+      //           splash: const Icon(Icons.home),
+      //           nextScreen: const ArtikliScreen(),
+      //         );
+      //       }
+      //     }),
       routes: routes,
     );
   }

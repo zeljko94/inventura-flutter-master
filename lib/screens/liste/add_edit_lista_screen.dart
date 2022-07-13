@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
@@ -51,7 +50,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar.buildAppBar('Liste', '', context),
+      appBar: MainAppBar.buildAppBar('Liste', isEdit ? 'Pregled liste' : 'Dodaj listu', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
     );
@@ -60,7 +59,17 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
 
     
   _buildBody() {
-      return SingleChildScrollView(
+      return Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+            image: DecorationImage(
+              colorFilter: ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+              image: const AssetImage(ColorPalette.backgroundImagePath),
+              fit: BoxFit.cover),
+            ),
+          ),
+          SingleChildScrollView(
         child: StatefulBuilder(builder: (context, setState) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -256,7 +265,9 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
             ],),
           );
     }),
-    );
+    )
+        ],
+      );
   }
 
   _resetControllers() {}

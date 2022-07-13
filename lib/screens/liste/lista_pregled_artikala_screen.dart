@@ -139,7 +139,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
               colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
               image: AssetImage(ColorPalette.backgroundImagePath),
               fit: BoxFit.cover),
-          ),
+            ),
           ),
           SingleChildScrollView(
         child: StatefulBuilder(builder: (context, setState) {
