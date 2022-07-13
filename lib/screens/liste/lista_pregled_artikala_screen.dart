@@ -416,13 +416,13 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
           dodaniArtikli.sort((a, b) => a.barkod!.compareTo(b.barkod!));
         }
         else if(options.sortByColumn == 'Sifra') {
-          artikli.sort((a, b) => a.kod!.compareTo(b.kod!));
+          dodaniArtikli.sort((a, b) => a.kod!.compareTo(b.kod!));
         }
         else if(options.sortByColumn == 'Cijena') {
-          artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+          dodaniArtikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
         }
         else if(options.sortByColumn == 'Kolicina') {
-          artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+          dodaniArtikli.sort((a, b) => a.kolicina!.compareTo(b.kolicina!));
         }
       }
       else if(options.sortOrder == 'Descending') {
@@ -437,6 +437,9 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         }
         else if(options.sortByColumn == 'Cijena') {
           dodaniArtikli.sort((a, b) => b.cijena!.compareTo(a.cijena!));
+        }
+        else if(options.sortByColumn == 'Kolicina') {
+          dodaniArtikli.sort((a, b) => b.kolicina!.compareTo(a.kolicina!));
         }
       }
     });
