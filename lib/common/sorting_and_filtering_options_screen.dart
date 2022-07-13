@@ -31,7 +31,7 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
     }
     else if(widget.type == 'liste') {
       setState(() {
-        sortColumnChips = ['Naziv'];
+        sortColumnChips = ['Naziv', 'Datum kreiranja', 'Broj artikala'];
       });
     }
     else if(widget.type == 'lista_pregled_artikala') {

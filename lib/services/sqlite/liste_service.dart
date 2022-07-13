@@ -14,8 +14,6 @@ class ListeService extends SqliteBaseService {
   Future<int> add(Lista lista) async{ 
     final db = await init(); 
     var map = lista.toMap();
-
-    print(map);
     map.remove("id");
     map.remove("items");
     map.remove("isCheckedForExport");

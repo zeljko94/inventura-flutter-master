@@ -322,14 +322,25 @@ class _ListeScreenState extends State<ListeScreen> {
         if(options.sortByColumn == 'Naziv') {
           liste.sort((a, b) => a.naziv!.compareTo(b.naziv!));
         }
+        else if(options.sortByColumn == 'Datum kreiranja') {
+          liste.sort((a, b) => DateTime.parse(a.datumKreiranja!).compareTo(DateTime.parse(b.datumKreiranja!)));
+        }
+        else if(options.sortByColumn == 'Broj artikala') {
+          liste.sort((a, b) => a.items!.length.compareTo(b.items!.length));
+        }
       }
       else if(options.sortOrder == 'Descending') {
         if(options.sortByColumn == 'Naziv') {
           liste.sort((a, b) => b.naziv!.compareTo(a.naziv!));
         }
+        else if(options.sortByColumn == 'Datum kreiranja') {
+          liste.sort((a, b) => DateTime.parse(b.datumKreiranja!).compareTo(DateTime.parse(a.datumKreiranja!)));
+        }
+        else if(options.sortByColumn == 'Broj artikala') {
+          liste.sort((a, b) => b.items!.length.compareTo(a.items!.length));
+        }
       }
     });
-  
   }
 
 }
