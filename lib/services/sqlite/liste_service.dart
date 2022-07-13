@@ -11,22 +11,28 @@ class ListeService extends SqliteBaseService {
     final ListItemService? _listItemService = ListItemService();
     final ArtikliService? _artikliService = ArtikliService();
 
-  Future<int> add(Lista lista) async{ 
-    final db = await init(); 
-    var map = lista.toMap();
-    map.remove("id");
-    map.remove("items");
-    map.remove("isCheckedForExport");
-    var insertedListaId = await db.insert("Liste", map, conflictAlgorithm: ConflictAlgorithm.ignore,);
+  Future<int?> add(Lista lista) async{ 
+    try {
+      final db = await init(); 
+      var map = lista.toMap();
+      map.remove("id");
+      map.remove("items");
+      map.remove("isCheckedForExport");
+      var insertedListaId = await db.insert("Liste", map, conflictAlgorithm: ConflictAlgorithm.ignore,);
 
-    if(insertedListaId > 0) {
-      for(var i=0; i<lista.items!.length; i++) {
-        lista.items![i].listaId = insertedListaId;
-        await _listItemService!.add(lista.items![i]);
+      if(insertedListaId > 0) {
+        for(var i=0; i<lista.items!.length; i++) {
+          lista.items![i].listaId = insertedListaId;
+          await _listItemService!.add(lista.items![i]);
+        }
       }
-    }
 
-    return insertedListaId;
+      return insertedListaId;
+    }
+    catch(exception) {
+      print(exception);
+      return null;
+    }
   }
 
  Future<List<Lista>> fetchAll() async {
@@ -46,9 +52,6 @@ class ListeService extends SqliteBaseService {
 
     for(var i=0; i<liste.length; i++) {
       liste[i].items = await _listItemService!.getListItems(liste[i].id!);
-      // for(var j=0; j<liste[i].items!.length; j++) {
-      //   liste[i].items![j].artikl = await _artikliService!.getById(liste[i].items![j].artiklId!);
-      // }
     }
 
     return liste;

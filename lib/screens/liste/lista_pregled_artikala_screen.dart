@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
@@ -378,7 +377,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     if(!isEdit) {
       var inserted = await _listeService!.add(lista);
 
-      if(inserted > 0) {
+      if(inserted != null && inserted > 0) {
         var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         _resetControllers();

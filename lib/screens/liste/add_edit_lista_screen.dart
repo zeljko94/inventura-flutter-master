@@ -222,7 +222,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
                         if(!isEdit) {
                           var inserted = await _listeService.add(lista);
                   
-                          if(inserted > 0) {
+                          if(inserted != null && inserted > 0) {
                             var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
                             _resetControllers();

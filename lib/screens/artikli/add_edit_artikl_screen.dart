@@ -4,9 +4,7 @@ import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/artikl.dart';
-import 'package:inventura_app/models/mjerna_jedinica.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
-import 'package:inventura_app/services/sqlite/mjerne_jedinice_service.dart';
 import 'package:collection/collection.dart';
 
 class AddEditArtiklScreen extends StatefulWidget {

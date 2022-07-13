@@ -1,13 +1,11 @@
 
 import 'package:inventura_app/models/artikl.dart';
-import 'package:inventura_app/services/sqlite/mjerne_jedinice_service.dart';
 import 'package:inventura_app/services/sqlite/sqlite_base_service.dart';
 import 'package:sqflite/sqflite.dart'; //sqflite package
 import 'dart:async';
 
 
 class ArtikliService extends SqliteBaseService {
-  final MjerneJediniceService _mjerneJediniceService = MjerneJediniceService();
 
   Future<int> addArtikl(Artikl artikl) async{ //retur
     final db = await init(); //open data
