@@ -54,7 +54,6 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
       appBar: MainAppBar.buildAppBar('Liste', '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
-      floatingActionButton: _buildButton(),
     );
   
   }
@@ -143,7 +142,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
           
                       },
                     ),
-                    TextFormField(
+                    if(isEdit) TextFormField(
                       readOnly: true,
                       enabled: false,
                       controller: datumController,
@@ -258,18 +257,6 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
           );
     }),
     );
-  }
-
-
-  _buildButton() {
-    // return FloatingActionButton(
-    //       heroTag: null,
-    //       backgroundColor: ColorPalette.info,
-    //       onPressed: () {
-    //         _scanBarcode();
-    //       },
-    //       child: const Icon(Icons.camera_alt),
-    //     );
   }
 
   _resetControllers() {}

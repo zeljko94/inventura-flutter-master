@@ -101,6 +101,7 @@ class _ListeScreenState extends State<ListeScreen> {
                     const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
                 child: Card(
                     child: ListTile(
+                      tileColor: ColorPalette.listItemTileBackgroundColor,
                         onTap: () {
                           if(!isSearchMode) {
                             Navigator.of(context).push(

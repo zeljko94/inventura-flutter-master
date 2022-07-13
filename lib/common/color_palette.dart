@@ -135,6 +135,9 @@ class ColorPalette {
     900: const Color(0xff757575), //100%
   });
 
+
+
+  static final Color listItemTileBackgroundColor = const Color(0xffbbdefb).withOpacity(0.6);
   static const String backgroundImagePath = 'assets/images/background4.jpg';
   static const double backgroundImageOpacity = 0.13;
 }

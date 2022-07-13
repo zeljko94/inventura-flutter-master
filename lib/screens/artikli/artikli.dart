@@ -113,6 +113,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                     child: Padding(
                       padding: EdgeInsets.zero,
                       child: ListTile(
+                        tileColor: ColorPalette.listItemTileBackgroundColor,
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -248,6 +249,9 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         else if(options.sortByColumn == 'Cijena') {
           artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
         }
+        else if(options.sortByColumn == 'Jedinica mjere') {
+          artikli.sort((a, b) => a.jedinicaMjere!.compareTo(b.jedinicaMjere!));
+        }
       }
       else if(options.sortOrder == 'Descending') {
         if(options.sortByColumn == 'Naziv') {
@@ -261,6 +265,9 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         }
         else if(options.sortByColumn == 'Cijena') {
           artikli.sort((a, b) => b.cijena!.compareTo(a.cijena!));
+        }
+        else if(options.sortByColumn == 'Jedinica mjere') {
+          artikli.sort((a, b) => b.jedinicaMjere!.compareTo(a.jedinicaMjere!));
         }
       }
     });

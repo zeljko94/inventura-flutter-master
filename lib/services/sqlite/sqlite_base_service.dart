@@ -15,15 +15,7 @@ class SqliteBaseService {
         path,
         version: 1,
         onCreate: (Database db,int version) async{
-          await db.execute("""
-            CREATE TABLE MjerneJedinice(
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              opis TEXT,
-              naziv TEXT
-            )"""
-          );
-
-          await db.execute("""
+        await db.execute("""
           CREATE TABLE Artikli(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             barkod TEXT,

@@ -121,9 +121,27 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       ),
     );
   }
+
+  
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(
+          //     colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+          //     image: AssetImage(ColorPalette.backgroundImagePath),
+          //     fit: BoxFit.cover),
+          // ),
   
   _buildBody() {
-      return SingleChildScrollView(
+      return Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+            image: DecorationImage(
+              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+              image: AssetImage(ColorPalette.backgroundImagePath),
+              fit: BoxFit.cover),
+          ),
+          ),
+          SingleChildScrollView(
         child: StatefulBuilder(builder: (context, setState) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -151,6 +169,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
                                 child: Card(
                                     child: ListTile(
+                                      tileColor: ColorPalette.listItemTileBackgroundColor,
                                         onTap: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
@@ -236,7 +255,9 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
             ],),
           );
     }),
-    );
+    )
+        ],
+      );
   }
 
 
