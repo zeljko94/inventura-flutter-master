@@ -8,6 +8,7 @@ import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
+import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class ArtikliScreen extends StatefulWidget {
@@ -84,6 +85,21 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             padding: EdgeInsets.only(top: 8),
             child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.secondaryText[50])),
           ) : SizedBox(),
+          
+          if(artikli.isEmpty) 
+            ElevatedButton.icon(
+              icon: Icon(Icons.add),
+              label: Text('Uvezi artikle'),
+              onPressed: () async {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      settings: const RouteSettings(name: '/import-data'),
+                      builder: (context) => AddEditDataImportScreen(
+                      ),
+                    ),
+                  );
+              },
+            ),
           Expanded(child: 
           !isLoading ? ListView.builder(
             scrollDirection: Axis.vertical,

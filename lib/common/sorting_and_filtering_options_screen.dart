@@ -3,7 +3,8 @@ import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 
 class SortingAndFilteringOptionsScreen extends StatefulWidget {
-  const SortingAndFilteringOptionsScreen({ Key? key }) : super(key: key);
+  final String? type;
+  const SortingAndFilteringOptionsScreen({ Key? key, this.type }) : super(key: key);
 
   @override
   _SortingAndFilteringOptionsScreenState createState() => _SortingAndFilteringOptionsScreenState();
@@ -20,6 +21,25 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
 
   String selectedSortColumnChip = 'Naziv';
   String selectedSortOrder = 'Ascending';
+
+  @override
+  void initState() {
+    super.initState();
+    
+    if(widget.type == 'artikli') {
+      
+    }
+    else if(widget.type == 'liste') {
+      setState(() {
+        sortColumnChips = ['Naziv'];
+      });
+    }
+    else if(widget.type == 'lista_pregled_artikala') {
+      setState(() {
+        sortColumnChips.add('Kolicina');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,10 @@ class Lista {
   String? naziv;
   String? napomena;
   String? skladiste;
+  String? datumKreiranja;
   bool? isCheckedForExport = false;
 
-  Lista({ this.id, this.naziv, this.napomena, this.skladiste, this.items });
+  Lista({ this.id, this.naziv, this.napomena, this.skladiste, this.items, this.datumKreiranja });
 
   List<ListItem>? items = [];
 
@@ -21,7 +22,8 @@ class Lista {
       'napomena': napomena,
       'skladiste': skladiste,
       'items': items,
-      'isCheckedForExport': isCheckedForExport
+      'isCheckedForExport': isCheckedForExport,
+      'datumKreiranja': datumKreiranja
     };
   }
 }

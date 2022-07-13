@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/models/app_settings.dart';
@@ -95,6 +96,18 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
                       )
                   ],
                 ),
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(15, 8, 8, 8),
+                    child: Text('Izvezi datoteke kao odvojene'),
+                  ),
+                  CupertinoSwitch(value: _settings == null || _settings!.izveziKaoOdvojeneDatoteke! == 0 ? false : true, onChanged: (value) async {
+                      await _updateIzveziKaoOdvojeneDatoteke(value);
+                  })
+                ],),
               ],)
             ),
           );
@@ -186,6 +199,13 @@ class _SettingsIzvozPodatakaScreenState extends State<SettingsIzvozPodatakaScree
     String result = poljaZaExportCheckboxItems.where((element) => element.isChecked!).map((e) => e.label!).toList().join(',');
     setState(() {
       _settings!.exportDataFields = result;
+    });
+    await _appSettingsService.update(_settings!.id!, _settings!);
+  }
+
+  _updateIzveziKaoOdvojeneDatoteke(bool value) async {
+    setState(() {
+      _settings!.izveziKaoOdvojeneDatoteke = value ? 1 : 0;
     });
     await _appSettingsService.update(_settings!.id!, _settings!);
   }

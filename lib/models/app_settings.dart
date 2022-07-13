@@ -13,9 +13,10 @@ class AppSettings {
 
   String? csvDelimiterSimbolExport;
   String? exportDataFields;
+  int? izveziKaoOdvojeneDatoteke;
 
   AppSettings({ this.id, this.defaultSearchInputMethod, this.scannerInputModeSearchByFields, this.keyboardInputModeSearchByFields, this.numberOfResultsPerSearch, 
-  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbolImport, this.restApiLinkImportArtikli, this.csvDelimiterSimbolExport, this.exportDataFields });
+  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbolImport, this.restApiLinkImportArtikli, this.csvDelimiterSimbolExport, this.exportDataFields, this.izveziKaoOdvojeneDatoteke });
 
   
   Map<String, dynamic> toMap() {
@@ -30,7 +31,8 @@ class AppSettings {
       'csvDelimiterSimbolImport': csvDelimiterSimbolImport,
       'restApiLinkImportArtikli': restApiLinkImportArtikli,
       'csvDelimiterSimbolExport': csvDelimiterSimbolExport,
-      'exportDataFields': exportDataFields
+      'exportDataFields': exportDataFields,
+      'izveziKaoOdvojeneDatoteke': izveziKaoOdvojeneDatoteke
     };
   }
 }

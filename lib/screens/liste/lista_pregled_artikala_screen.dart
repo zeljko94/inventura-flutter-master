@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
+import 'package:inventura_app/common/text_styles.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/models/list_item.dart';
@@ -83,7 +85,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: MainAppBar.buildAppBar(widget.lista!.naziv!, 'Pregled artikala', context),
+      appBar: buildSearchAppBarNormal(widget.lista!.naziv!, 'Pregled artikala', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -284,7 +286,6 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     _updateTotalValues();
     await _spremiIzmjene();
 
-    print("reload screen");
     // Navigator.popAndPushNamed(context, '/add-edit-dodani-artikl');
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -295,6 +296,33 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
           onUpdateDodaniArtikl: _updateDodaniArtikl,
         ),
       ),
+    );
+  }
+
+    AppBar buildSearchAppBarNormal(String title, String subtitle, BuildContext context) {
+    return AppBar(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+        Text(title),
+        subtitle != '' ? Text(subtitle, style: TextStyles.subtitleAppBar,) : const SizedBox()
+      ]),
+      actions: <Widget>[
+          IconButton(icon: const Icon(Icons.sort), onPressed: () async {
+            SortingAndFilteringOptions? result = await Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/sorting-and-filtering-options'),
+                builder: (context) => const SortingAndFilteringOptionsScreen(
+                  type: 'lista_pregled_artikala',
+                ),
+              ),
+            );
+            if(result != null) {
+              _applySorting(result);
+            }
+        }),
+        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {}),
+      ],
     );
   }
 
@@ -329,11 +357,6 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       existing.nazivArtikla = dodaniArt.nazivArtikla;
       existing.jedinicaMjere = dodaniArt.jedinicaMjere;
 
-      // var artikl = artikli.firstWhereOrNull((x) => x.id == existing!.artiklId);
-      // existing.artikl = artikl;
-
-      // var mjernaJedinica = mjerne
-
       setState(() {
         dodaniArtikli = List.of(dodaniArtikli);
       });
@@ -348,6 +371,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       naziv: widget.lista!.naziv!,
       skladiste: widget.lista!.skladiste!,
       napomena: widget.lista!.napomena,
+      datumKreiranja: widget.lista!.datumKreiranja,
       items: dodaniArtikli
     );
 
@@ -380,5 +404,41 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
+  }
+
+  _applySorting(SortingAndFilteringOptions options) {
+    setState(() {
+      if(options.sortOrder == 'Ascending') {
+        if(options.sortByColumn == 'Naziv') {
+          dodaniArtikli.sort((a, b) => a.naziv!.compareTo(b.naziv!));
+        }
+        else if(options.sortByColumn == 'Barkod') {
+          dodaniArtikli.sort((a, b) => a.barkod!.compareTo(b.barkod!));
+        }
+        else if(options.sortByColumn == 'Sifra') {
+          artikli.sort((a, b) => a.kod!.compareTo(b.kod!));
+        }
+        else if(options.sortByColumn == 'Cijena') {
+          artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+        }
+        else if(options.sortByColumn == 'Kolicina') {
+          artikli.sort((a, b) => a.cijena!.compareTo(b.cijena!));
+        }
+      }
+      else if(options.sortOrder == 'Descending') {
+        if(options.sortByColumn == 'Naziv') {
+          dodaniArtikli.sort((a, b) => b.naziv!.compareTo(a.naziv!));
+        }
+        else if(options.sortByColumn == 'Barkod') {
+          dodaniArtikli.sort((a, b) => b.barkod!.compareTo(a.barkod!));
+        }
+        else if(options.sortByColumn == 'Sifra') {
+          dodaniArtikli.sort((a, b) => b.kod!.compareTo(a.kod!));
+        }
+        else if(options.sortByColumn == 'Cijena') {
+          dodaniArtikli.sort((a, b) => b.cijena!.compareTo(a.cijena!));
+        }
+      }
+    });
   }
 }

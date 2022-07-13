@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
+import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
@@ -24,6 +26,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
   final TextEditingController nazivController = TextEditingController();
   final TextEditingController skladisteController = TextEditingController();
   final TextEditingController napomenaController = TextEditingController();
+  final TextEditingController datumController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -36,6 +39,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
       nazivController.text = widget.lista!.naziv!;
       skladisteController.text = widget.lista!.skladiste!;
       napomenaController.text = widget.lista!.napomena!;
+      datumController.text = DateTImeHelperService.formatZaPrikaz.format(DateTime.parse(widget.lista!.datumKreiranja!));
     }
 
     Future.delayed(Duration.zero, () async {
@@ -139,6 +143,29 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
           
                       },
                     ),
+                    TextFormField(
+                      readOnly: true,
+                      enabled: false,
+                      controller: datumController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Datum kreiranja',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                      onTap: () async {
+          
+                      },
+                    ),
                     // DropdownButtonFormField<Artikl>(
                     //   hint: const Text('Odaberite artikl:'),
                     //   // validator: (value) => value == null ? 'Odaberite mjernu jedinicu' : null,
@@ -182,11 +209,13 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
                     if (_formKey.currentState!.validate()) {
 
 
+                        var dateFormat = DateTImeHelperService.formatDbInsert;
                         var lista = Lista(
                           id: isEdit ? widget.lista!.id! : 0,
                           naziv: nazivController.text,
                           skladiste: skladisteController.text,
                           napomena: napomenaController.text,
+                          datumKreiranja: dateFormat.format(DateTime.now()),
                           items: isEdit ? widget.lista!.items! : []
                         );
 

@@ -11,7 +11,7 @@ class SqliteBaseService {
     Directory directory = await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
     final path = join(directory.path,"inventura.db"); //create path to database
 
-      return await openDatabase( //open the database or create a database if there isn't any
+      return await openDatabase(
         path,
         version: 1,
         onCreate: (Database db,int version) async{
@@ -43,7 +43,8 @@ class SqliteBaseService {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           naziv TEXT,
           napomena TEXT,
-          skladiste TEXT
+          skladiste TEXT,
+          datumKreiranja TEXT
         )"""
       );
 
@@ -76,15 +77,16 @@ class SqliteBaseService {
           restApiLinkImportArtikli TEXT,
 
           csvDelimiterSimbolExport TEXT,
-          exportDataFields TEXT
+          exportDataFields TEXT,
+          izveziKaoOdvojeneDatoteke INTEGER
         );
       """);
 
       
       // INSERT INITIAL DATA
       await db.execute("""
-        INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbolImport, restApiLinkImportArtikli, csvDelimiterSimbolExport, exportDataFields) 
-        VALUES(1, 'keyboard', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv')
+        INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbolImport, restApiLinkImportArtikli, csvDelimiterSimbolExport, exportDataFields, izveziKaoOdvojeneDatoteke) 
+        VALUES(1, 'keyboard', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv', 1)
       """);
       
     });

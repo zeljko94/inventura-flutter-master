@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:inventura_app/common/app_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
+import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
+import 'package:inventura_app/common/text_styles.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/screens/export_data/export_data_screen.dart';
@@ -26,6 +29,8 @@ class _ListeScreenState extends State<ListeScreen> {
 
   TextEditingController searchController = TextEditingController();
 
+  var dateFormat = DateTImeHelperService.formatZaPrikaz;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +50,7 @@ class _ListeScreenState extends State<ListeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: isSearchMode ? buildSearchAppBar('Liste', context) : MainAppBar.buildAppBar('Liste', 'Pregled svih lista', context),
+      appBar: isSearchMode ? buildSearchAppBar('Liste', context) : buildSearchAppBarNormal('Liste', 'Pregled svih lista', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
       floatingActionButton: _buildButton(),
@@ -141,7 +146,12 @@ class _ListeScreenState extends State<ListeScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('Broj artikala: ' + liste[index].items!.length.toString())
+                                Column(
+                                  children: [
+                                    Text('Broj artikala: ' + liste[index].items!.length.toString()),
+                                    Text(dateFormat.format(DateTime.parse(liste[index].datumKreiranja!)))
+                                  ],
+                                )
                             ],)
                           ],
                         ),)),
@@ -241,6 +251,33 @@ class _ListeScreenState extends State<ListeScreen> {
     );
   }
 
+  AppBar buildSearchAppBarNormal(String title, String subtitle, BuildContext context) {
+    return AppBar(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+        Text(title),
+        subtitle != '' ? Text(subtitle, style: TextStyles.subtitleAppBar,) : const SizedBox()
+      ]),
+      actions: <Widget>[
+          IconButton(icon: const Icon(Icons.sort), onPressed: () async {
+            SortingAndFilteringOptions? sortOptions = await Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/sorting-and-filtering-options'),
+                builder: (context) => const SortingAndFilteringOptionsScreen(
+                  type: 'liste',
+                ),
+              ),
+            );
+            if(sortOptions != null) {
+              _applySorting(sortOptions);
+            }
+        }),
+        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {}),
+      ],
+    );
+  }
+
   _deleteSelectedListe() async {
     var confirmDelete = await ConfirmationDialog.openConfirmationDialog("Brisanje liste", 'Jeste li sigurni da želite trajno obrisati odabrane liste?', context);
 
@@ -277,6 +314,22 @@ class _ListeScreenState extends State<ListeScreen> {
         liste = listeStore.where((element) => element.naziv!.toLowerCase().contains(value.toLowerCase())).toList();
       }
     });
+  }
+
+  _applySorting(SortingAndFilteringOptions options) async {
+    setState(() {
+      if(options.sortOrder == 'Ascending') {
+        if(options.sortByColumn == 'Naziv') {
+          liste.sort((a, b) => a.naziv!.compareTo(b.naziv!));
+        }
+      }
+      else if(options.sortOrder == 'Descending') {
+        if(options.sortByColumn == 'Naziv') {
+          liste.sort((a, b) => b.naziv!.compareTo(a.naziv!));
+        }
+      }
+    });
+  
   }
 
 }

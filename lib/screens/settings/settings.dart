@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/screens/settings/pretraga.dart';
 import 'package:inventura_app/screens/settings/settings_izvoz_podataka.dart';
 import 'package:inventura_app/screens/settings/settings_uvoz_podataka.dart';
@@ -9,7 +10,8 @@ import 'package:inventura_app/screens/settings/skeniranje.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({ Key? key }) : super(key: key);
+  final AppSettings? settings;
+  const SettingsScreen({ Key? key, this.settings }) : super(key: key);
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();

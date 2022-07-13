@@ -29,7 +29,8 @@ class AppSettingsService extends SqliteBaseService {
         csvDelimiterSimbolImport: maps[i]['csvDelimiterSimbolImport'] as String,
         restApiLinkImportArtikli: maps[i]['restApiLinkImportArtikli'] as String,
         csvDelimiterSimbolExport: maps[i]['csvDelimiterSimbolExport'] as String,
-        exportDataFields: maps[i]['exportDataFields'] as String
+        exportDataFields: maps[i]['exportDataFields'] as String,
+        izveziKaoOdvojeneDatoteke: maps[i]['izveziKaoOdvojeneDatoteke'] as int
       );
   }).first;
   }
