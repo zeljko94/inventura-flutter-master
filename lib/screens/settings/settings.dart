@@ -335,7 +335,7 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
 
                 
                 ExpansionTile(
-                  title: const Text('Pretraga unosom pretražuje po poljima'),
+                  title: const Text('Odaberite stupce za izvoz'),
                   children: <Widget>[
                     for(var i=0; i<poljaZaExportCheckboxItems.length; i++)
                       CheckboxListTile(
@@ -586,7 +586,7 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
   // UVOZ PODATAKA END
 
   // IZVOZ PODATAKA BEGIN
-    _updateCsvExportSimbol(result) async {
+  _updateCsvExportSimbol(result) async {
     _settings!.csvDelimiterSimbolExport = result;
     _appSettingsService.update(_settings!.id!, _settings!);
   }

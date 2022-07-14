@@ -81,12 +81,12 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             },
             onChanged: _searchOnChange,
           ),
-          artikli.isEmpty ? Padding(
+          artikli.isEmpty && !isLoading ? Padding(
             padding: EdgeInsets.only(top: 8),
             child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.secondaryText[50])),
           ) : SizedBox(),
           
-          if(artikli.isEmpty) 
+          if(artikli.isEmpty && !isLoading) 
             ElevatedButton.icon(
               icon: Icon(Icons.add),
               label: Text('Uvezi artikle'),

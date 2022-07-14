@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/services/data_export_service.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 
 class ExportDataScreen extends StatefulWidget {
   final List<Lista>? liste;
@@ -16,6 +18,8 @@ class ExportDataScreen extends StatefulWidget {
 }
 
 class _ExportDataScreenState extends State<ExportDataScreen> {
+  AppSettings? _settings;
+  final AppSettingsService _appSettingsService = AppSettingsService();
   final DataExportService _dataExportService = DataExportService();
 
   bool isLoading = false;
@@ -31,6 +35,12 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
     super.initState();
     
     Future.delayed(Duration.zero, () async {
+      var settings = await _appSettingsService.getSettings();
+
+      setState(() {
+        _settings = settings;
+        izveziKaoOdvojeneDatoteke = _settings!.izveziKaoOdvojeneDatoteke == 1 ? true : false;
+      });
     });
   }
 
@@ -200,7 +210,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
   }
   
   _pokreniIzvozCsv(List<ListItem> items, String filename) async {
-    var isSuccess = await _dataExportService.exportCsv(items, filename);
+    var isSuccess = await _dataExportService.exportCsv(items, filename, context);
     if(isSuccess) {
         var snackBar = const SnackBar(content: Text("Uspješan izvoz podataka!"));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);

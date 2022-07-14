@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
@@ -81,12 +83,13 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
       return StatefulBuilder(builder: (context, setState) {
         return DecoratedBox(
       decoration: BoxDecoration(
-        image: DecorationImage(
-          colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
-          image: AssetImage(ColorPalette.backgroundImagePath),
-          fit: BoxFit.cover),
-      ),
-          child: Padding(
+          image: DecorationImage(
+            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+            image: AssetImage(ColorPalette.backgroundImagePath),
+            fit: BoxFit.cover),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
@@ -104,7 +107,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           controller: dodajArtiklTypeAheadController,
                           cursorColor: ColorPalette.primary,
                           decoration: InputDecoration(
-                            suffixIcon: IconButton(onPressed: _scanBarcode, icon: const Icon(Icons.camera_alt)),
+                            suffixIcon: IconButton(onPressed: _scanCode, icon: const Icon(Icons.camera_alt)),
                             // suffixIcon: Row(
                             //   mainAxisAlignment: MainAxisAlignment.end,
                             //   children: [
@@ -384,6 +387,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
               ]),
             )
             ],),
+          )
           ),
         );
     });
@@ -420,35 +424,26 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
     // });
   }
 
-  Future<void> _scanBarcode() async {
+  Future<void> _scanCode() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
     setState(() {
-      inputType = 'scanBarcode';
-    });
-    // String barcodeScanRes;
-    // // Platform messages may fail, so we use a try/catch PlatformException.
-    // try {
-    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-    //       '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-    //   print(barcodeScanRes);
-    // } on PlatformException {
-    //   barcodeScanRes = 'Failed to get platform version.';
-    // }
-
-    // // If the widget was removed from the tree while the asynchronous platform
-    // // message was in flight, we want to discard the reply rather than calling
-    // // setState to update our non-existent appearance.
-    // if (!mounted) return;
-
-    // setState(() {
-    //   _scanBarcode = barcodeScanRes;
-    // });
-
-    Future.delayed(const Duration(seconds: 2), () async {
-      setState(() {
-        _scannedBarcode = '238668';
-      });
-      dodajArtiklTypeAheadController.text = _scannedBarcode!;
+      _scannedBarcode = barcodeScanRes;
       artiklTypeAheadFocusNode.requestFocus();
+      dodajArtiklTypeAheadController.text = _scannedBarcode!;
     });
   }
 
