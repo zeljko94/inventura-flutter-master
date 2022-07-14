@@ -1,11 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
-import 'package:inventura_app/common/sorting_options_screen.dart';
 
 class FilteringOptionsScreen extends StatefulWidget {
   final String? type;
