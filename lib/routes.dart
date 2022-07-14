@@ -28,5 +28,5 @@ var routes = {
 
    '/sorting-and-filtering-options': (ctx) => const SortingAndFilteringOptionsScreen(),
 
-   '/postavke': (ctx) => const SettingsScreen()
+   '/postavke': (ctx) => const SettingsScreen(),
 };

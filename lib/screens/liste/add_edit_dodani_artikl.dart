@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
+import 'package:collection/collection.dart';
 
 class AddEditDodaniArtikl extends StatefulWidget {
   final ListItem? dodaniArtikl;
@@ -23,9 +24,11 @@ class AddEditDodaniArtikl extends StatefulWidget {
 class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   final ArtikliService _artikliService = ArtikliService();
   bool isEdit = false;
+  bool fetchingSuggestions = false;
+  List<Artikl> suggestions = [];
   Artikl? selectedArtikl;
   String? _scannedBarcode;
-  String inputType = 'keyboard';
+  String inputType = 'scanner';
 
 
   final TextEditingController dodajArtiklTypeAheadController = TextEditingController();
@@ -41,14 +44,27 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   final TextEditingController napomenaController = TextEditingController();
   final TextEditingController predefiniranaKolicinaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
+
+
+  final TextEditingController scannerInputController = TextEditingController();
+  final FocusNode scannerInputFocusNode = FocusNode();
   
   
   @override
   void initState() {
     super.initState();
 
+
+
     isEdit = widget.dodaniArtikl != null;
+
+    Future.delayed(Duration.zero, () async {
+        var artikli = await _artikliService.fetchArtikli();
+        setState(() {
+          suggestions = artikli;
+        });
+      });
 
 
     if(isEdit) {
@@ -64,7 +80,13 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
         extentOffset: kolicinaController.text.length,
       );
     }
-    artiklTypeAheadFocusNode.requestFocus();
+    
+    if(inputType == 'keyboard') {
+      artiklTypeAheadFocusNode.requestFocus();
+    }
+    else {
+      scannerInputFocusNode.requestFocus();
+    }
     
   }
 
@@ -72,10 +94,10 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: MainAppBar.buildAppBar(widget.lista != null ? widget.lista!.naziv! : '', 'Dodavanje artikla', context),
+      // appBar: MainAppBar.buildAppBar(widget.lista != null ? widget.lista!.naziv! : '', 'Dodavanje artikla', context),
+      appBar: buildSearchAppBar(widget.lista != null ? widget.lista!.naziv! : '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
-      floatingActionButton: _buildButton(),
     );
   }
   
@@ -99,34 +121,64 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                 width: MediaQuery.of(context).size.width,
                 child: (Column(
                   children: [
-                      isEdit ? SizedBox() : TypeAheadFormField<Artikl?>(
+                    if(!isEdit && inputType == 'scanner') TextFormField(
+                        onEditingComplete: () async {
+                          String textFieldValue = scannerInputController.text;
+                          selectedArtikl = suggestions.firstWhereOrNull((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase()));
+                          if(selectedArtikl != null) {
+                            barkodController.text = selectedArtikl!.barkod!;
+                            nazivController.text  = selectedArtikl!.naziv!;
+                            kodController.text    = selectedArtikl!.kod!;
+                            cijenaController.text = selectedArtikl!.cijena!.toString();
+                            kolicinaController.text    = '0';
+                            mjernaJedinicaController.text = selectedArtikl!.jedinicaMjere!;
+                            dodajArtiklTypeAheadController.text = selectedArtikl!.naziv!;
+          
+                            kolicinaFocusNode.requestFocus();
+                            kolicinaController.selection = TextSelection(
+                              baseOffset: 0,
+                              extentOffset: kolicinaController.text.length,
+                            );
+                          }
+                        },
+                        showCursor: true,
+                        controller: scannerInputController,
+                        focusNode: scannerInputFocusNode,
+                        decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Dodaj artikl',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      onTap: () {
+                      }
+                    ),
+                      if(!isEdit && inputType == 'keyboard') TypeAheadFormField<Artikl?>(
                         key: dodajArtiklTypeAheadControllerState,
                         textFieldConfiguration: TextFieldConfiguration(
-                          autofocus: isEdit ? true : false,
+                          // autofocus: isEdit ? true : false,
                           focusNode: artiklTypeAheadFocusNode,
                           controller: dodajArtiklTypeAheadController,
                           cursorColor: ColorPalette.primary,
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(onPressed: _scanCode, icon: const Icon(Icons.camera_alt)),
-                            // suffixIcon: Row(
-                            //   mainAxisAlignment: MainAxisAlignment.end,
-                            //   children: [
-                            //     IconButton(onPressed: _scanBarcode, icon: const Icon(CustomIcons.times),),
-                            //   ],
-                            // ),
-                            border: const UnderlineInputBorder(),
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
                             labelText: 'Dodaj artikl',
                             floatingLabelStyle:
-                                const TextStyle(color: ColorPalette.primary),
-                            focusedBorder: const UnderlineInputBorder(
+                                TextStyle(color: ColorPalette.primary),
+                            focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                   color: ColorPalette.primary,
                                   width: 2.0),
                             ),
                           ),
                         ),
-                        noItemsFoundBuilder: (context) => const Center(
-                          child: Text('Nema pronađenih artikala', style: TextStyle(fontSize: 18),),
+                        noItemsFoundBuilder: (context) => Center(
+                          child: Text(fetchingSuggestions ? 'Učitavanje...' : 'Nema pronađenih artikala', style: const TextStyle(fontSize: 18),),
                         ),
                         suggestionsCallback: _fetchAritkliSuggestions, 
                         itemBuilder: (context, Artikl? suggestion) {
@@ -289,9 +341,9 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                       },
                     ),
                     TextFormField(
-                      showCursor: true,
-                      readOnly: true,
-                      enabled: false,
+                      // showCursor: true,
+                      // readOnly: true,
+                      // enabled: false,
                       controller: mjernaJedinicaController,
                       decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
@@ -328,64 +380,6 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                 )),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: ColorPalette.primary,
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  onPressed: () async{
-                    Navigator.pop(context, 'Odustani');
-                    _resetControllers();
-                  },
-                  child: const Text('Odustani'),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: ColorPalette.primary,
-                    primary: const Color.fromARGB(255, 255, 255, 255),
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-        
-                          var kolicina = num.tryParse(kolicinaController.text);
-                          if(kolicina == null) {
-                            return;
-                          }
-        
-                          var cijena = num.tryParse(cijenaController.text);
-                          if(cijena == null) {
-                            return;
-                          }
-        
-                          var listItem = ListItem(
-                            id: 0,
-                            barkod: barkodController.text,
-                            naziv: nazivController.text,
-                            kod: kodController.text,
-                            cijena: cijena,
-                            kolicina: kolicina,
-                            nazivArtikla: isEdit ? widget.dodaniArtikl!.nazivArtikla : selectedArtikl!.naziv,
-                            artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl!.id!,
-                            // artikl: isEdit ? widget.dodaniArtikl!.artikl : selectedArtikl,
-                            listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!,
-                            jedinicaMjere: isEdit ? widget.dodaniArtikl!.jedinicaMjere! : selectedArtikl!.jedinicaMjere
-                          );
-        
-        
-                          isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
-                          Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text('Spremi'),
-                ),
-              ]),
-            )
             ],),
           )
           ),
@@ -394,57 +388,118 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   }
 
   Future<List<Artikl?>> _fetchAritkliSuggestions(String textFieldValue) {
+    fetchingSuggestions = true;
     return Future.delayed(Duration.zero, () async {
-      var artikli = await _artikliService.fetchArtikli();
-      return artikli.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
+    if(textFieldValue.isNotEmpty) {
+      fetchingSuggestions = false;
+      return suggestions.where((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase())).toList();
+    }
+    else {
+      fetchingSuggestions = false;
+      return [];
+    }
     });
   }
   
-  _buildButton() {
-
+  AppBar buildSearchAppBar(String title, BuildContext context) {
+    return AppBar(
+      title: Text(title),
+      actions: <Widget>[
+        Tooltip(
+          message: 'Pretraži',
+          child: IconButton(
+            icon: Icon(inputType == 'scanner' ? Icons.search : Icons.camera_alt),
+            onPressed: () async {
+              setState(() {
+                if(inputType == 'keyboard') {
+                  inputType = 'scanner';
+                  Future.delayed(const Duration(milliseconds: 1000), () async {
+                    artiklTypeAheadFocusNode.requestFocus();
+                  });
+                }
+                else if(inputType == 'scanner') {
+                  inputType = 'keyboard';
+                  Future.delayed(const Duration(milliseconds: 150), () async {
+                    scannerInputFocusNode.requestFocus();
+                  });
+                }
+              });
+            }, 
+          ),
+        ),
+        Tooltip(
+          message: 'Odustani',
+          child: IconButton(
+            icon: const Icon(CustomIcons.times),
+            onPressed: () async {
+              Navigator.pop(context, 'Odustani');
+              _resetControllers();
+            }, 
+          ),
+        ),
+        Tooltip(
+          message: 'Spremi',
+          child: IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+  
+                    var kolicina = num.tryParse(kolicinaController.text);
+                    if(kolicina == null) {
+                      return;
+                    }
+  
+                    var cijena = num.tryParse(cijenaController.text);
+                    if(cijena == null) {
+                      return;
+                    }
+  
+                    var listItem = ListItem(
+                      id: 0,
+                      barkod: barkodController.text,
+                      naziv: nazivController.text,
+                      kod: kodController.text,
+                      cijena: cijena,
+                      kolicina: kolicina,
+                      nazivArtikla: isEdit ? widget.dodaniArtikl!.nazivArtikla! : selectedArtikl != null ? selectedArtikl!.naziv! : nazivController.text,
+                      artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl != null ? selectedArtikl!.id! : 0,
+                      listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!,
+                      jedinicaMjere: isEdit ? widget.dodaniArtikl!.jedinicaMjere! : selectedArtikl != null ? selectedArtikl!.jedinicaMjere : mjernaJedinicaController.text
+                    );
+  
+  
+                    isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
+                    Navigator.of(context).pop();
+              }
+            }, 
+          ),
+        ),
+      ],
+    );
   }
-
   _resetControllers() {}
 
-  Future<void> _scanQrCode() async {
-    // String barcodeScanRes;
+  Future<void> _scanCode() async {
+    // String scannedCodeRes;
+    // artiklTypeAheadFocusNode.unfocus();
     // // Platform messages may fail, so we use a try/catch PlatformException.
     // try {
-    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-    //       '#ff6666', 'Cancel', true, ScanMode.QR);
-    //   print(barcodeScanRes);
+    //   scannedCodeRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.BARCODE);
+
     // } on PlatformException {
-    //   barcodeScanRes = 'Failed to get platform version.';
+    //   scannedCodeRes = 'Failed to get platform version.';
     // }
 
+    // // If the widget was removed from the tree while the asynchronous platform
+    // // message was in flight, we want to discard the reply rather than calling
+    // // setState to update our non-existent appearance.
     // if (!mounted) return;
 
     // setState(() {
-    //   _scannedBarcode = barcodeScanRes;
+    //   _scannedBarcode = scannedCodeRes;
+    //   artiklTypeAheadFocusNode.requestFocus();
+    //   dodajArtiklTypeAheadController.text = _scannedBarcode!;
     // });
-  }
-
-  Future<void> _scanCode() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _scannedBarcode = barcodeScanRes;
-      artiklTypeAheadFocusNode.requestFocus();
-      dodajArtiklTypeAheadController.text = _scannedBarcode!;
-    });
   }
 
 }
