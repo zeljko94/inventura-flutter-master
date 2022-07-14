@@ -20,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
   String? scannerInputModeSearchByFields;
   String? keyboardInputModeSearchByFields;
   int? numberOfResultsPerSearch;
-  List<String> vrsteUnosaPretrazivanja = ['keyboard', 'scan'];
+  List<String> vrsteUnosaPretrazivanja = ['keyboard', 'scanner'];
 
   final _formKeyDialogInput = GlobalKey<FormState>();
   final _formKeyDialogDropdown = GlobalKey<FormState>();

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/common/snackbar.service.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/models/list_item.dart';
 import 'package:inventura_app/models/lista.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 import 'package:collection/collection.dart';
 
@@ -22,6 +23,8 @@ class AddEditDodaniArtikl extends StatefulWidget {
 }
 
 class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
+  AppSettings? _settings;
+  final AppSettingsService _appSettingsService = AppSettingsService();
   final ArtikliService _artikliService = ArtikliService();
   bool isEdit = false;
   bool fetchingSuggestions = false;
@@ -61,8 +64,12 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
 
     Future.delayed(Duration.zero, () async {
         var artikli = await _artikliService.fetchArtikli();
+        var settings = await _appSettingsService.getSettings();
+
         setState(() {
           suggestions = artikli;
+          _settings = settings;
+          inputType = _settings!.defaultSearchInputMethod!;
         });
       });
 
@@ -84,7 +91,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
     if(inputType == 'keyboard') {
       artiklTypeAheadFocusNode.requestFocus();
     }
-    else {
+    else if(inputType == 'scanner') {
       scannerInputFocusNode.requestFocus();
     }
     
@@ -432,8 +439,8 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
           child: IconButton(
             icon: const Icon(CustomIcons.times),
             onPressed: () async {
-              Navigator.pop(context, 'Odustani');
               _resetControllers();
+              Navigator.pop(context, 'Odustani');
             }, 
           ),
         ),
@@ -442,7 +449,13 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
           child: IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
+              if(selectedArtikl == null && widget.dodaniArtikl == null) {
+                SnackbarService.show('Artikl nije pronađen u bazi.', context);
+                return;
+              }
+
               if (_formKey.currentState!.validate()) {
+
   
                     var kolicina = num.tryParse(kolicinaController.text);
                     if(kolicina == null) {
@@ -469,7 +482,8 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   
   
                     isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
+                    _resetControllers();
               }
             }, 
           ),
@@ -477,7 +491,26 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
       ],
     );
   }
-  _resetControllers() {}
+
+  _resetControllers() {
+      barkodController.text = '';
+      nazivController.text  = '';
+      kodController.text    = '';
+      cijenaController.text = '';
+      kolicinaController.text    = '';
+      mjernaJedinicaController.text = '';
+      scannerInputController.text = '';
+      napomenaController.text = '';
+      dodajArtiklTypeAheadController.text = '';
+
+          
+    if(inputType == 'keyboard') {
+      artiklTypeAheadFocusNode.requestFocus();
+    }
+    else if(inputType == 'scanner') {
+      scannerInputFocusNode.requestFocus();
+    }
+  }
 
   Future<void> _scanCode() async {
     // String scannedCodeRes;

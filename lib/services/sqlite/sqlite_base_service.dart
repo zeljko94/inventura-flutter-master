@@ -78,7 +78,7 @@ class SqliteBaseService {
       // INSERT INITIAL DATA
       await db.execute("""
         INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbolImport, restApiLinkImportArtikli, csvDelimiterSimbolExport, exportDataFields, izveziKaoOdvojeneDatoteke) 
-        VALUES(1, 'keyboard', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv', 1)
+        VALUES(1, 'scanner', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv', 1)
       """);
       
     });
