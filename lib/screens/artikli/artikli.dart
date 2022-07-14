@@ -1,10 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
-import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
+import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
@@ -97,7 +96,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.secondaryText[50])),
           ) : SizedBox(),
           
-          if(artikli.isEmpty && !isLoading) 
+          if(artikliStore.isEmpty && !isLoading) 
             ElevatedButton.icon(
               icon: Icon(Icons.add),
               label: Text('Uvezi artikle'),
@@ -169,7 +168,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                        Text(artikli[index].cijena!.toString() + ' KM', maxLines: 1, overflow: TextOverflow.ellipsis,),
+                                        Text(currencyFormat.format(artikli[index].cijena!), maxLines: 1, overflow: TextOverflow.ellipsis,),
                                         Text(artikli[index].jedinicaMjere!, maxLines: 1, overflow: TextOverflow.ellipsis,),
                                       ],
                                     ),
@@ -291,8 +290,8 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         IconButton(icon: const Icon(Icons.sort), onPressed: () async {
             SortingAndFilteringOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
-                settings: const RouteSettings(name: '/sorting-and-filtering-options'),
-                builder: (context) => const SortingAndFilteringOptionsScreen(),
+                settings: const RouteSettings(name: '/sorting-options'),
+                builder: (context) => const SortingOptionsScreen(),
               ),
             );
             if(result != null) {

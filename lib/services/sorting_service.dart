@@ -1,6 +1,6 @@
 
 
-import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
+import 'package:inventura_app/common/sorting_options_screen.dart';
 
 class SortingAndFilteringService {
 

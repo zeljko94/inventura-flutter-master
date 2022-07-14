@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 
-class SortingAndFilteringOptionsScreen extends StatefulWidget {
+class SortingOptionsScreen extends StatefulWidget {
   final String? type;
-  const SortingAndFilteringOptionsScreen({ Key? key, this.type }) : super(key: key);
+  const SortingOptionsScreen({ Key? key, this.type }) : super(key: key);
 
   @override
-  _SortingAndFilteringOptionsScreenState createState() => _SortingAndFilteringOptionsScreenState();
+  _SortingOptionsScreenState createState() => _SortingOptionsScreenState();
 }
 
-class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOptionsScreen> {
+class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
   List<String> sortColumnChips = [
     'Naziv',
     'Barkod',
@@ -21,6 +21,9 @@ class _SortingAndFilteringOptionsScreenState extends State<SortingAndFilteringOp
 
   String selectedSortColumnChip = 'Naziv';
   String selectedSortOrder = 'Ascending';
+
+  String selectedFilterColumnChip = 'Naziv';
+  String selectedFilterOrder = 'Ascending';
 
   @override
   void initState() {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
-import 'package:inventura_app/common/sorting_and_filtering_options_screen.dart';
+import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/common/text_styles.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/artikl.dart';
@@ -325,8 +325,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
           IconButton(icon: const Icon(Icons.sort), onPressed: () async {
             SortingAndFilteringOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
-                settings: const RouteSettings(name: '/sorting-and-filtering-options'),
-                builder: (context) => const SortingAndFilteringOptionsScreen(
+                settings: const RouteSettings(name: '/sorting-options'),
+                builder: (context) => const SortingOptionsScreen(
                   type: 'lista_pregled_artikala',
                 ),
               ),
