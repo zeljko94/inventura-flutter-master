@@ -179,7 +179,15 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           focusNode: artiklTypeAheadFocusNode,
                           controller: dodajArtiklTypeAheadController,
                           cursorColor: ColorPalette.primary,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                                onPressed: () async {
+                                  dodajArtiklTypeAheadController.text = '';
+                                  selectedArtikl = null;
+                              },
+                              icon: Icon(CustomIcons.times), 
+                              iconSize: 14,
+                            ),
                             border: UnderlineInputBorder(),
                             labelText: 'Dodaj artikl',
                             floatingLabelStyle:
