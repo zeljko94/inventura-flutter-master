@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/routes.dart';
-import 'package:inventura_app/screens/artikli/artikli.dart';
 import 'package:inventura_app/screens/auth/login.dart';
+import 'package:inventura_app/screens/liste/liste.dart';
 import 'package:inventura_app/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const CircularProgressIndicator();
             if (snapshot.data == true) {
-              return const ArtikliScreen();
+              return const ListeScreen();
             } else {
               return const LoginScreen();
             }

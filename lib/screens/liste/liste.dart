@@ -70,7 +70,17 @@ class _ListeScreenState extends State<ListeScreen> {
           TextFormField(
             controller: searchController,
             cursorColor: ColorPalette.primary,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  onPressed: () async {
+                    searchController.text = '';
+                    setState(() {
+                      liste = List.of(listeStore);
+                    });
+                },
+                  icon: Icon(CustomIcons.times), 
+                  iconSize: 14,
+              ),
               prefixIcon: Icon(Icons.search),
               border: UnderlineInputBorder(),
               labelText: 'Search',

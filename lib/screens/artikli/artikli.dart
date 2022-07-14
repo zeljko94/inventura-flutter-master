@@ -59,9 +59,20 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
       child: Column(
         children: [
           TextFormField(
+            autofocus: true,
             controller: searchController,
             cursorColor: ColorPalette.primary,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  onPressed: () async {
+                    searchController.text = '';
+                    setState(() {
+                      artikli = List.of(artikliStore);
+                    });
+                },
+                  icon: Icon(CustomIcons.times), 
+                  iconSize: 14,
+              ),
               prefixIcon: Icon(Icons.search),
               border: UnderlineInputBorder(),
               labelText: 'Search',

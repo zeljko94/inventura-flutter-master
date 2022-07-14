@@ -35,6 +35,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
   List<Artikl> artikli = [];
   List<ListItem> dodaniArtikli = [];
 
+  bool resetScannerInputField = false;
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -299,16 +301,16 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     await _spremiIzmjene();
 
     // Navigator.popAndPushNamed(context, '/add-edit-dodani-artikl');
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        settings: const RouteSettings(name: '/add-edit-dodani-artikl'),
-        builder: (context) => AddEditDodaniArtikl(
-          lista: widget.lista!,
-          onAddDodaniArtikl: _dodajArtikl,
-          onUpdateDodaniArtikl: _updateDodaniArtikl,
-        ),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     settings: const RouteSettings(name: '/add-edit-dodani-artikl'),
+    //     builder: (context) => AddEditDodaniArtikl(
+    //       lista: widget.lista!,
+    //       onAddDodaniArtikl: _dodajArtikl,
+    //       onUpdateDodaniArtikl: _updateDodaniArtikl,
+    //     ),
+    //   ),
+    // );
   }
 
     AppBar buildSearchAppBarNormal(String title, String subtitle, BuildContext context) {

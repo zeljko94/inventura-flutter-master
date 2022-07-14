@@ -151,7 +151,14 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                         showCursor: true,
                         controller: scannerInputController,
                         focusNode: scannerInputFocusNode,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            onPressed: () async {
+                              scannerInputController.text = '';
+                          },
+                           icon: Icon(CustomIcons.times), 
+                           iconSize: 14,
+                        ),
                         border: UnderlineInputBorder(),
                         labelText: 'Dodaj artikl',
                         floatingLabelStyle:
@@ -451,6 +458,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
             onPressed: () async {
               if(selectedArtikl == null && widget.dodaniArtikl == null) {
                 SnackbarService.show('Artikl nije pronađen u bazi.', context);
+                _resetControllers();
                 return;
               }
 
