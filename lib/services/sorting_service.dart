@@ -2,9 +2,9 @@
 
 import 'package:inventura_app/common/sorting_options_screen.dart';
 
-class SortingAndFilteringService {
+class SortingService {
 
-  static SortingAndFilteringOptions sortingAndFilteringOptions = SortingAndFilteringOptions(sortByColumn: 'naziv', sortOrder: 'asc');
+  static SortingOptions sortingOptions = SortingOptions(sortByColumn: 'naziv', sortOrder: 'asc');
 
   static const columnMappings = <String, String> {
     'Naziv': 'naziv',

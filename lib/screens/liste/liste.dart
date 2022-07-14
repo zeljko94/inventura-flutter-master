@@ -272,7 +272,7 @@ class _ListeScreenState extends State<ListeScreen> {
       ]),
       actions: <Widget>[
           IconButton(icon: const Icon(Icons.sort), onPressed: () async {
-            SortingAndFilteringOptions? sortOptions = await Navigator.of(context).push(
+            SortingOptions? sortOptions = await Navigator.of(context).push(
               MaterialPageRoute(
                 settings: const RouteSettings(name: '/sorting-options'),
                 builder: (context) => const SortingOptionsScreen(
@@ -327,7 +327,7 @@ class _ListeScreenState extends State<ListeScreen> {
     });
   }
 
-  _applySorting(SortingAndFilteringOptions options) async {
+  _applySorting(SortingOptions options) async {
     setState(() {
       if(options.sortOrder == 'Ascending') {
         if(options.sortByColumn == 'Naziv') {

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
+import 'package:inventura_app/common/filtering_options_screen.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
@@ -244,7 +245,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     });
   }
   
-  _applySorting(SortingAndFilteringOptions options) async {
+  _applySorting(SortingOptions options) async {
     setState(() {
       if(options.sortOrder == 'Ascending') {
         if(options.sortByColumn == 'Naziv') {
@@ -283,12 +284,16 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     });
   }
 
+  _applyFiltering(FilteringOptions options) {
+
+  }
+
   AppBar buildSearchAppBar(String title, BuildContext context) {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
         IconButton(icon: const Icon(Icons.sort), onPressed: () async {
-            SortingAndFilteringOptions? result = await Navigator.of(context).push(
+            SortingOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
                 settings: const RouteSettings(name: '/sorting-options'),
                 builder: (context) => const SortingOptionsScreen(),
@@ -298,7 +303,17 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
               _applySorting(result);
             }
         }),
-        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {}),
+        IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {
+            SortingOptions? result = await Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/filtering-options'),
+                builder: (context) => const FilteringOptionsScreen(),
+              ),
+            );
+            if(result != null) {
+              _applySorting(result);
+            }
+        }),
       ],
     );
   }

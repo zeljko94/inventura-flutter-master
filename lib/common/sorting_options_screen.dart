@@ -22,9 +22,6 @@ class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
   String selectedSortColumnChip = 'Naziv';
   String selectedSortOrder = 'Ascending';
 
-  String selectedFilterColumnChip = 'Naziv';
-  String selectedFilterOrder = 'Ascending';
-
   @override
   void initState() {
     super.initState();
@@ -47,7 +44,7 @@ class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar('Sorting & filtering options', context),
+      appBar: buildAppBar('Sorting options', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
     );
@@ -128,7 +125,7 @@ class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
         Tooltip(
           message: 'Primjeni',
           child: IconButton(onPressed: () async {
-            Navigator.pop(context, SortingAndFilteringOptions(sortByColumn: selectedSortColumnChip, sortOrder: selectedSortOrder));
+            Navigator.pop(context, SortingOptions(sortByColumn: selectedSortColumnChip, sortOrder: selectedSortOrder));
         }, icon: const Icon(Icons.check)),
         ),
       ],
@@ -138,11 +135,11 @@ class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
   
 }
 
-class SortingAndFilteringOptions {
+class SortingOptions {
   String? sortByColumn;
   String? sortOrder;
 
-  SortingAndFilteringOptions({ this.sortByColumn, this.sortOrder });
+  SortingOptions({ this.sortByColumn, this.sortOrder });
 
   
   Map<String, dynamic> toMap() {

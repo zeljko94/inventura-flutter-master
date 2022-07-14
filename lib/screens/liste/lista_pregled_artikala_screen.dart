@@ -323,7 +323,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       ]),
       actions: <Widget>[
           IconButton(icon: const Icon(Icons.sort), onPressed: () async {
-            SortingAndFilteringOptions? result = await Navigator.of(context).push(
+            SortingOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
                 settings: const RouteSettings(name: '/sorting-options'),
                 builder: (context) => const SortingOptionsScreen(
@@ -420,7 +420,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
     }
   }
 
-  _applySorting(SortingAndFilteringOptions options) {
+  _applySorting(SortingOptions options) {
     setState(() {
       if(options.sortOrder == 'Ascending') {
         if(options.sortByColumn == 'Naziv') {
