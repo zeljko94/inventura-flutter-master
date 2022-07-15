@@ -78,7 +78,7 @@ class DataExportService {
   }
 
   Future<bool> exportExcel(List<ListItem> items, String filename) async {    
-    // try {
+    try {
       _settings = await _appSettingsService.getSettings();
       var columnsFromSettings = _settings!.exportDataFields!.split(',').toList();
       print(columnsFromSettings);
@@ -138,11 +138,11 @@ class DataExportService {
       await file.writeAsBytes(bytes, flush: true);
       await _openFile('$path/$filename.xlsx');
       return true;
-    // }
-    // catch(exception) {
-    //   print(exception);
-    //   return false;
-    // }
+    }
+    catch(exception) {
+      print(exception);
+      return false;
+    }
   }
   
   Future<bool> exportRestApi(List<ListItem> items) async {
