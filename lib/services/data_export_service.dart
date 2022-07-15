@@ -32,6 +32,7 @@ class DataExportService {
   Future<bool> exportCsv(List<ListItem> items, String filename, BuildContext context) async {
     try {
       _settings = await _appSettingsService.getSettings();
+      items.sort((a, b) => b.id!.compareTo(a.id!));
 
       List<List<dynamic>> rows = [];
       var columnsFromSettins = _settings!.exportDataFields!.split(',').toList();
@@ -81,7 +82,7 @@ class DataExportService {
     try {
       _settings = await _appSettingsService.getSettings();
       var columnsFromSettings = _settings!.exportDataFields!.split(',').toList();
-      print(columnsFromSettings);
+      items.sort((a, b) => b.id!.compareTo(a.id!));
 
       final Workbook workbook = Workbook();
       final Worksheet sheet = workbook.worksheets[0];
