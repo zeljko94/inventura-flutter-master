@@ -113,8 +113,8 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
         return DecoratedBox(
       decoration: BoxDecoration(
           image: DecorationImage(
-            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
-            image: AssetImage(ColorPalette.backgroundImagePath),
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+            image: const AssetImage(ColorPalette.backgroundImagePath),
             fit: BoxFit.cover),
           ),
           child: SingleChildScrollView(
@@ -131,7 +131,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                     if(!isEdit && inputType == 'scanner') TextFormField(
                         onEditingComplete: () async {
                           String textFieldValue = scannerInputController.text;
-                          selectedArtikl = suggestions.firstWhereOrNull((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase()));
+                          selectedArtikl = suggestions.firstWhereOrNull((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.kod!.toLowerCase().contains(textFieldValue.toLowerCase()));
                           if(selectedArtikl != null) {
                             barkodController.text = selectedArtikl!.barkod!;
                             nazivController.text  = selectedArtikl!.naziv!;

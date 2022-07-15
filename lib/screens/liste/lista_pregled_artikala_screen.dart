@@ -393,8 +393,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       var inserted = await _listeService!.add(lista);
 
       if(inserted != null && inserted > 0) {
-        var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
         _resetControllers();
         widget.onAddLista!();
         // Navigator.of(context).pop();
@@ -408,8 +408,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       var updated = await _listeService!.update(widget.lista!.id!, lista);
 
       if(updated > 0) {
-        var snackBar = const SnackBar(content: Text("Lista je uspješno izmjenjena!"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // var snackBar = const SnackBar(content: Text("Lista je uspješno izmjenjena!"));
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
         widget.onUpdateLista!();
         // Navigator.of(context).pop();
       }

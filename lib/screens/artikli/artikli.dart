@@ -304,14 +304,14 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             }
         }),
         IconButton(icon: const Icon(CustomIcons.filter), onPressed: () async {
-            SortingOptions? result = await Navigator.of(context).push(
+            FilteringOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
                 settings: const RouteSettings(name: '/filtering-options'),
                 builder: (context) => const FilteringOptionsScreen(),
               ),
             );
             if(result != null) {
-              _applySorting(result);
+              _applyFiltering(result);
             }
         }),
       ],

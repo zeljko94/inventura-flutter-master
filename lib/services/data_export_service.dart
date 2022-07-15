@@ -34,11 +34,13 @@ class DataExportService {
       _settings = await _appSettingsService.getSettings();
 
       List<List<dynamic>> rows = [];
+      var columnsFromSettins = _settings!.exportDataFields!.split(',').toList();
+    
       for (int i = 0; i < items.length; i++) {
         List<dynamic> row = [];
-        var columnsFromSettins = _settings!.exportDataFields!.split(',').toList();
 
-        
+        print(items[i].kod);
+
         if(columnsFromSettins.contains('naziv'))
           row.add(items[i].nazivArtikla);
         if(columnsFromSettins.contains('barkod'))
@@ -65,6 +67,9 @@ class DataExportService {
       SnackbarService.show(file + "/" + filename + ".csv", context);
       String csv = ListToCsvConverter(fieldDelimiter: _settings!.csvDelimiterSimbolExport!, eol: '\r\n').convert(rows);
       f.writeAsString(csv);
+
+      print("OPEN FILE: " + file + "/" + filename + ".csv");
+      await _openFile(file + "/" + filename + ".csv");
       return true;
     } 
     catch(exception) {
@@ -96,6 +101,7 @@ class DataExportService {
       
       File file = File('$path/$filename.xlsx');
       await file.writeAsBytes(bytes, flush: true);
+      await _openFile('$path/$filename.xlsx');
       return true;
     }
     catch(exception) {
