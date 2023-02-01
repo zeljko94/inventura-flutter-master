@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:inventura_app/models/user.dart';
-// import 'package:intranet_it4/models/menu_items.dart';
-// import 'package:intranet_it4/models/user_model.dart';
-// import 'package:intranet_it4/services/auth_service.dart';
 
 class MenuDrawer {
-  // static AuthService authService = AuthService.fromAuthService();
 
 List<Map> menuItems = [
-  // {
-  //   'title': 'Početna',
-  //   'icon': Icons.house,
-  //   'group': false,
-  //   'link': '/dashboard',
-  //   'hasChildren': false,
-  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  // },
   {
     'title': 'Artikli',
     'icon': Icons.article,
@@ -25,7 +13,23 @@ List<Map> menuItems = [
     'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
   },
   {
-    'title': 'Liste',
+    'title': 'Primke',
+    'icon': Icons.receipt_long,
+    'group': false,
+    'link': '/primke',
+    'hasChildren': false,
+    'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
+  },
+  {
+    'title': 'Međuspremnice',
+    'icon': Icons.receipt_long,
+    'group': false,
+    'link': '/medjuspremnice',
+    'hasChildren': false,
+    'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
+  },
+  {
+    'title': 'Liste inventura',
     'icon': Icons.list,
     'group': false,
     'link': '/liste',
@@ -98,22 +102,6 @@ List<Map> menuItems = [
     'hasChildren': false,
     'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
   },
-  // {
-  //   'title': 'Izvoz podataka',
-  //   'icon': Icons.upload,
-  //   'group': false,
-  //   'link': '/export-data',
-  //   'hasChildren': false,
-  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  // },
-  // {
-  //   'title': 'Uvoz/Izvoz konfiguracije',
-  //   'icon': Icons.import_export,
-  //   'group': false,
-  //   'link': '/uvoz-izvoz-konfiguracije',
-  //   'hasChildren': false,
-  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  // },
   {
     'title': 'Postavke',
     'icon': Icons.settings,

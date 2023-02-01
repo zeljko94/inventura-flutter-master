@@ -179,16 +179,6 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           controller: dodajArtiklTypeAheadController,
                           cursorColor: ColorPalette.primary,
                           decoration: InputDecoration(
-<<<<<<< HEAD
-                          suffixIcon: IconButton(
-                                onPressed: () async {
-                                  dodajArtiklTypeAheadController.text = '';
-                                  selectedArtikl = null;
-                              },
-                              icon: Icon(CustomIcons.times), 
-                              iconSize: 14,
-                            ),
-=======
                             suffixIcon: IconButton(
                               onPressed: () async {
                                 dodajArtiklTypeAheadController.text = '';
@@ -197,7 +187,6 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                             icon: Icon(CustomIcons.times), 
                             iconSize: 14,
                           ),
->>>>>>> bcdb7de13846fc9ccb7715b74ccf27c0a0b803da
                             border: UnderlineInputBorder(),
                             labelText: 'Dodaj artikl',
                             floatingLabelStyle:

@@ -8,6 +8,7 @@ import 'package:inventura_app/screens/liste/add_edit_dodani_artikl.dart';
 import 'package:inventura_app/screens/liste/add_edit_lista_screen.dart';
 import 'package:inventura_app/screens/liste/lista_pregled_artikala_screen.dart';
 import 'package:inventura_app/screens/liste/liste.dart';
+import 'package:inventura_app/screens/primke/primke.dart';
 import 'package:inventura_app/screens/settings/settings.dart';
 
 var routes = {
@@ -22,6 +23,9 @@ var routes = {
    '/lista-pregled-artikala': (ctx) => const ListaPregledArtikalaScreen(),
    '/add-edit-lista': (ctx) => const AddEditListaScreen(),
    '/add-edit-dodani-artikl': (ctx) => const AddEditDodaniArtikl(),
+
+   '/primke': (ctx) => const PrimkeScreen(),
+
 
    '/import-data': (ctx) => const AddEditDataImportScreen(),
    '/export-data': (ctx) => const ExportDataScreen(),

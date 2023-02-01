@@ -55,6 +55,17 @@ class SqliteBaseService {
         );
       """);
 
+
+      await db.execute("""
+        CREATE TABLE Primke(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          naziv TEXT,
+          napomena TEXT,
+          skladiste TEXT,
+          datumKreiranja TEXT
+        )"""
+      );
+
       await db.execute("""
         CREATE TABLE AppSettings(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
