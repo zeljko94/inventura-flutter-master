@@ -105,7 +105,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
                         _setSelectedVrstaUvoza(vrstaUvoza!);
                       },
                     ),
-                    Padding(
+                    if(widget.liste != null && widget.liste!.length > 1) Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CheckboxListTile(
                           checkColor: ColorPalette.success,

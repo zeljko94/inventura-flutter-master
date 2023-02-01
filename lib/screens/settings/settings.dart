@@ -146,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
                   ),),
                   
                     ExpansionTile(
-                      title: const Text('Pretraga skeniranjem pretražuje po poljima'),
+                      title: const Text('Pretraga skeniranjem pretražuje po'),
                       children: <Widget>[
                         for(var i=0; i<poljaZaPretraguCheckboxItemsScanner.length; i++)
                           CheckboxListTile(
@@ -163,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
                       ],
                     ),
                     ExpansionTile(
-                      title: const Text('Pretraga unosom pretražuje po poljima'),
+                      title: const Text('Pretraga unosom pretražuje po'),
                       children: <Widget>[
                         for(var i=0; i<poljaZaPretraguCheckboxItemsKeyboard.length; i++)
                           CheckboxListTile(

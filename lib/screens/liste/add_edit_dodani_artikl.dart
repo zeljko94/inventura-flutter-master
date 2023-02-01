@@ -101,7 +101,6 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // appBar: MainAppBar.buildAppBar(widget.lista != null ? widget.lista!.naziv! : '', 'Dodavanje artikla', context),
       appBar: buildSearchAppBar(widget.lista != null ? widget.lista!.naziv! : '', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
@@ -113,8 +112,8 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
         return DecoratedBox(
       decoration: BoxDecoration(
           image: DecorationImage(
-            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
-            image: AssetImage(ColorPalette.backgroundImagePath),
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(ColorPalette.backgroundImageOpacity), BlendMode.dstATop),
+            image: const AssetImage(ColorPalette.backgroundImagePath),
             fit: BoxFit.cover),
           ),
           child: SingleChildScrollView(
@@ -131,7 +130,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                     if(!isEdit && inputType == 'scanner') TextFormField(
                         onEditingComplete: () async {
                           String textFieldValue = scannerInputController.text;
-                          selectedArtikl = suggestions.firstWhereOrNull((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase()));
+                          selectedArtikl = suggestions.firstWhereOrNull((x) => x.naziv!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.barkod!.toLowerCase().contains(textFieldValue.toLowerCase()) || x.kod!.toLowerCase().contains(textFieldValue.toLowerCase()));
                           if(selectedArtikl != null) {
                             barkodController.text = selectedArtikl!.barkod!;
                             nazivController.text  = selectedArtikl!.naziv!;
@@ -180,6 +179,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                           controller: dodajArtiklTypeAheadController,
                           cursorColor: ColorPalette.primary,
                           decoration: InputDecoration(
+<<<<<<< HEAD
                           suffixIcon: IconButton(
                                 onPressed: () async {
                                   dodajArtiklTypeAheadController.text = '';
@@ -188,6 +188,16 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                               icon: Icon(CustomIcons.times), 
                               iconSize: 14,
                             ),
+=======
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                dodajArtiklTypeAheadController.text = '';
+                                selectedArtikl = null;
+                            },
+                            icon: Icon(CustomIcons.times), 
+                            iconSize: 14,
+                          ),
+>>>>>>> bcdb7de13846fc9ccb7715b74ccf27c0a0b803da
                             border: UnderlineInputBorder(),
                             labelText: 'Dodaj artikl',
                             floatingLabelStyle:
@@ -243,6 +253,9 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
                               width: 2.0),
                         ),
                       ),
+                      onFieldSubmitted: (String value) async {
+                        _spremiDodaniArtikl();
+                      },
                       validator: (value) {
                         if(value == null || value.isEmpty) {
                           kolicinaFocusNode.requestFocus();
@@ -430,7 +443,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
         Tooltip(
           message: 'Pretraži',
           child: IconButton(
-            icon: Icon(inputType == 'scanner' ? Icons.search : Icons.camera_alt),
+            icon: Icon(inputType == 'scanner' ? Icons.keyboard : Icons.camera_alt),
             onPressed: () async {
               setState(() {
                 if(inputType == 'keyboard') {
@@ -464,43 +477,7 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
           child: IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
-              if(selectedArtikl == null && widget.dodaniArtikl == null) {
-                SnackbarService.show('Artikl nije pronađen u bazi.', context);
-                _resetControllers();
-                return;
-              }
-
-              if (_formKey.currentState!.validate()) {
-
-  
-                    var kolicina = num.tryParse(kolicinaController.text);
-                    if(kolicina == null) {
-                      return;
-                    }
-  
-                    var cijena = num.tryParse(cijenaController.text);
-                    if(cijena == null) {
-                      return;
-                    }
-  
-                    var listItem = ListItem(
-                      id: 0,
-                      barkod: barkodController.text,
-                      naziv: nazivController.text,
-                      kod: kodController.text,
-                      cijena: cijena,
-                      kolicina: kolicina,
-                      nazivArtikla: isEdit ? widget.dodaniArtikl!.nazivArtikla! : selectedArtikl != null ? selectedArtikl!.naziv! : nazivController.text,
-                      artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl != null ? selectedArtikl!.id! : 0,
-                      listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!,
-                      jedinicaMjere: isEdit ? widget.dodaniArtikl!.jedinicaMjere! : selectedArtikl != null ? selectedArtikl!.jedinicaMjere : mjernaJedinicaController.text
-                    );
-  
-  
-                    isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
-                    // Navigator.of(context).pop();
-                    _resetControllers();
-              }
+              _spremiDodaniArtikl();
             }, 
           ),
         ),
@@ -549,6 +526,46 @@ class _AddEditDodaniArtiklState extends State<AddEditDodaniArtikl> {
     //   artiklTypeAheadFocusNode.requestFocus();
     //   dodajArtiklTypeAheadController.text = _scannedBarcode!;
     // });
+  }
+
+  _spremiDodaniArtikl() {
+    if(selectedArtikl == null && widget.dodaniArtikl == null) {
+      SnackbarService.show('Artikl nije pronađen u bazi.', context);
+      _resetControllers();
+      return;
+    }
+
+    if (_formKey.currentState!.validate()) {
+
+
+          var kolicina = num.tryParse(kolicinaController.text);
+          if(kolicina == null) {
+            return;
+          }
+
+          var cijena = num.tryParse(cijenaController.text);
+          if(cijena == null) {
+            return;
+          }
+
+          var listItem = ListItem(
+            id: 0,
+            barkod: barkodController.text,
+            naziv: nazivController.text,
+            kod: kodController.text,
+            cijena: cijena,
+            kolicina: kolicina,
+            nazivArtikla: isEdit ? widget.dodaniArtikl!.nazivArtikla! : selectedArtikl != null ? selectedArtikl!.naziv! : nazivController.text,
+            artiklId: isEdit ? widget.dodaniArtikl!.artiklId : selectedArtikl != null ? selectedArtikl!.id! : 0,
+            listaId: isEdit ? widget.dodaniArtikl!.listaId! : widget.lista!.id!,
+            jedinicaMjere: isEdit ? widget.dodaniArtikl!.jedinicaMjere! : selectedArtikl != null ? selectedArtikl!.jedinicaMjere : mjernaJedinicaController.text
+          );
+
+
+          isEdit ? widget.onUpdateDodaniArtikl!(listItem) : widget.onAddDodaniArtikl!(listItem);
+          // Navigator.of(context).pop();
+          _resetControllers();
+    }
   }
 
 }

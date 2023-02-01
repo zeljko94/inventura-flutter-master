@@ -37,6 +37,7 @@ class _SortingOptionsScreenState extends State<SortingOptionsScreen> {
     else if(widget.type == 'lista_pregled_artikala') {
       setState(() {
         sortColumnChips.add('Kolicina');
+        sortColumnChips.add('Id');
       });
     }
   }

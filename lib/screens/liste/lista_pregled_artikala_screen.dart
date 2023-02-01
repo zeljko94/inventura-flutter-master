@@ -34,16 +34,17 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
 
   List<Artikl> artikli = [];
   List<ListItem> dodaniArtikli = [];
+  List<ListItem> dodaniArtikliStore = [];
 
   bool resetScannerInputField = false;
 
-
+  final TextEditingController searchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   
   final currencyFormat = NumberFormat("#,##0.00", "en_US");
   
-
+  
 
   @override
   void initState() {
@@ -63,6 +64,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       setState(() {
         artikli = artikliData;
         dodaniArtikli = List.of(widget.lista != null ? widget.lista!.items! : []);
+        dodaniArtikliStore = List.of(dodaniArtikli);
         isLoading = false;
       });
     });
@@ -148,6 +150,40 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                 child: (Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    TextFormField(
+                      autofocus: true,
+                      controller: searchController,
+                      cursorColor: ColorPalette.primary,
+                      decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            onPressed: () async {
+                              searchController.text = '';
+                              setState(() {
+                                dodaniArtikli = List.of(dodaniArtikliStore);
+                              });
+                          },
+                            icon: Icon(CustomIcons.times), 
+                            iconSize: 14,
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                        border: UnderlineInputBorder(),
+                        labelText: 'Search',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                      onTap: () async {
+              
+                      },
+                      onChanged: _searchOnChange,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 12, ),
                       child: Column(
@@ -155,6 +191,7 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
                           // const Text('Artikli:',),
                           !isLoading && dodaniArtikli.isEmpty ? const Text('Lista nema dodanih artikala.', style: TextStyle(color: ColorPalette.warning),) : const SizedBox(),
                           !isLoading ? ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: dodaniArtikli.length,
@@ -216,34 +253,6 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
               padding: const EdgeInsets.only(top: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-              //   children: <Widget>[
-              //   TextButton(
-              //     style: TextButton.styleFrom(
-              //       primary: ColorPalette.primary,
-              //       textStyle: const TextStyle(fontSize: 15),
-              //     ),
-              //     onPressed: () async{
-              //       Navigator.pop(context, 'Odustani');
-              //       _resetControllers();
-              //     },
-              //     child: const Text('Odustani'),
-              //   ),
-              //   TextButton(
-              //     style: TextButton.styleFrom(
-              //       backgroundColor: ColorPalette.primary,
-              //       primary: const Color.fromARGB(255, 255, 255, 255),
-              //       textStyle: const TextStyle(fontSize: 15),
-              //     ),
-              //     onPressed: () async {
-              //       if (_formKey.currentState!.validate()) {
-
-
-              //         await _spremiIzmjene();
-              //       }
-              //     },
-              //     child: const Text('Spremi'),
-              //   ),
-              // ]
               ),
             )
             ],),
@@ -279,15 +288,6 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
   }
 
   _dodajArtikl(ListItem? listItem) async {
-    // var listItem = ListItem(
-    //    artiklId: odabraniArtikl!.id, listaId: widget.lista != null ? widget.lista!.id : 0, kolicina: 0, jedinicaMjere: odabraniArtikl.jedinicaMjere,
-    // naziv: odabraniArtikl.naziv, nazivArtikla: odabraniArtikl.naziv, barkod: odabraniArtikl.barkod, kod: odabraniArtikl.kod, cijena: odabraniArtikl.cijena );
-
-    // var existing = dodaniArtikli.firstWhereOrNull((element) => element.barkod == odabraniArtikl.barkod);
-    // if(existing == null) {
-    //   dodaniArtikli.add(listItem);
-    // }
-
     if(listItem!.kolicina! > 0) {
       dodaniArtikli.add(listItem);
     }
@@ -299,18 +299,6 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
 
     _updateTotalValues();
     await _spremiIzmjene();
-
-    // Navigator.popAndPushNamed(context, '/add-edit-dodani-artikl');
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     settings: const RouteSettings(name: '/add-edit-dodani-artikl'),
-    //     builder: (context) => AddEditDodaniArtikl(
-    //       lista: widget.lista!,
-    //       onAddDodaniArtikl: _dodajArtikl,
-    //       onUpdateDodaniArtikl: _updateDodaniArtikl,
-    //     ),
-    //   ),
-    // );
   }
 
     AppBar buildSearchAppBarNormal(String title, String subtitle, BuildContext context) {
@@ -393,8 +381,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       var inserted = await _listeService!.add(lista);
 
       if(inserted != null && inserted > 0) {
-        var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // var snackBar = const SnackBar(content: Text("Lista je uspješno dodana!"));
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
         _resetControllers();
         widget.onAddLista!();
         // Navigator.of(context).pop();
@@ -408,8 +396,8 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
       var updated = await _listeService!.update(widget.lista!.id!, lista);
 
       if(updated > 0) {
-        var snackBar = const SnackBar(content: Text("Lista je uspješno izmjenjena!"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // var snackBar = const SnackBar(content: Text("Lista je uspješno izmjenjena!"));
+        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
         widget.onUpdateLista!();
         // Navigator.of(context).pop();
       }
@@ -438,6 +426,9 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         else if(options.sortByColumn == 'Kolicina') {
           dodaniArtikli.sort((a, b) => a.kolicina!.compareTo(b.kolicina!));
         }
+        else if(options.sortByColumn == 'Id') {
+          dodaniArtikli.sort((a, b) => a.id!.compareTo(b.id!));
+        }
       }
       else if(options.sortOrder == 'Descending') {
         if(options.sortByColumn == 'Naziv') {
@@ -455,6 +446,20 @@ class _ListaPregledArtikalaScreen extends State<ListaPregledArtikalaScreen> {
         else if(options.sortByColumn == 'Kolicina') {
           dodaniArtikli.sort((a, b) => b.kolicina!.compareTo(a.kolicina!));
         }
+        else if(options.sortByColumn == 'Id') {
+          dodaniArtikli.sort((a, b) => b.id!.compareTo(a.id!));
+        }
+      }
+    });
+  }
+
+  _searchOnChange(String value) {
+    setState(() {
+      if(value.isEmpty) {
+        dodaniArtikli = List.of(dodaniArtikliStore);
+      }
+      else {
+        dodaniArtikli = dodaniArtikliStore.where((element) => element.naziv!.toLowerCase().contains(value.toLowerCase()) || element.barkod!.toLowerCase().contains(value.toLowerCase()) || element.kod!.toLowerCase().contains(value.toLowerCase())).toList();
       }
     });
   }

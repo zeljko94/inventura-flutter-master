@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
@@ -30,6 +29,8 @@ class _ListeScreenState extends State<ListeScreen> {
   TextEditingController searchController = TextEditingController();
 
   var dateFormat = DateTImeHelperService.formatZaPrikaz;
+
+  bool checkAll = false;
 
   @override
   void initState() {
@@ -99,6 +100,21 @@ class _ListeScreenState extends State<ListeScreen> {
     
             },
             onChanged: _searchOnChange,
+          ),
+          if(isSearchMode) Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: const Text('Odaberi sve', style: TextStyle(fontSize: 19, color: ColorPalette.secondaryText),),
+              ),
+              checkColor: ColorPalette.success,
+              value: checkAll,
+              onChanged: (bool? value) async {
+                _toggleCheckAll(value!);
+              },
+            ),
           ),
           Expanded(
             child: ListView.builder(
@@ -350,6 +366,15 @@ class _ListeScreenState extends State<ListeScreen> {
         else if(options.sortByColumn == 'Broj artikala') {
           liste.sort((a, b) => b.items!.length.compareTo(a.items!.length));
         }
+      }
+    });
+  }
+
+  _toggleCheckAll(bool value) {
+    setState(() {
+      checkAll = value;
+      for(var i=0; i<liste.length; i++) {
+        liste[i].isCheckedForExport = value;
       }
     });
   }
