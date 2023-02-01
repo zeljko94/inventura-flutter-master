@@ -294,7 +294,9 @@ List<Primka> primke = [];
         subtitle != '' ? Text(subtitle, style: TextStyles.subtitleAppBar,) : const SizedBox()
       ]),
       actions: <Widget>[
-        IconButton(icon: const Icon(Icons.sync), onPressed: () async {}),
+        IconButton(icon: const Icon(Icons.sync), onPressed: () async {
+          await _onSyncPress();
+        }),
         IconButton(icon: const Icon(Icons.sort), onPressed: () async {
           SortingOptions? sortOptions = await Navigator.of(context).push(
             MaterialPageRoute(
@@ -385,4 +387,7 @@ List<Primka> primke = [];
     });
   }
 
+  _onSyncPress() async {
+    ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+  }
 }

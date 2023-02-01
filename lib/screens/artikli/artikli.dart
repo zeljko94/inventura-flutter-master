@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
+import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/filtering_options_screen.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/common/sorting_options_screen.dart';
@@ -292,6 +293,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     return AppBar(
       title: Text(title),
       actions: <Widget>[
+        IconButton(icon: const Icon(Icons.sync), onPressed: () async { await _onSyncPress(); }),
         IconButton(icon: const Icon(Icons.sort), onPressed: () async {
             SortingOptions? result = await Navigator.of(context).push(
               MaterialPageRoute(
@@ -316,5 +318,9 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         }),
       ],
     );
+  }
+
+  _onSyncPress() async {
+    ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
   }
 }

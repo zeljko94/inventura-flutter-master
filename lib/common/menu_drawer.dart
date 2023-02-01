@@ -94,14 +94,14 @@ List<Map> menuItems = [
   //   ]
   // },
   
-  {
-    'title': 'Uvoz podataka',
-    'icon': Icons.download,
-    'group': false,
-    'link': '/import-data',
-    'hasChildren': false,
-    'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
-  },
+  // {
+  //   'title': 'Uvoz podataka',
+  //   'icon': Icons.download,
+  //   'group': false,
+  //   'link': '/import-data',
+  //   'hasChildren': false,
+  //   'claim': 'administracija.add-edit-vazni-linkovi.btnUkloniLink',
+  // },
   {
     'title': 'Postavke',
     'icon': Icons.settings,
