@@ -7,6 +7,7 @@ import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
 import 'package:inventura_app/common/loading_spinner.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/common/progress_bar_colors.dart';
 import 'package:inventura_app/common/snackbar.service.dart';
 import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/common/text_styles.dart';
@@ -14,6 +15,7 @@ import 'package:inventura_app/custom_icons_icons.dart';
 import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/primke/primka.dart';
 import 'package:inventura_app/screens/export_data/export_data_screen.dart';
+import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
 import 'package:inventura_app/screens/primke/primka_details.dart';
 import 'package:inventura_app/services/rest/primke_rest_service.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
@@ -42,6 +44,7 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
 
   var dateFormat = DateTImeHelperService.formatZaPrikaz;
 
+  bool isLoading = false;
   bool checkAll = false;
 
   @override
@@ -49,6 +52,9 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
+      setState(() {
+        isLoading = true;
+      });
       var settings = await _appSettingsService.getSettings();
 
       setState(() {
@@ -56,13 +62,20 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
       });
 
       await fetchPrimke();
+
+      
+      setState(() {
+        isLoading = false;
+        _appSettings = settings;
+      });
     });
   }
 
   fetchPrimke() async {
-    var primkeData = await _primkeService!.fetchAll();
+    // var primkeData = await _primkeService!.fetchAll();
+    var primkeData = await _primkeRestService.getPrimke();
     setState(() {
-      primke = primkeData;
+      primke = primkeData!;
       primkeStore = primkeData;
     });
   }
@@ -136,7 +149,7 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: isLoading ? Center(child: CircularProgressIndicator()) : ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemCount: primke.length,
@@ -146,63 +159,90 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
                     const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
                 child: Card(
                   
-                    // child: ListTile(
-                    //   tileColor: ColorPalette.listItemTileBackgroundColor,
-                    //     onTap: () {
-                    //       if(!isSearchMode) {
-                    //         Navigator.of(context).push(
-                    //           MaterialPageRoute(
-                    //             settings: const RouteSettings(name: '/lista-pregled-artikala'),
-                    //             builder: (context) => ListaPregledArtikalaScreen(
-                    //               lista: liste[index],
-                    //               onAddLista: fetchListe,
-                    //               onUpdateLista: fetchListe,
-                    //             ),
-                    //           ),
-                    //         );
-                    //       }
-                    //       else {
-                    //         setState(() {
-                    //           liste[index].isCheckedForExport = !liste[index].isCheckedForExport!;
-                    //         });
-                    //       }
-                    //     },
-                    //     onLongPress: () async {
-                    //     //  liste[index].isCheckedForExport != liste[index].isCheckedForExport;
-                    //       _toggleSearchModeOn();
-                    //     },
-                    //     title: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         if(isSearchMode) Checkbox(
-                    //           checkColor: ColorPalette.success,
-                    //           value: liste[index].isCheckedForExport,
-                    //           onChanged: (value) async {
-                    //             setState(() {
-                    //               liste[index].isCheckedForExport = !liste[index].isCheckedForExport!;
-                    //             });
-                    //           },
-                    //         ),
-                    //         Column(
-                    //           crossAxisAlignment: CrossAxisAlignment.start,
-                    //           children: [
-                    //             Text(liste[index].naziv!),
-                    //             Text(liste[index].skladiste!)
-                    //           ],
-                    //         ),
-                    //         Row(
-                    //           crossAxisAlignment: CrossAxisAlignment.end,
-                    //           children: [
-                    //             Column(
-                    //               children: [
-                    //                 Text('Broj artikala: ' + liste[index].items!.length.toString()),
-                    //                 Text(dateFormat.format(DateTime.parse(liste[index].datumKreiranja!)))
-                    //               ],
-                    //             )
-                    //         ],)
-                    //       ],
-                    //     ),
-                    //   )
+                    child: ListTile(
+                      tileColor: ColorPalette.listItemTileBackgroundColor,
+                        onTap: () {
+                          if(!isSearchMode) {
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //     settings: const RouteSettings(name: '/lista-pregled-artikala'),
+                            //     builder: (context) => ListaPregledArtikalaScreen(
+                            //       lista: liste[index],
+                            //       onAddLista: fetchListe,
+                            //       onUpdateLista: fetchListe,
+                            //     ),
+                            //   ),
+                            // );
+                          }
+                          else {
+                            setState(() {
+                              primke[index].isCheckedForExport = !primke[index].isCheckedForExport!;
+                            });
+                          }
+                        },
+                        onLongPress: () async {
+                        //  liste[index].isCheckedForExport != liste[index].isCheckedForExport;
+                          _toggleSearchModeOn();
+                        },
+                        title: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if(isSearchMode) Checkbox(
+                                  checkColor: ColorPalette.success,
+                                  value: primke[index].isCheckedForExport,
+                                  onChanged: (value) async {
+                                    setState(() {
+                                      primke[index].isCheckedForExport = !primke[index].isCheckedForExport!;
+                                    });
+                                  },
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(primke[index].naziv!),
+                                    Text(primke[index].skladiste!)
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text('Broj artikala: ' + primke[index].items!.length.toString()),
+                                        Text(dateFormat.format(DateTime.parse(primke[index].datumKreiranja!)))
+                                      ],
+                                    )
+                                ],),
+                              ],
+                            ),          
+                            // Expanded(
+                            SizedBox(height: 10,),
+                            Text("Broj skeniranih artikala: "),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Stack(
+                                children: <Widget>[
+                                  SizedBox(
+                                    child: LinearProgressIndicator(
+                                      minHeight: 10,
+                                      value: (primke[index].id!) / 5,
+                                      backgroundColor: Colors.white,
+                                      valueColor: AlwaysStoppedAnimation<Color>(ProgressBarColors.getColorByValue(primke[index].id! / 5)),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 14.0),
+                                    child: Align(child: Text("${primke[index].id}/5"), alignment: Alignment.topCenter,),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // )
+                          ],
+                        ),
+                      )
 
 
                     ),
@@ -395,6 +435,7 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
     });
   }
 
+
   _toggleCheckAll(bool value) {
     setState(() {
       checkAll = value;
@@ -405,20 +446,29 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
   }
 
   _onSyncPress() async {
-    var result = await ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+    if(!isLoading) {
+      var result = await ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
 
-    if(result != null && result) {
-      if(_appSettings.defaultImportMethod == 'csv') {
-
+      if(result != null && result) {
+        if(_appSettings.defaultImportMethod == 'csv') {
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: '/import-data'),
+                  builder: (context) => AddEditDataImportScreen(
+                  ),
+                ),
+              );
+        }
+        else if(_appSettings.defaultImportMethod == 'rest api') {
+          setState(() {
+            isLoading = true;
+          });
+          var primke = await _primkeRestService.getPrimke();
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
-      else if(_appSettings.defaultImportMethod == 'rest api') {
-        buildLoadingSpinner('Učitavanje...', context);
-        var primke = await _primkeRestService.getPrimke();
-        // var artikli = await _dataImportService!.getArtikliFromRestApi(restApiLinkController.text);
-        // await _artikliService!.deleteAll();
-        // await _artikliService!.bulkInsert(artikli!);
-        removeLoadingSpinner(context);
       }
-    }
   }
 }
