@@ -12,6 +12,7 @@ import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
 import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
+import 'package:inventura_app/services/rest/artikli_rest_service.dart';
 import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
@@ -24,6 +25,7 @@ class ArtikliScreen extends StatefulWidget {
 
 class _ArtikliScreenState extends State<ArtikliScreen> {
   final AppSettingsService _appSettingsService = AppSettingsService();
+  final ArtikliRestService _artikliRestService = ArtikliRestService();
   AppSettings? _settings;
   final ArtikliService _artikliService = ArtikliService();
 
@@ -338,7 +340,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
 
     
 
-    if(result) {
+    if(result != null && result) {
       if(_settings!.defaultImportMethod == 'csv') {       
           Navigator.of(context).push(
               MaterialPageRoute(
@@ -379,11 +381,11 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
         // }
       }
       else if(_settings!.defaultImportMethod == 'rest api') {
-        // buildLoadingSpinner('Učitavanje...', context);
-        // var artikli = await _dataImportService!.getArtikliFromRestApi(restApiLinkController.text);
+        buildLoadingSpinner('Učitavanje...', context);
+        var artikli = await _artikliRestService.getArtikli();
         // await _artikliService!.deleteAll();
         // await _artikliService!.bulkInsert(artikli!);
-        // removeLoadingSpinner(context);
+        removeLoadingSpinner(context);
       }
     }
   }

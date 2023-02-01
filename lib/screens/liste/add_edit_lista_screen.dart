@@ -3,7 +3,9 @@ import 'package:inventura_app/common/app_bar.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/lista.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 import 'package:inventura_app/services/sqlite/liste_service.dart';
 
@@ -17,6 +19,8 @@ class AddEditListaScreen extends StatefulWidget {
 }
 
 class _AddEditListaScreenState extends State<AddEditListaScreen> {
+  late AppSettings _appSettings;
+  final AppSettingsService _appSettingsService = AppSettingsService();
   final ListeService   _listeService   = ListeService();
   final ArtikliService _artikliService = ArtikliService();
 
@@ -32,18 +36,29 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
   void initState() {
     super.initState();
     
-    isEdit = widget.lista != null;
-
-    if(isEdit) {
-      nazivController.text = widget.lista!.naziv!;
-      skladisteController.text = widget.lista!.skladiste!;
-      napomenaController.text = widget.lista!.napomena!;
-      datumController.text = DateTImeHelperService.formatZaPrikaz.format(DateTime.parse(widget.lista!.datumKreiranja!));
-    }
 
     Future.delayed(Duration.zero, () async {
+      isEdit = widget.lista != null;
       // var artikliData = await _artikliService.fetchArtikli();
+      var settings = await _appSettingsService.getSettings();
+
+
+      if(isEdit) {
+        nazivController.text = widget.lista!.naziv!;
+        napomenaController.text = widget.lista!.napomena!;
+        datumController.text = DateTImeHelperService.formatZaPrikaz.format(DateTime.parse(widget.lista!.datumKreiranja!));
+      }
+
+      skladisteController.text = settings.odabranoSkladiste!;
+      setState(() {
+        _appSettings = settings;
+      });
+
     });
+
+
+
+
   }
 
 
@@ -107,6 +122,7 @@ class _AddEditListaScreenState extends State<AddEditListaScreen> {
                       },
                     ),
                     TextFormField(
+                      readOnly: true,
                       controller: skladisteController,
                       cursorColor: ColorPalette.primary,
                       decoration: const InputDecoration(

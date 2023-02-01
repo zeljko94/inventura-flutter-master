@@ -5,13 +5,18 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/helpers/datetime_helper_service.dart';
+import 'package:inventura_app/common/loading_spinner.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/common/snackbar.service.dart';
 import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/common/text_styles.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/primke/primka.dart';
 import 'package:inventura_app/screens/export_data/export_data_screen.dart';
+import 'package:inventura_app/screens/primke/primka_details.dart';
+import 'package:inventura_app/services/rest/primke_rest_service.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/primke_service.dart';
 
 class PrimkeScreen extends StatefulWidget {
@@ -22,9 +27,14 @@ class PrimkeScreen extends StatefulWidget {
 }
 
 class _PrimkeScreenState extends State<PrimkeScreen> {
-List<Primka> primke = [];
-  List<Primka> primkeStore = [];
+  late AppSettings _appSettings;
+  final AppSettingsService _appSettingsService = AppSettingsService();
   final PrimkeService? _primkeService = PrimkeService();
+  final PrimkeRestService _primkeRestService = PrimkeRestService();
+
+  
+  List<Primka> primke = [];
+  List<Primka> primkeStore = [];
   bool isSearchMode = false;
   List<Primka> searchSelectedPrimka = [];
 
@@ -38,8 +48,15 @@ List<Primka> primke = [];
   void initState() {
     super.initState();
 
+    Future.delayed(Duration.zero, () async {
+      var settings = await _appSettingsService.getSettings();
 
-    fetchPrimke();
+      setState(() {
+        _appSettings = settings;
+      });
+
+      await fetchPrimke();
+    });
   }
 
   fetchPrimke() async {
@@ -56,7 +73,7 @@ List<Primka> primke = [];
       appBar: isSearchMode ? buildSearchAppBar('Primke', context) : buildSearchAppBarNormal('Primke', 'Pregled svih primki', context),
       body: _buildBody(),
       drawer: MenuDrawer.getDrawer(),
-      floatingActionButton: _buildButton(),
+      // floatingActionButton: _buildButton(),
     );
   }
   
@@ -203,15 +220,15 @@ List<Primka> primke = [];
           heroTag: null,
           backgroundColor: ColorPalette.info,
           onPressed: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     settings: const RouteSettings(name: '/add-edit-lista'),
-            //     builder: (context) => AddEditListaScreen(
-            //       onAddLista: fetchListe,
-            //       onUpdateLista: fetchListe,
-            //     ),
-            //   ),
-            // );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/primka-details'),
+                builder: (context) => PrimkaDetailsScreen(
+                  // onAddLista: fetchListe,
+                  // onUpdateLista: fetchListe,
+                ),
+              ),
+            );
           },
           child: const Icon(Icons.add),
         );
@@ -388,6 +405,20 @@ List<Primka> primke = [];
   }
 
   _onSyncPress() async {
-    ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+    var result = await ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+
+    if(result != null && result) {
+      if(_appSettings.defaultImportMethod == 'csv') {
+
+      }
+      else if(_appSettings.defaultImportMethod == 'rest api') {
+        buildLoadingSpinner('Učitavanje...', context);
+        var primke = await _primkeRestService.getPrimke();
+        // var artikli = await _dataImportService!.getArtikliFromRestApi(restApiLinkController.text);
+        // await _artikliService!.deleteAll();
+        // await _artikliService!.bulkInsert(artikli!);
+        removeLoadingSpinner(context);
+      }
+    }
   }
 }

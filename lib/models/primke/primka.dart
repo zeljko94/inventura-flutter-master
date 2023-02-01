@@ -7,10 +7,12 @@ class Primka {
   String? skladiste;
   String? datumKreiranja;
   bool? isCheckedForExport = false;
-
-  Primka({ this.id, this.naziv, this.napomena, this.skladiste, this.items, this.datumKreiranja });
-
+  bool? isFinished = false;
+  // int? kolicinaSkeniranih;
+  // int? potrebnaKolicina;
   List<ListItem>? items = [];
+
+  Primka({ this.id, this.naziv, this.napomena, this.skladiste, this.items, this.datumKreiranja, this.isFinished });
 
 
   
@@ -22,7 +24,8 @@ class Primka {
       'skladiste': skladiste,
       'items': items,
       'isCheckedForExport': isCheckedForExport,
-      'datumKreiranja': datumKreiranja
+      'datumKreiranja': datumKreiranja,
+      'isFinished': isFinished
     };
   }
 }
