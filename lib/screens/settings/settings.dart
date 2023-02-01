@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventura_app/common/color_palette.dart';
@@ -13,7 +15,8 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsService _appSettingsService = AppSettingsService();
+class _SettingsScreenState extends State<SettingsScreen> {  
+  final AppSettingsService _appSettingsService = AppSettingsService();
   AppSettings? _settings;
 
   // String? defaultSearchInputMethod = 'keyboard';
@@ -21,6 +24,8 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
   String? keyboardInputModeSearchByFields;
   int? numberOfResultsPerSearch;
   List<String> vrsteUnosaPretrazivanja = ['keyboard', 'scanner'];
+  List<String> vrsteUvozaPodataka = ['csv', 'rest api'];
+  List<String> skladista = ['Skladiste 1', 'Skladiste 2', 'Skladiste 3'];
 
   final _formKeyDialogInput = GlobalKey<FormState>();
   final _formKeyDialogDropdown = GlobalKey<FormState>();
@@ -115,6 +120,57 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
       ),
       child: SingleChildScrollView(child: Column(
         children: [
+          // SKLADIŠTE
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(children: [
+                const ListTile(
+                  leading: Icon(Icons.storage),
+                  title: Text('Skladište', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                  // subtitle: Text('Podnaslov'),
+                ),
+
+                
+                _settings != null ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<String>(
+                    value: _settings!.odabranoSkladiste,
+                    hint: const Text('Odaberite skladište:'),
+                    validator: (value) => value == null ? 'Skladište' : null,
+                    decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Skladište',
+                    floatingLabelStyle:
+                        TextStyle(color: ColorPalette.primary),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: ColorPalette.primary,
+                          width: 2.0),
+                    ),
+                  ),
+                    items: skladista.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (odabranoSkladiste) {
+                      setState(() {
+                        _settings!.odabranoSkladiste = odabranoSkladiste;
+                        _appSettingsService.update(_settings!.id!, _settings!);
+                      });
+                    },
+                  ),
+                ) : SizedBox(),
+                  
+              ],)
+            ),
+          ),
+          // SKLADIŠTE END
+
+
+
           // PRETRAGA
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -246,6 +302,24 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
                       await _updateObrisiArtiklePrilikomImporta(value);
                   })
                 ],),
+                InkWell(
+                  onTap: () async {
+                    var result = await _displayZadanaMetodaUvozaPodataka('Zadana metoda uvoza', context);
+                    if(result != null) {
+                      _settings!.defaultImportMethod = result;
+                      _appSettingsService.update(_settings!.id!, _settings!);
+                    }
+                  },
+                  child: const IgnorePointer(
+                    ignoring: true,
+                    child: ExpansionTile(
+                      trailing: Icon(Icons.arrow_forward_ios, size: 15,),
+                      title: Text('Zadana metoda uvoza'),
+                      children: <Widget>[
+                      ],
+                    ),
+                  )
+                ),
                 InkWell(
                   onTap: () async {
                     var result = await _displayInputDialog('Csv delimiter simbol', '', 'Simbol', false, _settings!.csvDelimiterSimbolImport, context);
@@ -475,6 +549,77 @@ class _SettingsScreenState extends State<SettingsScreen> {  final AppSettingsSer
                   onPressed: () async {
                     if (_formKeyDialogInput.currentState!.validate()) {
                       Navigator.pop(context, _settings!.defaultSearchInputMethod);
+                      dialogInputTextController.clear();
+                    }
+                  },
+                  child: const Text('Potvrdi'),
+                  style: ElevatedButton.styleFrom(
+                    primary: ColorPalette.primary
+                  ),
+                ),
+            ],
+            );
+          });
+      }
+
+Future<dynamic> _displayZadanaMetodaUvozaPodataka(String title, BuildContext context) async {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(title),
+              content: 
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                  // Text(message),
+                    Form(
+                      key: _formKeyDialogInput,
+                      child: DropdownButtonFormField<String>(
+                        value: _settings!.defaultImportMethod,
+                        hint: const Text('Vrsta uvoza:'),
+                        validator: (value) => value == null ? 'Vrsta uvoza' : null,
+                        decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Vrsta uvoza',
+                        floatingLabelStyle:
+                            TextStyle(color: ColorPalette.primary),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: ColorPalette.primary,
+                              width: 2.0),
+                        ),
+                      ),
+                        items: vrsteUvozaPodataka.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (vrstaUnosa) {
+                          setState(() {
+                            _settings!.defaultImportMethod = vrstaUnosa;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+            actions: [
+              ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    dialogInputTextController.clear();
+                  },
+                  child: const Text('Odustani'),
+                  style: ElevatedButton.styleFrom(
+                    primary:ColorPalette.danger
+                  ),
+                ),
+              ElevatedButton(
+                  onPressed: () async {
+                    if (_formKeyDialogInput.currentState!.validate()) {
+                      Navigator.pop(context, _settings!.defaultImportMethod);
                       dialogInputTextController.clear();
                     }
                   },

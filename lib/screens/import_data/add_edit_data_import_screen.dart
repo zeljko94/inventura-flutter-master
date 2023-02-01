@@ -41,6 +41,10 @@ class _AddEditDataImportScreenState extends State<AddEditDataImportScreen> {
     Future.delayed(Duration.zero, () async {
       var settings = await _appSettingsService.getSettings();
       restApiLinkController.text = settings.restApiLinkImportArtikli!;
+
+      setState(() {
+        selectedVrstaUvoza = settings.defaultImportMethod;
+      });
     });
   }
 

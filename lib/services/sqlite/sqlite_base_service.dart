@@ -69,6 +69,9 @@ class SqliteBaseService {
       await db.execute("""
         CREATE TABLE AppSettings(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+          odabranoSkladiste TEXT,
+
           defaultSearchInputMethod TEXT,
           scannerInputModeSearchByFields TEXT,
           keyboardInputModeSearchByFields TEXT,
@@ -81,15 +84,16 @@ class SqliteBaseService {
 
           csvDelimiterSimbolExport TEXT,
           exportDataFields TEXT,
-          izveziKaoOdvojeneDatoteke INTEGER
+          izveziKaoOdvojeneDatoteke INTEGER,
+          defaultImportMethod TEXT
         );
       """);
 
       
       // INSERT INITIAL DATA
       await db.execute("""
-        INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbolImport, restApiLinkImportArtikli, csvDelimiterSimbolExport, exportDataFields, izveziKaoOdvojeneDatoteke) 
-        VALUES(1, 'scanner', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv', 1)
+        INSERT INTO AppSettings(id, defaultSearchInputMethod, scannerInputModeSearchByFields, keyboardInputModeSearchByFields, numberOfResultsPerSearch, trimLeadingZeros, obrisiArtiklePrilikomUvoza, csvDelimiterSimbolImport, restApiLinkImportArtikli, csvDelimiterSimbolExport, exportDataFields, izveziKaoOdvojeneDatoteke, defaultImportMethod, odabranoSkladiste) 
+        VALUES(1, 'scanner', 'barkod, sifra, naziv', 'barkod, sifra, naziv', 20, 0, 1, '#', 'http://192.168.5.200:8888/ords/opus/artikl/barkodovi', '#', 'barkod, sifra, naziv', 1, 'rest api', 'Skladiste 1')
       """);
       
     });

@@ -4,12 +4,15 @@ import 'package:intl/intl.dart';
 import 'package:inventura_app/common/color_palette.dart';
 import 'package:inventura_app/common/confirmation_dialog.dart';
 import 'package:inventura_app/common/filtering_options_screen.dart';
+import 'package:inventura_app/common/loading_spinner.dart';
 import 'package:inventura_app/common/menu_drawer.dart';
 import 'package:inventura_app/common/sorting_options_screen.dart';
 import 'package:inventura_app/custom_icons_icons.dart';
+import 'package:inventura_app/models/app_settings.dart';
 import 'package:inventura_app/models/artikl.dart';
 import 'package:inventura_app/screens/artikli/add_edit_artikl_screen.dart';
 import 'package:inventura_app/screens/import_data/add_edit_data_import_screen.dart';
+import 'package:inventura_app/services/sqlite/app_settings_service.dart';
 import 'package:inventura_app/services/sqlite/artikli_service.dart';
 
 class ArtikliScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class ArtikliScreen extends StatefulWidget {
 }
 
 class _ArtikliScreenState extends State<ArtikliScreen> {
+  final AppSettingsService _appSettingsService = AppSettingsService();
+  AppSettings? _settings;
   final ArtikliService _artikliService = ArtikliService();
 
   bool isLoading = false;
@@ -35,6 +40,7 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     super.initState();
     
     Future.delayed(Duration.zero, () async {
+        await fetchAppSettings();
         await fetchArtikli();
     });
   }
@@ -98,20 +104,20 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
             child: Text('Nema artikala za prikaz.', style: TextStyle(color: ColorPalette.secondaryText[50])),
           ) : SizedBox(),
           
-          if(artikliStore.isEmpty && !isLoading) 
-            ElevatedButton.icon(
-              icon: Icon(Icons.add),
-              label: Text('Uvezi artikle'),
-              onPressed: () async {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      settings: const RouteSettings(name: '/import-data'),
-                      builder: (context) => AddEditDataImportScreen(
-                      ),
-                    ),
-                  );
-              },
-            ),
+          // if(artikliStore.isEmpty && !isLoading) 
+          //   ElevatedButton.icon(
+          //     icon: Icon(Icons.add),
+          //     label: Text('Uvezi artikle'),
+          //     onPressed: () async {
+          //         Navigator.of(context).push(
+          //           MaterialPageRoute(
+          //             settings: const RouteSettings(name: '/import-data'),
+          //             builder: (context) => AddEditDataImportScreen(
+          //             ),
+          //           ),
+          //         );
+          //     },
+          //   ),
           Expanded(child: 
           !isLoading ? ListView.builder(
             scrollDirection: Axis.vertical,
@@ -199,6 +205,13 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
     //       },
     //       child: const Icon(Icons.add),
     //     );
+  }
+
+  fetchAppSettings() async {
+    var settings = await _appSettingsService.getSettings();
+    setState(() {
+      _settings = settings;
+    });
   }
 
   fetchArtikli() async {
@@ -321,6 +334,57 @@ class _ArtikliScreenState extends State<ArtikliScreen> {
   }
 
   _onSyncPress() async {
-    ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+    var result = await ConfirmationDialog.openConfirmationDialog('', 'Želite li pokrenuti sinkronizaciju artikala?', context);
+
+    
+
+    if(result) {
+      if(_settings!.defaultImportMethod == 'csv') {       
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/import-data'),
+                builder: (context) => AddEditDataImportScreen(
+                ),
+              ),
+            );
+        // if(files.isNotEmpty) {
+        //   buildLoadingSpinner('Učitavanje...', context);
+        //   var artikli = await _dataImportService!.getArtikliFromCsv(files.first);
+        //   if(artikli == null) {
+        //     removeLoadingSpinner(context);
+        //     var snackBar = const SnackBar(content: Text("Greška prilikom uvoza podataka!"));
+        //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //     return;
+        //   }
+
+        //   await _artikliService!.deleteAll();
+        //   var isOkInsert = await _artikliService!.bulkInsert(artikli);
+
+        //   if(isOkInsert) {
+        //     removeLoadingSpinner(context);
+        //     var snackBar = const SnackBar(content: Text("Artikli uspješno uvezeni!"));
+        //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //     return;
+        //   }
+        //   else {
+        //     removeLoadingSpinner(context);
+        //     var snackBar = const SnackBar(content: Text("Greška prilikom spremanja podataka u sqlite bazu!"));
+        //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //     return;
+        //   }
+        // }
+        // else {
+        //   var snackBar = const SnackBar(content: Text("Odaberite datoteku za uvoz!"));
+        //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // }
+      }
+      else if(_settings!.defaultImportMethod == 'rest api') {
+        // buildLoadingSpinner('Učitavanje...', context);
+        // var artikli = await _dataImportService!.getArtikliFromRestApi(restApiLinkController.text);
+        // await _artikliService!.deleteAll();
+        // await _artikliService!.bulkInsert(artikli!);
+        // removeLoadingSpinner(context);
+      }
+    }
   }
 }

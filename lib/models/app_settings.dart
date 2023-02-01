@@ -1,11 +1,15 @@
 
 class AppSettings {
   int? id;
+
+  String? odabranoSkladiste;
+
   String? defaultSearchInputMethod;
   String? scannerInputModeSearchByFields;
   String? keyboardInputModeSearchByFields;
   int? numberOfResultsPerSearch;
 
+  String? defaultImportMethod;
   int? trimLeadingZeros;
   int? obrisiArtiklePrilikomUvoza;
   String? csvDelimiterSimbolImport;
@@ -16,7 +20,7 @@ class AppSettings {
   int? izveziKaoOdvojeneDatoteke;
 
   AppSettings({ this.id, this.defaultSearchInputMethod, this.scannerInputModeSearchByFields, this.keyboardInputModeSearchByFields, this.numberOfResultsPerSearch, 
-  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbolImport, this.restApiLinkImportArtikli, this.csvDelimiterSimbolExport, this.exportDataFields, this.izveziKaoOdvojeneDatoteke });
+  this.trimLeadingZeros, this.obrisiArtiklePrilikomUvoza, this.csvDelimiterSimbolImport, this.restApiLinkImportArtikli, this.csvDelimiterSimbolExport, this.exportDataFields, this.izveziKaoOdvojeneDatoteke, this.defaultImportMethod, this.odabranoSkladiste });
 
   
   Map<String, dynamic> toMap() {
@@ -32,7 +36,9 @@ class AppSettings {
       'restApiLinkImportArtikli': restApiLinkImportArtikli,
       'csvDelimiterSimbolExport': csvDelimiterSimbolExport,
       'exportDataFields': exportDataFields,
-      'izveziKaoOdvojeneDatoteke': izveziKaoOdvojeneDatoteke
+      'izveziKaoOdvojeneDatoteke': izveziKaoOdvojeneDatoteke,
+      'defaultImportMethod': defaultImportMethod,
+      'odabranoSkladiste': odabranoSkladiste,
     };
   }
 }
