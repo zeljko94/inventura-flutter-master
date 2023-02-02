@@ -163,16 +163,16 @@ class _PrimkeScreenState extends State<PrimkeScreen> {
                       tileColor: ColorPalette.listItemTileBackgroundColor,
                         onTap: () {
                           if(!isSearchMode) {
-                            // Navigator.of(context).push(
-                            //   MaterialPageRoute(
-                            //     settings: const RouteSettings(name: '/lista-pregled-artikala'),
-                            //     builder: (context) => ListaPregledArtikalaScreen(
-                            //       lista: liste[index],
-                            //       onAddLista: fetchListe,
-                            //       onUpdateLista: fetchListe,
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                settings: const RouteSettings(name: '/primka-details'),
+                                builder: (context) => PrimkaDetailsScreen(
+                                  // lista: liste[index],
+                                  // onAddLista: fetchListe,
+                                  // onUpdateLista: fetchListe,
+                                ),
+                              ),
+                            );
                           }
                           else {
                             setState(() {
